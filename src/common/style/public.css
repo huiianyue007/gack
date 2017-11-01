@@ -1,0 +1,160 @@
+@import '~swiper/dist/css/swiper.css';
+@import '~@/theme/index.css';
+/*初始化标签*/
+body,p,ol,ul,h1,h2,h3,h4,h5,h6,dl,dd,form,input{
+	margin:0;
+	padding:0;
+	list-style:none;/*去除ul ol的初始样式*/
+	font-weight:normal;
+  font-size:14px;
+  line-height:24px;
+  color: #333;
+}
+img{
+	border:0;
+  max-width: 100%;
+  vertical-align: middle;
+	}
+a{
+	color:inherit;
+	text-decoration:none;
+}
+.fade-enter {
+  opacity:0;
+}
+.fade-leave{
+  opacity:1;
+}
+.fade-enter-active{
+  transition:opacity .5s;
+}
+.fade-leave-active{
+  opacity:0;
+  transition:opacity .5s;
+}
+.inline-block{
+  display:inline-block;
+}
+.block{
+  display:block;
+}
+.el-button.block{
+  width:100%;
+  display:block !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+body{
+	font-family:"Microsoft YaHei";
+	background-color:#fff!important;
+}
+.container{
+  width: 1190px;
+  margin: 0 auto;
+}
+.fl{
+  float:left;
+}
+.fr{
+  float:right;
+}
+.title{
+  font-size:20px;
+  color:#333;
+  font-weight: bolder;
+}
+.subhead{
+  color: #999;
+}
+.text-center{
+  text-align:center;
+}
+.text-right{
+  text-align:right;
+}
+.oh{
+  overflow:hidden;
+}
+.del{
+  text-decoration: line-through;
+}
+.text-indent{
+  text-indent: 2em;
+}
+.center{
+  vertical-align: middle;
+}
+.page-container{
+  background: #f3f3f3;
+  padding-bottom: 40px;
+}
+.el-breadcrumb.bread{
+  line-height: 46px;
+}
+.cursor {
+  cursor: pointer;
+}
+.fixed{
+  position:fixed;
+}
+.absolute {
+  position: absolute;
+}
+.text-hidden{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/*.box_img img{*/
+  /*width:100%;*/
+/*}*/
+.pr{
+  position:relative;
+}
+.del-line{
+  text-decoration: line-through;
+}
+.news_views p{
+  /*line-height: 26px;*/
+  text-align: justify;
+  text-justify: inter-ideograph;
+  text-indent: 2em;
+}
+.news_views p img{
+  margin-left: -2em;
+  width:100%;
+}
+.news_views .ql-align-center {
+  text-align: center;
+}
+.news_views .ql-align-center  span{
+  /*text-align: center;*/
+  text-indent:0em;
+}
+.news_views .ql-align-left{
+  text-align: left;
+}
+.news_views .ql-align-right{
+  text-align: right;
+}
+.no_data {
+  color: #999 !important;
+  line-height: 3em;
+  border-top: 1px solid #efefef;
+  margin-top: 15px;
+}
+.no_data_lay{
+  position: relative;
+  min-height: 500px;
+  background: #fff;
+}
+.editorImg img{
+  max-width:100%;
+}
+.editorImg .ql-align-center {
+  text-align: center;
+}
+
+.editorImg .ql-align-right {
+  text-align: right;
+}
