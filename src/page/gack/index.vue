@@ -219,7 +219,7 @@
         return this.homePage.OperatorRoundPhotos.filter(item => {
           return item.photoPath
         }).map(item => {
-          if((item.url.indexOf('takeOutAward.html') !== -1 || item.url.indexOf('eggFrenzy.html') !== -1) && this.$store.state.userid) {
+          if((item.url.indexOf('takeOutAward.html') !== -1 || item.url.indexOf('eggFrenzy.html') !== -1 || item.url.indexOf('gackstatic.html') !== -1) && this.$store.state.userid) {
             item.url += `&userid=${this.$store.state.userid.id}`
             item.flag = false
           } else if ((item.url.indexOf('takeOutAward.html') !== -1 || item.url.indexOf('eggFrenzy.html') !== -1) && !this.$store.state.userid) {

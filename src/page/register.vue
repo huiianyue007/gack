@@ -280,6 +280,21 @@ export default {
                         }
                         this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/registered', {}, {
                             params: reg
+                        }).then(() => {
+                          return this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/verify', {}, {
+                            params: {
+                              username: this.ruleForm.phone,
+                              password: passwordMd.toUpperCase()
+                            }
+                          })
+                        }).then(res => {
+                          this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+                            params: {
+                              userid: res.data.data.value,
+                              type: '4'
+                            }
+                          })
+                          return Promise.resolve(res)
                         }).then(({ data }) => {
                             if (data.data.key == 'success') {
                                 this.$store.commit('setFirstLogin', 1)

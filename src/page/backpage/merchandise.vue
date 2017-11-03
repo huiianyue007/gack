@@ -46,7 +46,7 @@
                     <template slot-scope="props">
                         <el-form label-position="left" inline class="demo-table-expand">
                             <el-form-item label="订单备注：" style="margin-bottom:0">
-                                <span>{{ props.row.remark }}</span>
+                                <span>{{ props.row.requirementDescription }}</span>
                             </el-form-item>
                         </el-form>
                     </template>
@@ -261,7 +261,7 @@ export default {
                 return '￥' + row.realPrice;
             }
         },
-        //时间格式化  
+        //时间格式化
         dateFormat(row, column) {
             var date = row[column.property];
             if (date == undefined) {

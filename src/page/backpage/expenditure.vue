@@ -242,8 +242,8 @@ export default {
         onSubmit() {
             let stat = this.search.stratTime;
             let end = this.search.endTime;
-            let timestamp = Date.parse(stat);
-            let timeend = Date.parse(end);
+            let timestamp = Date.parse(stat) || '';
+            let timeend = Date.parse(end) || '';
             this.stratTime = timestamp / 1000;
             this.endTime = timeend / 1000;
             this.init();

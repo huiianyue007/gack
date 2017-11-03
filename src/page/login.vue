@@ -184,6 +184,14 @@ export default {
           let url = this.flag ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/verify' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/fastLanding'
           this.$htAjax.post(url, {}, {
             params: userInfo
+          }).then(res => {
+            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+              params: {
+                userid: res.data.data.value,
+                type: '5'
+              }
+            })
+            return Promise.resolve(res)
           }).then(({ data }) => {
             this.submitLoading = false;
             this.$message({
@@ -224,6 +232,8 @@ export default {
                   }
                 });
               }
+            } else if (this.service == '3') {
+              window.location.href = `${this.$route.query.url + ((/\?/ig).test(this.$route.query.url) ? '&' : '?')}userid=${this.$store.state.userid.id}`
             } else {
               this.$router.push('/', () => {
                 if (!this.user.password) {
