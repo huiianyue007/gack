@@ -17,7 +17,7 @@
         <el-button @click = 'pay'>单篇阅读 10元/条</el-button>
       </div>
     </div>
-    <el-dialog title="扫描二维码支付" :visible.sync="dialogTableVisible" @close = 'payFlag = false' :close-on-click-modal = 'false'>
+    <el-dialog title="微信扫描二维码支付" :visible.sync="dialogTableVisible" @close = 'payFlag = false' :close-on-click-modal = 'false'>
       <div class="qr_code">
         <layout>
           <qrcode :val="wxImg" fgColor = '#000' bgColor = '#fff' :size = '256'></qrcode>
@@ -64,7 +64,7 @@
         for (let i = 0; i< 16; i++) {
           platOrderId += arr[Math.floor(Math.random() * 16)]
         }
-        this.$tkAjax.get('https://tpay.gack.citic/pay.php', {
+        this.$tkAjax.get('https://pay.gack.citic/pay.php', {
           params: {
             uid: '8ab3fd56',
             systemCode: '10',
@@ -88,7 +88,7 @@
           this.payFlag = true
           let state = 0
           while (state == 0 && this.payFlag) {
-            let res = await this.$tkAjax.get(`https://tpay.gack.citic/retrieve.php?pingId=${id}`).catch(error => {
+            let res = await this.$tkAjax.get(`https://pay.gack.citic/retrieve.php?pingId=${id}`).catch(error => {
               console.log(error)
             })
             state = res.data
@@ -116,7 +116,7 @@
           this.dialogTableVisible = false
           this.$message({
             type: 'success',
-            message: '操作成功'
+            message: '关闭成功'
           })
         })
       }

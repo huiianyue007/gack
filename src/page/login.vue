@@ -58,167 +58,211 @@
     <v-footer></v-footer>
   </div>
 </template>
+</script>
 <script>
-import md5 from 'js-md5'
-import loginHeader from 'components/loginHeader'
-import vFooter from 'components/FooterNew'
-export default {
-  name: 'login',
-  data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('密码不可为空'));
-      }
-      /*setTimeout(() => {
-        var isLogin = 1;
-        if (isLogin != 1) {
-            callback(new Error('密码错误,请重新输入'));
-        } else {
-            callback();
+  import md5 from 'js-md5'
+  import loginHeader from 'components/loginHeader'
+  import vFooter from 'components/FooterNew'
+  export default {
+    name: 'login',
+    data() {
+      var checkAge = (rule, value, callback) => {
+        if(!value) {
+          return callback(new Error('密码不可为空'));
         }
-      }, 1000);*/
-      else {
-        callback();
-      }
-    };
-    return {
-      submitLoading: false,
-      //注册
-      register: '/register/0',
-      service: '0',
-      disabled: false,
-      loginForm: {
-        phone: '',
-        sign: '',
-        meg: '',
-        type: true
-      },
-      time: 0,
-      errors: '',
-      flag: true,
-      rules: {
-        /**
-         * 验证手机号码
-         * 移动号码段:139、138、137、136、135、134、150、151、152、157、158、159、182、183、187、188、147
-         * 联通号码段:130、131、132、136、185、186、145
-         * 电信号码段:133、153、180、189
-         **/
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-        ],
-        sign: [
-          { validator: checkAge, trigger: 'blur' }
-        ]
-      }
-    }
-  },
-  mounted() {
-    this.service = this.$route.params.service;
-    this.register = '/register/' + this.service;
-    if (this.username) {
-      this.loginForm.phone = this.username
-    }
-    if (this.password) {
-      this.loginForm.sign = this.password
-    }
-  },
-  components: {
-    vFooter,
-    loginHeader
-  },
-  computed: {
-    regGetText: function() {
-      return this.time > 0 ? this.time + 's 后重新获取' : '获取验证码';
-    },
-    username() {
-      return window.localStorage.getItem('username')
-    },
-    password() {
-      return window.localStorage.getItem('password')
-    }
-  },
-  methods: {
-    regGet() {
-      this.$refs.loginForm.validateField('phone', (valid) => {
-        if (valid == '') {
-          this.time = 60
-          this.disabled = false
-          this.timer()
-          this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
-            params: {
-              telephone: this.loginForm.phone,
-              isuser: '0'
-            }
-          }).then(({ data }) => {
-            this.$message.success('验证码已发送')
-          }).catch(() => {
-            this.$message.error('请求错误')
-          })
-        }
-      });
-    },
-    timer: function() {
-      if (this.time > 0) {
-        this.time--;
-        setTimeout(this.timer, 1000);
-      }
-    },
-    submitForm() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.submitLoading = true;
-          let userInfo = null
-          if (this.flag) {
-            let passwordMd = md5(this.loginForm.sign);
-            userInfo = {
-              username: this.loginForm.phone,
-              password: passwordMd.toUpperCase()
-            }
+        /*setTimeout(() => {
+          var isLogin = 1;
+          if (isLogin != 1) {
+              callback(new Error('密码错误,请重新输入'));
           } else {
-            userInfo = {
-              username: this.loginForm.phone,
-              code: this.loginForm.meg
-            }
+              callback();
           }
-          let url = this.flag ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/verify' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/fastLanding'
-          this.$htAjax.post(url, {}, {
-            params: userInfo
-          }).then(res => {
-            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+        }, 1000);*/
+        else {
+          callback();
+        }
+      };
+      return {
+        submitLoading: false,
+        //注册
+        register: '/register/0',
+        service: '0',
+        disabled: false,
+        loginForm: {
+          phone: '',
+          sign: '',
+          meg: '',
+          type: true
+        },
+        time: 0,
+        errors: '',
+        flag: true,
+        rules: {
+          /**
+           * 验证手机号码
+           * 移动号码段:139、138、137、136、135、134、150、151、152、157、158、159、182、183、187、188、147
+           * 联通号码段:130、131、132、136、185、186、145
+           * 电信号码段:133、153、180、189
+           **/
+          phone: [{
+              required: true,
+              message: '请输入手机号',
+              trigger: 'blur'
+            },
+            {
+              pattern: /^1[34578]\d{9}$/,
+              message: '请输入正确的手机号码',
+              trigger: 'blur'
+            }
+          ],
+          sign: [{
+            validator: checkAge,
+            trigger: 'blur'
+          }]
+        }
+      }
+    },
+    mounted() {
+      this.service = this.$route.params.service;
+      if (this.service == '3' && this.$route.query.url && this.$route.query.state) {
+        this.register = {
+          path: '/register/' + this.service,
+          query: {
+            url: this.$route.query.url,
+            state: this.$route.query.state
+          }
+        }
+      } else {
+        this.register = '/register/' + this.service;
+      }
+
+      if(this.username) {
+        this.loginForm.phone = this.username
+      }
+      if(this.password) {
+        this.loginForm.sign = window.atob(this.password)
+      }
+    },
+    components: {
+      vFooter,
+      loginHeader
+    },
+    computed: {
+      regGetText: function() {
+        return this.time > 0 ? this.time + 's 后重新获取' : '获取验证码';
+      },
+      username() {
+        return window.localStorage.getItem('username')
+      },
+      password() {
+        return window.localStorage.getItem('password')
+      }
+    },
+    methods: {
+      regGet() {
+        this.$refs.loginForm.validateField('phone', (valid) => {
+          if(valid == '') {
+            this.time = 60
+            this.disabled = false
+            this.timer()
+            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
               params: {
-                userid: res.data.data.value,
-                type: '5'
+                telephone: this.loginForm.phone,
+                isuser: '0'
               }
+            }).then(({
+              data
+            }) => {
+              this.$message.success('验证码已发送')
+            }).catch(() => {
+              this.$message.error('请求错误')
             })
-            return Promise.resolve(res)
-          }).then(({ data }) => {
-            this.submitLoading = false;
-            this.$message({
-              message: '登录成功',
-              type: 'success'
-            });
-            let user = {
-              avatar: 0,
-              id: data.data.value,
+          }
+        });
+      },
+      timer: function() {
+        if(this.time > 0) {
+          this.time--;
+          setTimeout(this.timer, 1000);
+        }
+      },
+      submitForm() {
+        this.$refs.loginForm.validate((valid) => {
+          if(valid) {
+            this.submitLoading = true;
+            let userInfo = null
+            if(this.flag) {
+              let passwordMd = md5(this.loginForm.sign);
+              userInfo = {
+                username: this.loginForm.phone,
+                password: passwordMd.toUpperCase()
+              }
+            } else {
+              userInfo = {
+                username: this.loginForm.phone,
+                code: this.loginForm.meg
+              }
             }
-            if (this.loginForm.type) {
-              window.localStorage.setItem('username', this.loginForm.phone)
-              window.localStorage.setItem('password', this.loginForm.sign)
-            }
-            this.$store.commit('setUserId', user)
-            this.$store.commit('setSessionId', data.data.sessionid)
-            this.$htAjaxGlobal.headers = {
-              'Authorization': `Bearer ${this.$store.state.sessionid}`
-            }
-            return this.$store.dispatch('findById', data.data.value)
-          }).then(() => {
-            if (this.service == '1') {
-              if (this.user.isProvider != null) {
-                this.$router.push('/backHome');
+            let url = this.flag ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/verify' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/fastLanding'
+            this.$htAjax.post(url, {}, {
+              params: userInfo
+            }).then(res => {
+              this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+                params: {
+                  userid: res.data.data.value,
+                  type: '5'
+                }
+              })
+              return Promise.resolve(res)
+            }).then(({
+              data
+            }) => {
+              _czc.push(["_setCustomVar", "是否登录", "已登录", 72000]);
+              this.submitLoading = false;
+              this.$message({
+                message: '登录成功',
+                type: 'success'
+              });
+              let user = {
+                avatar: 0,
+                id: data.data.value,
+              }
+              if(this.loginForm.type) {
+                let password = window.btoa(this.loginForm.sign)
+                window.localStorage.setItem('username', this.loginForm.phone)
+                window.localStorage.setItem('password', password)
+              }
+              this.$store.commit('setUserId', user)
+              this.$store.commit('setSessionId', data.data.sessionid)
+              this.$htAjaxGlobal.headers = {
+                'Authorization': `Bearer ${this.$store.state.sessionid}`
+              }
+              return this.$store.dispatch('findById', data.data.value)
+            }).then(() => {
+              if(this.service == '1') {
+                if(this.user.isProvider != null) {
+                  this.$router.push('/backHome');
+                } else {
+                  this.$router.push('/middle', () => {
+                    if(!this.user.password) {
+                      this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                      }).then(() => {
+                        this.$router.push({
+                          path: '/user/setpass',
+                          title: '设置密码'
+                        })
+                      }).catch()
+                    }
+                  });
+                }
+              } else if(this.service == '3' && this.$route.query.url) {
+                window.location.href = `${this.$route.query.url + ((/\?/ig).test(this.$route.query.url) ? '&' : '?')}userid=${this.$store.state.userid.id}`
               } else {
-                this.$router.push('/middle', () => {
-                  if (!this.user.password) {
+                this.$router.push('/', () => {
+                  if(!this.user.password) {
                     this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
                       confirmButtonText: '确定',
                       cancelButtonText: '取消',
@@ -232,167 +276,147 @@ export default {
                   }
                 });
               }
-            } else if (this.service == '3') {
-              window.location.href = `${this.$route.query.url + ((/\?/ig).test(this.$route.query.url) ? '&' : '?')}userid=${this.$store.state.userid.id}`
-            } else {
-              this.$router.push('/', () => {
-                if (!this.user.password) {
-                  this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                  }).then(() => {
-                    this.$router.push({
-                      path: '/user/setpass',
-                      title: '设置密码'
-                    })
-                  }).catch()
-                }
-              });
-            }
-          }).catch((data) => {
-            this.submitLoading = false;
-            if (data.data.data.key) {
-              this.$message.warning(data.data.data.value);
-            }
-          })
-        }
-      })
+            }).catch((data) => {
+              this.submitLoading = false;
+              if(data.data.data.key) {
+                this.$message.warning(data.data.data.value);
+              }
+            })
+          }
+        })
+      }
     }
   }
-}
 </script>
-<style  scoped>
-.container {
-  width: 100%;
-  height: 500px;
-  background-color: #e4e4e4;
-}
+<style scoped>
+  .container {
+    width: 100%;
+    height: 500px;
+    background-color: #e4e4e4;
+  }
 
-.contentbox {
-  width: 1200px;
-  height: 500px;
-  background: url(~@/assets/gack/loginbg.jpg) no-repeat;
-  margin: 0 auto;
-  overflow: hidden;
-}
+  .contentbox {
+    width: 1200px;
+    height: 500px;
+    background: url(~@/assets/gack/loginbg.jpg) no-repeat;
+    margin: 0 auto;
+    overflow: hidden;
+  }
 
-.contentbox .biaodan {
-  float: right;
-  margin-right: 95px;
-  margin-top: 60px;
-  width: 350px;
-  height: 380px;
-  background-color: #fff;
-}
+  .contentbox .biaodan {
+    float: right;
+    margin-right: 95px;
+    margin-top: 60px;
+    width: 350px;
+    height: 380px;
+    background-color: #fff;
+  }
 
-.contentbox .biaodan .denglu {
-  font-size: 20px;
-  width: 280px;
-  margin: 40px auto 10px;
-}
+  .contentbox .biaodan .denglu {
+    font-size: 20px;
+    width: 280px;
+    margin: 40px auto 10px;
+  }
 
-.contentbox .biaodan .denglu .login_title {
-  color: #f00;
-}
+  .contentbox .biaodan .denglu .login_title {
+    color: #f00;
+  }
 
-.login_form {
-  width: 280px;
-  height: auto;
-  margin: 0 auto;
-  overflow: hidden;
-}
+  .login_form {
+    width: 280px;
+    height: auto;
+    margin: 0 auto;
+    overflow: hidden;
+  }
 
-.icon_img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 36px;
-  height: 36px;
-  z-index: 99;
-}
+  .icon_img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    z-index: 99;
+  }
 
-.login_inp {
-  position: relative;
-  width: 100%;
-  margin-top: 20px;
-}
+  .login_inp {
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+  }
 
-.icon_img img {
-  position: absolute;
-  margin: auto auto;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
+  .icon_img img {
+    position: absolute;
+    margin: auto auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
 
-.sub_login {
-  margin-top: 20px;
-}
+  .sub_login {
+    margin-top: 20px;
+  }
 
-.sub_login .el-button {
-  width: 100%;
-}
+  .sub_login .el-button {
+    width: 100%;
+  }
 
-.login .loginType {
-  margin-top: 10px;
-}
+  .login .loginType {
+    margin-top: 10px;
+  }
 
-.login .el_forget {
-  float: right;
-  color: #666;
-  cursor: pointer;
-  font-size: 12px;
-  margin-top: 4px;
-}
+  .login .el_forget {
+    float: right;
+    color: #666;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 4px;
+  }
 
-.login .zhuce {
-  color: #ff6d6d;
-  font-size: 14px;
-  margin-top: 15px;
-}
+  .login .zhuce {
+    color: #ff6d6d;
+    font-size: 14px;
+    margin-top: 15px;
+  }
 
-.login .zhuce a {
-  color: #ff6d6d;
-}
+  .login .zhuce a {
+    color: #ff6d6d;
+  }
 </style>
 
 <style>
-.login .el-input__inner {
-  padding-left: 35px;
-}
+  .login .el-input__inner {
+    padding-left: 35px;
+  }
 
+  .login .el-checkbox__label {
+    color: #666;
+  }
 
+  .login .el-checkbox__inner {
+    width: 14px;
+    height: 14px;
+  }
 
-.login .el-checkbox__label {
-  color: #666;
-}
+  .login .el-checkbox__inner::after {
+    height: 6px;
+    left: 3px;
+  }
 
-.login .el-checkbox__inner {
-  width: 14px;
-  height: 14px;
-}
+  .login .el-checkbox__input.is-checked .el-checkbox__inner {
+    background-color: #ff6d6d;
+    border-color: #ff6d6d;
+  }
 
-.login .el-checkbox__inner::after {
-  height: 6px;
-  left: 3px;
-}
+  .login .el-checkbox__input.is-focus .el-checkbox__inner {
+    border-color: #ff6d6d;
+  }
 
-.login .el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #ff6d6d;
-  border-color: #ff6d6d;
-}
+  .reg_message .el-input__inner {
+    padding-left: 15px;
+  }
 
-.login .el-checkbox__input.is-focus .el-checkbox__inner {
-  border-color: #ff6d6d;
-}
-
-.reg_message .el-input__inner {
-  padding-left: 15px;
-}
-
-.login .el-checkbox__inner:hover {
-  border-color: #ff6d6d;
-}
+  .login .el-checkbox__inner:hover {
+    border-color: #ff6d6d;
+  }
 </style>

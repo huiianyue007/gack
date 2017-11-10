@@ -64,8 +64,8 @@
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar3' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.case"></editor>
                 </el-form-item>
                 <!--<el-form-item label="入孵尊享：" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar4' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.process"></editor>
-                </el-form-item>-->
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar4' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.process"></editor>
+                        </el-form-item>-->
                 <el-form-item style="text-align: center;">
                     <el-button type="primary" @click="submitForm1()" :loading="submitLoading">提交发布商品</el-button>
                     <el-button type="primary" @click="cancel">取消</el-button>
@@ -134,17 +134,17 @@
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                 </el-form-item>
                 <!--<el-form-item label="培训受众：" prop="details" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar1' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.introduce"></editor>
-                </el-form-item>-->
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar1' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.introduce"></editor>
+                        </el-form-item>-->
                 <el-form-item label="商品介绍：" prop="details" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar2' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.describe"></editor>
                 </el-form-item>
                 <!--<el-form-item label="课程概述：" prop="details" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar3' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.case"></editor>
-                </el-form-item>
-                <el-form-item label="培训师/机构介绍：" prop="details" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar4' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.process"></editor>
-                </el-form-item>-->
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar3' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.case"></editor>
+                        </el-form-item>
+                        <el-form-item label="培训师/机构介绍：" prop="details" class="quillcon" required>
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar4' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.process"></editor>
+                        </el-form-item>-->
                 <el-form-item label="服务承诺：" prop="details" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar5' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.promise"></editor>
                 </el-form-item>
@@ -183,10 +183,10 @@
                     <br>
                     <span>系统默认服务范围为“没有，即全国范围”，如您有地域限制，请勾选“有”后进行自主填写。</span>
                 </el-form-item>
-                <el-form-item label="商品价格:" prop="price" v-if="ruleForm3.bargaining == '1' && ruleForm3.region=='1'">
+                <el-form-item label="商品价格:" prop="price" v-if="ruleForm3.bargaining == '1'">
                     <el-input placeholder="请输入金额" v-model="ruleForm3.price" style="width:220px;" :maxlength="11">
-                        <template slot="append">元</template>
-                    </el-input>起
+                        <template slot="append">元起</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="商品价格:" prop="nowPrice" v-if="ruleForm3.bargaining == '2' && ruleForm3.region=='2'">
                     <el-input placeholder="请输入金额" v-model="ruleForm3.nowPrice" style="width:220px;" :maxlength="11">
@@ -294,7 +294,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value1" placeholder="请选择省" style="width:150px;margin-right:10px;" @change="provinceChange(serviceArea.value1,index,2)">
-                                <el-option v-for="(item,index) in serviceArea.options1" :key="item.name" :label="item.name" :value="item.id"></el-option>
+                                <el-option v-for="(item,index) in serviceArea.options1" :key="index" :label="item.name" :value="item.id"></el-option>
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -303,7 +303,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value2" placeholder="请选择市" style="width:150px; margin-right:10px;" @change="cityChange(serviceArea.value2,index,2)">
-                                <el-option v-for="item in serviceArea.options2" :key="item.name" :label="item.name" :value="item.id">
+                                <el-option v-for="item in serviceArea.options2" :key="item.id" :label="item.name" :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -312,7 +312,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value3" placeholder="请选择县/区" style="width:150px;margin-right:10px;">
-                                <el-option v-for="item in serviceArea.options3" :key="item.name" :label="item.name" :value="item.id">
+                                <el-option v-for="item in serviceArea.options3" :key="item.id" :label="item.name" :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -339,22 +339,22 @@
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                 </el-form-item>
                 <!--<el-form-item label="商品介绍:" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar1' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.introduce"></editor>
-                </el-form-item>-->
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar1' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.introduce"></editor>
+                        </el-form-item>-->
                 <el-form-item label="商品介绍:" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar2' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.describe"></editor>
                 </el-form-item>
                 <!--<el-form-item label="服务案例:" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar3' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.case"></editor>
-                </el-form-item>
-                <el-form-item label="服务流程:" class="quillcon" required>
-                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar4' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.process"></editor>
-                </el-form-item>-->
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar3' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.case"></editor>
+                        </el-form-item>
+                        <el-form-item label="服务流程:" class="quillcon" required>
+                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar4' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.process"></editor>
+                        </el-form-item>-->
                 <el-form-item label="服务承诺:" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar5' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.promise"></editor>
                 </el-form-item>
                 <el-form-item style="text-align: center;">
-                    <el-button type="primary" @click="submitForm3('newForm')" :loading="submitLoading">提交发布商品</el-button>
+                    <el-button type="primary" @click="submitForm3()" :loading="submitLoading">提交发布商品</el-button>
                     <el-button type="primary" @click="cancel">取消</el-button>
                 </el-form-item>
             </el-form>
@@ -553,7 +553,7 @@ export default {
                         value3: '',
                         price: '',
                         bargain: '2',
-                        
+
                         promotionPrice: '',
                         startTime: null,
                         endTime: null
@@ -581,7 +581,7 @@ export default {
                     // something config
                 },
                 id: null,
-                uploadUrl: 'https://apitest.gack.citic:8082/api/upload',
+                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
@@ -744,7 +744,7 @@ export default {
 
         });
         //获取省列表
-        this.getProvinceList(0,1)
+        this.getProvinceList(0, 1)
 
     },
     methods: {
@@ -759,7 +759,6 @@ export default {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
-
                     that.detailsType = data.data.type;
                     that.serverLastId = data.data.serviceType.id;
                     that.commodityCode = data.data.commodityCode
@@ -830,6 +829,7 @@ export default {
                     } else {
                         that.ruleForm3.bargaining = data.data.isBargaining
                         that.ruleForm3.region = data.data.isTerritoryRestriction
+                        // console.log()
                         that.ruleForm3.stock = data.data.stock
                         that.ruleForm3.price = data.data.startingPrice
                         that.ruleForm3.nowPrice = data.data.commodityPrice
@@ -904,9 +904,9 @@ export default {
 
                             serverAreas.push(area)
                         }
-                        if(serverAreas.length>0){
-                            that.ruleForm3.serviceAreas=serverAreas
-                        }else if(serverAreas.length==0){
+                        if (serverAreas.length > 0) {
+                            that.ruleForm3.serviceAreas = serverAreas
+                        } else if (serverAreas.length == 0) {
                             that.ruleForm3.serviceAreas.concat(serverAreas)
                         }
                         // that.ruleForm3.serviceAreas = serverAreas
@@ -1264,77 +1264,144 @@ export default {
             this.ruleForm3.endTime = moment(this.ruleForm3.endTime).toDate();
             this.$refs.ruleForm3.validate((valid) => {
                 var serviceRange = [];
-                var length = this.ruleForm3.serviceAreas.length
-                for (var i = 0; i < length; i++) {
-                    var service = {
-                        area: {
-                            id: null
-                        },
-                        city: {
-                            id: null
-                        },
-                        province: {
-                            id: null
-                        },
-                        isPromotion:'2',
-                        commodityPrice: null,
-                        commodityPricePromotion: null,
-                        startTime: null,
-                        endTime: null,
-                        id: null
-                    }
-                    if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
-                        service.area.id = null;
-                    } else {
-                        service.area.id = this.ruleForm3.serviceAreas[i].value3;
-                    }
-                    if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
-                        service.city.id = null;
-                    } else {
-                        service.city.id = this.ruleForm3.serviceAreas[i].value2;
-                    }
-                    if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
-                        service.province.id = null;
-                    } else {
-                        service.province.id = this.ruleForm3.serviceAreas[i].value1;
-                    }
-                    if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
-                        service.isPromotion = '2'
-                    } else {
-                        service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
-                    }
-                    if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
-                        this.ruleForm3.serviceAreas[i].price = null
-                    } else {
-                        service.commodityPrice = this.ruleForm3.serviceAreas[i].price
-                    }
-                    if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
-                        service.commodityPricePromotion = null
-                    } else {
-                        service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
-                    }
-                    if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
-                        service.startTime = null
-                    } else {
-                        service.startTime = this.ruleForm3.serviceAreas[i].startTime
-                    }
-                    if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
-                        service.endTime = null
-                    } else {
-                        service.endTime = this.ruleForm3.serviceAreas[i].endTime
-                    }
-                    service.id = this.ruleForm3.serviceAreas[i].id;
-                    serviceRange.push(service);
-                }
                 var price = 0.0;
+                var isPromotions = '';
                 if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '1') {
                     price = this.ruleForm3.price;
+                    isPromotions = this.ruleForm3.promotion;
+                    var length = this.ruleForm3.serviceAreas.length
+                    for (var i = 0; i < length; i++) {
+                        var service = {
+                            area: {
+                                id: null
+                            },
+                            city: {
+                                id: null
+                            },
+                            province: {
+                                id: null
+                            },
+                            isPromotion: '2',
+                            commodityPrice: null,
+                            commodityPricePromotion: null,
+                            startTime: null,
+                            endTime: null,
+                            id: null
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
+                            service.area.id = null;
+                        } else {
+                            service.area.id = this.ruleForm3.serviceAreas[i].value3;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
+                            service.city.id = null;
+                        } else {
+                            service.city.id = this.ruleForm3.serviceAreas[i].value2;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
+                            service.province.id = null;
+                        } else {
+                            service.province.id = this.ruleForm3.serviceAreas[i].value1;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
+                            service.isPromotion = '2'
+                        } else {
+                            service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
+                        }
+                        if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
+                            this.ruleForm3.serviceAreas[i].price = null
+                        } else {
+                            service.commodityPrice = this.ruleForm3.serviceAreas[i].price
+                        }
+                        if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
+                            service.commodityPricePromotion = null
+                        } else {
+                            service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
+                        }
+                        if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
+                            service.startTime = null
+                        } else {
+                            service.startTime = this.ruleForm3.serviceAreas[i].startTime
+                        }
+                        if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
+                            service.endTime = null
+                        } else {
+                            service.endTime = this.ruleForm3.serviceAreas[i].endTime
+                        }
+                        service.id = this.ruleForm3.serviceAreas[i].id;
+                        serviceRange.push(service);
+                    }
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '1') {
                     price = this.ruleForm3.serviceAreas[0].price;
+                    isPromotions = '2';
+                    var length = this.ruleForm3.serviceAreas.length
+                    for (var i = 0; i < length; i++) {
+                        var service = {
+                            area: {
+                                id: null
+                            },
+                            city: {
+                                id: null
+                            },
+                            province: {
+                                id: null
+                            },
+                            isPromotion: '2',
+                            commodityPrice: null,
+                            commodityPricePromotion: null,
+                            startTime: null,
+                            endTime: null,
+                            id: null
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
+                            service.area.id = null;
+                        } else {
+                            service.area.id = this.ruleForm3.serviceAreas[i].value3;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
+                            service.city.id = null;
+                        } else {
+                            service.city.id = this.ruleForm3.serviceAreas[i].value2;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
+                            service.province.id = null;
+                        } else {
+                            service.province.id = this.ruleForm3.serviceAreas[i].value1;
+                        }
+                        if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
+                            service.isPromotion = '2'
+                        } else {
+                            service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
+                        }
+                        if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
+                            this.ruleForm3.serviceAreas[i].price = null
+                        } else {
+                            service.commodityPrice = this.ruleForm3.serviceAreas[i].price
+                        }
+                        if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
+                            service.commodityPricePromotion = null
+                        } else {
+                            service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
+                        }
+                        if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
+                            service.startTime = null
+                        } else {
+                            service.startTime = this.ruleForm3.serviceAreas[i].startTime
+                        }
+                        if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
+                            service.endTime = null
+                        } else {
+                            service.endTime = this.ruleForm3.serviceAreas[i].endTime
+                        }
+                        service.id = this.ruleForm3.serviceAreas[i].id;
+                        serviceRange.push(service);
+                    }
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.nowPrice;
+                    isPromotions = this.ruleForm3.promotion;
                 } else if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.price;
+                    isPromotions = this.ruleForm3.promotion;
                 }
                 if (valid) {
                     this.submitLoading = true;
@@ -1345,7 +1412,7 @@ export default {
                         startingPrice: this.ruleForm3.price,
                         invoiceMail: this.ruleForm3.mail,
                         isTerritoryRestriction: this.ruleForm3.region,
-                        isPromotion: this.ruleForm3.promotion,
+                        isPromotion: isPromotions,
                         commodityPrice: this.ruleForm3.nowPrice,
                         commodityPricePromotion: this.ruleForm3.promotionPrice,
                         startTime: this.ruleForm3.startTime,
@@ -1518,10 +1585,10 @@ export default {
                     if (type == 2) {
                         that.ruleForm3.serviceAreas[index].value3 = '';
                     }
-                    var arr = [{ citycode:'',code:'',id: '',  name: '无' }]
-                        data.data.forEach(function(o) {
-                            arr.push(o)
-                        })
+                    var arr = [{ citycode: '', code: '', id: '', name: '无' }]
+                    data.data.forEach(function(o) {
+                        arr.push(o)
+                    })
                     that.ruleForm3.serviceAreas[index].options3 = arr;
                 } else {
                     that.$message.error(data.msg);
@@ -1717,6 +1784,8 @@ export default {
 
 
 
+
+
 /*弹窗样式*/
 
 .out_box {
@@ -1783,9 +1852,10 @@ export default {
 }
 </style>
 <style>
-.comImg{
-    width:320px!important;
+.comImg {
+    width: 320px!important;
 }
+
 .comEdit .avatar-uploader .el-upload {
     width: 178px;
     height: 178px;
@@ -1795,7 +1865,8 @@ export default {
     position: relative;
     overflow: hidden;
 }
-.comEdit  .avatar-uploader.comImg .el-upload {
+
+.comEdit .avatar-uploader.comImg .el-upload {
     width: 320px;
     height: 178px;
     border: 1px dashed #d9d9d9;
@@ -1804,6 +1875,7 @@ export default {
     position: relative;
     overflow: hidden;
 }
+
 .comEdit .avatar-uploader .el-upload:hover {
     border-color: #c7000a;
 }
@@ -1816,8 +1888,6 @@ export default {
     line-height: 178px;
     text-align: center;
 }
-
-
 </style>
 
 

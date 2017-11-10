@@ -49,7 +49,7 @@
         <div class="sy_search" ref = 'search'>
           <div class="search">
             <input type="text" v-model = 'keywords' @keyup.enter = 'search'>
-            <div class="search_btn" @click = 'search'></div>
+            <div class="search_btn" @click = 'search' id = 'search'></div>
           </div>
           <div class="search_key">
             <p v-if = 'homePage'>
@@ -165,9 +165,9 @@
         })
       }).then(async data => {
         let user = store.state.userInfo
-        let session = store.state.sessionid
+        let session = store.state.userid
         if (!user && session) {
-          await store.dispatch('findById', session)
+          await store.dispatch('findById', session.id)
         }
         return Vue.prototype.$htAjax.get(`https://apitest.gack.citic:8083/guoanmaker/operator/2app/getOpenCity2App?cityName=${data}&username=${user ? user.username : ''}&landType=1`)
       }).then(({ data }) => {
@@ -266,6 +266,9 @@
       document.head.appendChild(this.script)
       if (document.getElementById('chatBtn')) {
         document.getElementById('chatBtn').style.display = 'block'
+        document.getElementById('chatBtn').addEventListener('click', () => {
+          _czc.push(["_trackEvent",'咨询客服','咨询']);
+        })
       }
       if (this.firstLogin && this.user) {
         this.initYinDao()
@@ -331,7 +334,9 @@
         }
       },
       search () {
-        this.$router.push({
+         if (!this.keywords) return false
+        _czc.push(["_trackEvent",'搜索关键字','搜索', this.keywords]);
+          this.$router.push({
           path: '/spacelist',
           query: {
             keywords: this.keywords,
@@ -466,6 +471,7 @@
       siginOut() {
         return new Promise((resolve, reject) => {
           this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/signOut').then(res => {
+            _czc.push(["_deleteCustomVar","是否登录"]);
             this.$store.commit('setUserInfo', null)
             this.$store.commit('setUserId', null)
             this.$store.commit('setSessionId', null)

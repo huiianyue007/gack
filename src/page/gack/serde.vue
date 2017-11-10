@@ -19,6 +19,13 @@
               <div class="text-hidden title service_title">{{ service.commodityName || service.companyProject || service.corporateName }}</div>
               <div class="text-hidden subhead"> {{ service.synopsis || service.introduction }}</div>
               <el-row class = 'list_con' v-if = 'query.type == 1'>
+                <el-col :span = '18' v-if = 'service.isTerritoryRestriction == 2 && service.isBargaining === "2" && service.type == "1"'>
+                    <span>现价</span>
+                    <span class="current_price">
+                    {{ service.finalPrice }}
+                    <span class="unit">元</span>
+                  </span>
+                </el-col>
                 <el-col :span = '18' v-if = '(service.isTerritoryRestriction == 1 && service.serviceRange.length ? service.serviceRange[activeAddress].isPromotion == 2 : service.isPromotion == 2) || service.isBargaining === "1"'>
                     <span>现价</span>
                     <span class="current_price">

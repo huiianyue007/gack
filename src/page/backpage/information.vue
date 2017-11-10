@@ -727,8 +727,8 @@ export default {
             })
         },
         fication2(emit, index) {
-            this.classItem2 = [];
-            this.$set(this.classItem2, index, true);
+            // this.classItem2 = [];
+            // this.$set(this.classItem2, index, true);
             this.chosen.forEach((element) => {
                 if (element == emit.serverName) {
                     this.$message({

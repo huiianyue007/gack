@@ -261,7 +261,7 @@ export default {
                 return '￥' + row.realPrice;
             }
         },
-        //时间格式化
+        //时间格式化  
         dateFormat(row, column) {
             var date = row[column.property];
             if (date == undefined) {

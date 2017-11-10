@@ -88,5 +88,6 @@ if (store.state.sessionid) {
 //   store.dispatch('findById', store.state.userid.id)
 // })
 if (store.state.userid) {
+  _czc.push(["_setCustomVar","是否登录","已登录",72000]);
   store.dispatch('findById', store.state.userid.id)
 }

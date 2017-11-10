@@ -70,9 +70,8 @@
                 </el-table-column>
             </el-table>
             <div class="block">
-                <el-pagination layout="prev, pager, next" :current-page="search.page" :total="total"
+                <el-pagination layout="prev, pager, next" :current-page="search.num" :total="total"
                  @current-change="handleCurrentChange">
-                </el-pagination>
                 </el-pagination>
             </div>
         </div>
@@ -95,7 +94,7 @@ export default {
                 endTime: '',
                 likeStr: '',
                 businessid: '',
-                num: 0,//当前页
+                num: 1,//当前页
                 page: 5,//显示几挑
                 userid: '',
             }
@@ -127,7 +126,7 @@ export default {
                 likeStr: this.search.likeStr,//关键字：模糊查询 联系人，空间名，备注信息
                 state: State,//String类型,0为未预约  1为已预约
                 businessid: this.search.businessid,//服务商id
-                pageNumber: this.search.num,//int类型，页数，从0开始
+                pageNumber: this.search.num -1,//int类型，页数，从0开始
                 pageSize: this.search.page,//int类型，每页条数
                 userid: ''//String类型，用户id
             }
@@ -156,7 +155,7 @@ export default {
         },
         //页数
         handleCurrentChange(val) {
-            this.search.num = val - 1;
+            this.search.num = val;
             this.Order();
         },
         //确认

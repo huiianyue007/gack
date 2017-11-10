@@ -81,7 +81,7 @@
                 </ul>
                 <p class="pl">
                     <span>买家评论：</span>
-                    {{comment.info}}
+                    {{comment.appraise}}
                 </p>
             </div>
         </div>
@@ -205,7 +205,7 @@ export default {
                     that.$message.warning(data.msg);
                 }
             }).catch(function(err) {
-
+               
             });
         }
     }

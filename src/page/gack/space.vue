@@ -179,7 +179,7 @@
             pattern: /1[3|4|5|7|8][0-9]{9}/,
             message: '请输入正确的手机号码'
           }],
-          date: '',
+          date: [{ required: true, message: '请输入参观日期', trigger: 'blur' }],
           number: [{ validator: checkAmount, trigger: 'blur' }]
         }
 //        center: {

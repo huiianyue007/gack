@@ -74,7 +74,8 @@
                 </el-table-column>
             </el-table>
             <div class="block">
-                <el-pagination layout="prev, pager, next" :total="count" @current-change="handleCurrentChange">
+                <el-pagination layout="prev, pager, next" :current-page="page"
+                 :total="count" @current-change="handleCurrentChange">
                 </el-pagination>
             </div>
         </div>
@@ -88,7 +89,7 @@ export default {
             //url需要的参数
             states: -1,
             //当前页
-            page: 0,
+            page: 1,
             //显示条数
             size: 5,
             //总页数
@@ -124,7 +125,7 @@ export default {
             var json = {
                 businessId: this.businessid,
                 roomState: this.states,
-                page: this.page,
+                page: this.page -1,
                 size: this.size
             }
             this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomKeyNameBusinessIdStauts', {}, {
@@ -224,7 +225,7 @@ export default {
         },
         handleCurrentChange(val) {
             //页数
-            this.page = val - 1;
+            this.page = val;
             this.Order(this.i);
         },
         //搜索

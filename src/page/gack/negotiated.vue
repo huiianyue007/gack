@@ -177,6 +177,7 @@
             this.$htAjax.post(url, {}, {
               params: data
             }).then(({ data }) => {
+              _czc.push(["_trackEvent",'订单','创建']);
               if (this.commodity.isBargaining === '1') {
                 this.$message({
                   type: 'success',

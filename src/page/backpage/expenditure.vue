@@ -231,7 +231,7 @@ export default {
         formatterLiu(row, column) {
             return row.type == 1 ? '收入' : '支出';
         },
-        //时间格式化
+        //时间格式化  
         dateFormat(row, column) {
             var date = row[column.property];
             if (date == undefined) {

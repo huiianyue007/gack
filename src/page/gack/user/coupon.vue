@@ -85,7 +85,7 @@
             return item
           })
           this.activeTypeList = this.couponData.filter(item => {
-            let flag = (date > item.startcouponstime && date < item.endCouponstime) && item.isUsed == '0'
+            let flag = item.isUsed == '0'
             if (this.activeType === 'available') {
               return flag
             } else if (this.activeType === 'expired') {

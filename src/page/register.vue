@@ -30,13 +30,13 @@
                             <el-button type="primary" @click="regGetCode()" style="background:#f6f7f8;border: 1px solid #C4C4C4;color:#4a4a4a" :disabled="disabled || time > 0">{{ verCode }}</el-button>
                         </el-col>
                     </el-form-item>
-                    <el-form-item label="设置密码" required prop="password">
+                    <el-form-item label="设置密码" prop="password">
                         <div class="icon_img">
                             <img src='../assets/reg/zc_mm.png'>
                         </div>
                         <el-input type='password' v-model="ruleForm.password" :maxlength="12" placeholder="请设置一个6到12位的密码"></el-input>
                     </el-form-item>
-                    <el-form-item label="确认密码" required prop="conPassword">
+                    <el-form-item label="确认密码" prop="conPassword">
                         <div class="icon_img">
                             <img src='../assets/reg/zc_mm.png'>
                         </div>
@@ -288,6 +288,14 @@ export default {
                             }
                           })
                         }).then(res => {
+                          if (this.$route.query.state) {
+                            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/setSource', {}, {
+                              params: {
+                                userid: res.data.data.value,
+                                channelSource: this.$route.query.state
+                              }
+                            })
+                          }
                           this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
                             params: {
                               userid: res.data.data.value,
@@ -297,12 +305,23 @@ export default {
                           return Promise.resolve(res)
                         }).then(({ data }) => {
                             if (data.data.key == 'success') {
+                              _czc.push(["_trackEvent",'注册','注册成功']);
                                 this.$store.commit('setFirstLogin', 1)
                                 that.$message({
                                     message: '注册成功，请登录',
                                     type: 'success'
                                 });
-                                that.$router.push(that.login);
+                                if (this.$route.query.url && this.$route.query.state) {
+                                  that.$router.push({
+                                    path: that.login,
+                                    query: {
+                                      url: this.$route.query.url,
+                                      state: this.$route.query.state
+                                    }
+                                  });
+                                } else {
+                                  that.$router.push(that.login);
+                                }
                             } else {
                                 that.$message.warning(data.data.value);
                             }

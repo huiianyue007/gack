@@ -63,6 +63,7 @@
     mounted () {
       if (this.query.id) {
         let address = this.user.addresses[this.query.index]
+        console.log(address)
         if (address) {
           this.rulesForm = {
             username: address.name,

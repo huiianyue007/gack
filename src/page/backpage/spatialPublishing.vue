@@ -258,6 +258,8 @@ export default {
                 params: Compile
             }).then(({ data }) => {
                 if (data.status == 200) {
+                    this.lng = data.data.lng
+                    this.lat = data.data.lat
                     this.ruleForm = data.data;
                     this.value1 = data.data.province.id;
                     this.value2 = data.data.city.id;
@@ -368,22 +370,22 @@ export default {
                 if (fileList.length == 1) {
                     this.ruleForm.roomImgOne = fileList[0].response.data
                 } else if (fileList.length == 2) {
-                    this.ruleForm.roomImgOne = fileList[0].url;
+                    this.ruleForm.roomImgOne = fileList[0].response.data;
                     this.ruleForm.roomImgTwo = fileList[1].response.data;
                 } else if (fileList.length == 3) {
-                    this.ruleForm.roomImgOne = fileList[0].url;
-                    this.ruleForm.roomImgTwo = fileList[1].url;
+                    this.ruleForm.roomImgOne = fileList[0].response.data;
+                    this.ruleForm.roomImgTwo = fileList[1].response.data;
                     this.ruleForm.roomImgThree = fileList[2].response.data;
                 } else if (fileList.length == 4) {
-                    this.ruleForm.roomImgOne = fileList[0].url;
-                    this.ruleForm.roomImgTwo = fileList[1].url;
-                    this.ruleForm.roomImgThree = fileList[2].url;
+                    this.ruleForm.roomImgOne = fileList[0].response.data;
+                    this.ruleForm.roomImgTwo = fileList[1].response.data;
+                    this.ruleForm.roomImgThree = fileList[2].response.data;
                     this.ruleForm.roomImgFour = fileList[3].response.data;
                 } else if (fileList.length == 5) {
-                    this.ruleForm.roomImgOne = fileList[0].url;
-                    this.ruleForm.roomImgTwo = fileList[1].url;
-                    this.ruleForm.roomImgThree = fileList[2].url;
-                    this.ruleForm.roomImgFour = fileList[3].url;
+                    this.ruleForm.roomImgOne = fileList[0].response.data;
+                    this.ruleForm.roomImgTwo = fileList[1].response.data;
+                    this.ruleForm.roomImgThree = fileList[2].response.data;
+                    this.ruleForm.roomImgFour = fileList[3].response.data;
                     this.ruleForm.roomImgFive = fileList[4].response.data;
                 }
             } else {

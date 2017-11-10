@@ -222,7 +222,7 @@ export default {
             }
         },
         openItems(index) {
-          this.isTemActive = [];
+            this.isTemActive = [];
         }
     },
     watch: {

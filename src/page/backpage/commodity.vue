@@ -382,8 +382,8 @@
                     </el-form-item>
                     <el-form-item label="商品价格：" prop="price" v-if="ruleForm3.bargaining == '1'">
                         <el-input placeholder="请输入金额" v-model="ruleForm3.price" style="width:220px;" :maxlength="11">
-                            <template slot="append">元</template>
-                        </el-input>起
+                            <template slot="append">元起</template>
+                        </el-input>
                     </el-form-item>
                     <el-form-item label="商品价格：" prop="nowPrice" v-if="ruleForm3.bargaining == '2' && ruleForm3.region=='2'">
                         <el-input placeholder="请输入金额" v-model="ruleForm3.nowPrice" style="width:220px;" :maxlength="11">
@@ -1525,9 +1525,11 @@ export default {
             this.$refs.ruleForm3.validate((valid) => {
                 var serviceRange = [];
                 var price = 0.0;
+                var isPromotions='2';
                 if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '1') {
                     var length = this.ruleForm3.serviceAreas.length
                     price = this.ruleForm3.price;
+                    isPromotions=this.ruleForm3.promotion;
                     for (var i = 0; i < length; i++) {
                         var service = {
                             area: {
@@ -1566,6 +1568,7 @@ export default {
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '1') {
                     var length = this.ruleForm3.twoServiceAreas.length
                     price = this.ruleForm3.twoServiceAreas[0].price;
+                    isPromotions='2';
                     for (var i = 0; i < length; i++) {
                         var service = {
                             province: {
@@ -1611,8 +1614,10 @@ export default {
 
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.nowPrice;
+                    isPromotions=this.ruleForm3.promotion;
                 } else if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.price;
+                    isPromotions=this.ruleForm3.promotion;
                 }
                 var startTime = ''
                 if (this.ruleForm3.startTime == undefined) {
@@ -1634,7 +1639,7 @@ export default {
                         startingPrice: this.ruleForm3.price,
                         invoiceMail: this.ruleForm3.mail,
                         isTerritoryRestriction: this.ruleForm3.region,
-                        isPromotion: this.ruleForm3.promotion,
+                        isPromotion: isPromotions,
                         commodityPrice: this.ruleForm3.nowPrice,
                         finalPrice: price,
                         commodityPricePromotion: this.ruleForm3.promotionPrice,
