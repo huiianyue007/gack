@@ -7,7 +7,7 @@
       <el-form class="reg_form reg_box" :rules="rules" :model = 'resetForm' label-width="120px" ref = 'resetForm'>
         <el-form-item prop = 'phone' label = '手机号码'>
           <div class="icon_img">
-            <img src='../assets/reg/dhicon.png'>
+            <img src='../assets/images/reg/dhicon.png'>
           </div>
           <el-input v-model = 'resetForm.phone' :maxlength = '11' placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -17,7 +17,7 @@
               <el-input v-model = 'resetForm.code' :maxlength = '6' placeholder="请输入验证码"></el-input>
             </el-col>
             <el-col :span = '11' :push = '2'>
-              <el-button class = 'ver_code' @click = 'initCode'>{{ verCode }}</el-button>
+              <g-verify @click.native="initCode" width = '100' height="36" :code = 'verCode'></g-verify>
             </el-col>
           </el-row>
         </el-form-item>
@@ -31,15 +31,15 @@
         </el-form-item>
         <el-form-item prop = 'password' label = '设置密码'>
           <div class="icon_img">
-            <img src='../assets/reg/zc_mm.png'>
+            <img src='../assets/images/reg/zc_mm.png'>
           </div>
-          <el-input v-model = 'resetForm.password' :minlength="6" :maxlength="12" type = 'password' placeholder="请输入密码"></el-input>
+          <el-input v-model = 'resetForm.password' :minlength="6" type = 'password' placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item prop = 'oldPassword' label = '请再次输入密码'>
           <div class="icon_img">
-            <img src='../assets/reg/zc_mm.png'>
+            <img src='../assets/images/reg/zc_mm.png'>
           </div>
-          <el-input v-model = 'resetForm.oldPassword' :minlength="6" :maxlength="12" type = 'password' placeholder="请输入密码"></el-input>
+          <el-input v-model = 'resetForm.oldPassword' :minlength="6"  type = 'password' placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button class="block" type = 'danger' @click.native = 'submit' :loading = 'loadding'>提交</el-button>
@@ -53,8 +53,10 @@
 <script>
   import vFooter from 'components/FooterNew'
   import loginHeader from 'components/loginHeader'
+  import GVerify from 'components/GVerify'
   import md5 from 'js-md5'
   export default {
+    name: 'profile',
     data () {
       let self = this
       return {
@@ -101,11 +103,11 @@
     },
     methods: {
       checkPassword (rules, value, callback) {
-        let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/
+        let regExp = /(^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$)|(^[a-zA-Z]{6,16}$)/
         if (value === '') {
           callback(new Error('请输入密码'));
         } else if (regExp.test(value) === false) {
-          callback(new Error('6-12字母和数字组成，不能是纯数字或纯英文'))
+          callback(new Error('6-16字母和数字组成，不能是纯数字'))
         } else {
           callback();
         }
@@ -129,7 +131,7 @@
               telephone: this.resetForm.phone,
               isuser: '0'
             }
-            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
+            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/sendVerificationCode`, {}, {
               params: phone
             }).then(({ data }) => {
               this.$message.success(data.data.value);
@@ -150,7 +152,7 @@
       validatever (rules, value, callback) {
         if (!value) {
           callback(new Error('请输入验证码'))
-        } else if (value !== this.verCode) {
+        } else if (value.toUpperCase() !== this.verCode.toUpperCase()) {
           callback(new Error('验证码输入不正确'))
         } else {
           callback()
@@ -165,7 +167,7 @@
         this.loadding = true
         this.$refs.resetForm.validate((valid) => {
           if (valid) {
-            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/changePassword', {}, {
+            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/changePassword`, {}, {
               params: {
                 username: this.resetForm.phone,
                 password: md5(this.resetForm.password).toUpperCase(),
@@ -179,7 +181,7 @@
               })
               this.$router.go(-1)
             }).catch(() => {
-              this,loadding = false
+              this.loadding = false
               this.$message.error('密码修改失败')
             })
           }
@@ -188,7 +190,8 @@
     },
     components: {
       loginHeader,
-      vFooter
+      vFooter,
+      GVerify
     }
   }
 </script>

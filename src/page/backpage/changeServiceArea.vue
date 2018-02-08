@@ -114,7 +114,7 @@ export default {
             var reg = {
                 businessId: this.businessid
             }
-            this.$htAjax.post("https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/selectBusinessService", {}, { params: reg })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/selectBusinessService`, {}, { params: reg })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.chosens = data.data.twoPss
@@ -141,7 +141,7 @@ export default {
             var reg = {
                 businessId: this.businessid
             }
-            this.$htAjax.post("https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/selectBusinessService", {}, { params: reg })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/selectBusinessService`, {}, { params: reg })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.firstData = data.data.onePss
@@ -206,7 +206,7 @@ export default {
             this.init();
             this.type = 1;
             var that = this;
-            this.$htAjax.post("https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByListForlevid")
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByListForlevid`)
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.classification1 = data.data.pss;
@@ -221,7 +221,7 @@ export default {
                     }
                 })
 
-                
+
             // setTimeout(function() {
             //     var topVal = $('.edit').offset().top;
             //     console.log(topVal)
@@ -237,7 +237,7 @@ export default {
                     userid: user.id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/selectBusByUserid', {}, { params: item })
+                this.$htAjax.post(`${this.$config.back}/selectBusByUserid`, {}, { params: item })
                     .then(({ data }) => {
                         if (data.status == 200) {
                             that.$store.commit('isRoomServer', data.data.isRoomServer);
@@ -275,7 +275,7 @@ export default {
                 }
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/updateBusinessCommoditys', reg)
+            this.$htAjax.post(`${this.$config.back}/updateBusinessCommoditys`, reg)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         that.$message.success('提交成功');
@@ -497,7 +497,7 @@ p.title {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(../../assets/backImg/delate.png) 0 0 no-repeat;
+    background: url(../../assets/images/backImg/delate.png) 0 0 no-repeat;
     background-size: 16px 16px;
     position: absolute;
     right: -9px;
@@ -510,7 +510,7 @@ p.title {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(../../assets/backImg/nopass.png) 0 0 no-repeat;
+    background: url(../../assets/images/backImg/nopass.png) 0 0 no-repeat;
     background-size: 16px 16px;
     position: absolute;
     right: -9px;

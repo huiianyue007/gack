@@ -4,7 +4,7 @@
             <el-form :inline="true" :model="search" class="demo-form-inline">
                 <el-form-item label="所属类别">
                     <el-select v-model="search.category" placeholder="请选择" style="width:180px;">
-                        <el-option v-for="item in search.classOptions" :key="item.id" :label="item.serverName" :value="item.id" @change="onSubmit">
+                        <el-option v-for="item in search.classOptions" :key="item.id" :label="item.serverName" :value="item.id" @change="init">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -12,7 +12,7 @@
                     <el-input v-model="search.name" style="width:180px;"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit" icon="search">搜索</el-button>
+                    <el-button type="primary" @click="init" icon="search">搜索</el-button>
                 </el-form-item>
             </el-form>
             <el-button type="primary" @click="comJump" class="add">新增商品</el-button>
@@ -29,7 +29,10 @@
                         <p class="sale_class">{{scope.row.serverName}}</p>
                     </template>
                 </el-table-column>
-                <el-table-column prop="finalPrice" label="价  格" align="center">
+                <el-table-column label="价  格" align="center">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.finalPrice | price}}</p>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="examine" label="审核" align="center">
                     <template slot-scope="scope">
@@ -103,29 +106,13 @@
                     <p>工位介绍：</p>
                     <p v-html="comm.commodityCase"></p>
                 </div>
-                <!--<div>
-                    <p>入孵尊享：</p>
-                    <p v-html="comm.process"></p>
-                </div>-->
             </div>
             <div class="comdetails" v-if="comm.type=='2'">
                 <p class="title">商品详情介绍</p>
-                <!--<div>
-                    <p>商品介绍：</p>
-                    <p v-html="comm.introduce"></p>
-                </div>-->
                 <div>
                     <p>商品介绍：</p>
                     <p v-html="comm.description"></p>
                 </div>
-                <!--<div>
-                    <p>服务案例：</p>
-                    <p v-html="comm.commodityCase"></p>
-                </div>
-                <div>
-                    <p>服务流程：</p>
-                    <p v-html="comm.process"></p>
-                </div>-->
                 <div>
                     <p>服务承诺：</p>
                     <p v-html="comm.promise"></p>
@@ -133,25 +120,27 @@
             </div>
             <div class="comdetails" v-if="comm.type=='3'">
                 <p class="title">商品详情介绍</p>
-                <!--<div>
-                    <p>培训受众：</p>
-                    <p v-html="comm.introduce"></p>
-                </div>-->
                 <div>
                     <p>商品介绍：</p>
                     <p v-html="comm.description"></p>
                 </div>
-                <!--<div>
-                    <p>课程概述：</p>
-                    <p v-html="comm.commodityCase"></p>
-                </div>
-                <div>
-                    <p>培训师/机构介绍：</p>
-                    <p v-html="comm.process"></p>
-                </div>-->
                 <div>
                     <p>服务承诺：</p>
                     <p v-html="comm.promise"></p>
+                </div>
+            </div>
+            <div class="comdetails" v-if="comm.type=='4'">
+                <p class="title">商品详情介绍</p>
+                <div>
+                    <p>服务详情：</p>
+                    <p v-html="comm.introduce"></p>
+                </div>
+            </div>
+            <div class="comdetails" v-if="comm.type=='5'">
+                <p class="title">商品详情介绍</p>
+                <div>
+                    <p>服务详情：</p>
+                    <p v-html="comm.introduce"></p>
                 </div>
             </div>
         </el-dialog>
@@ -205,17 +194,43 @@ export default {
         }
     },
     methods: {
+
+        initService() {
+            var that = this;
+
+            var reg = {
+                serverLevel: 2
+            }
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByServiceLevel`, {}, {
+                params: reg
+            }).then(({ data }) => {
+                if (data.status === 200) {
+                    if (data.data.length > 0) {//如果有数据的话，组装数据
+                        that.search.classOptions = data.data;
+                    } else {
+
+                    }
+                }
+            }).catch(function(error) {
+                // that.$message.error('请求错误');
+            });
+        },
+
+        // 搜索
         init() {
             this.loadingTab = true;
             var that = this;
 
             var reg = {
-                page: that.currentPage - 1,
-                size: that.pagesize,
+                page: this.currentPage - 1,
+                size: this.pagesize,
                 commodityState: 1,
+                commodityName: this.search.name,
+                service_type_id: this.search.category,
                 businessID: this.businessid
+
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/findCommdity`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -235,62 +250,6 @@ export default {
                     }
                     this.$emit('getNum', [num1, num2])
                     // ---------------------
-                    if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
-                        that.tableData = data.data.commoditys
-                        that.totalCount = data.data.total;
-                        that.waitAuditNum = data.data.total;
-                    } else {
-                        that.tableData = [];
-                        that.totalCount = 0;
-                        that.waitAuditNum = 0;
-                    }
-                    that.loadingTab = false;
-                }
-            }).catch(function(error) {
-                that.loadingTab = false;
-            });
-
-        },
-
-        initService() {
-            var that = this;
-
-            var reg = {
-                serverLevel: 2
-            }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByServiceLevel', {}, {
-                params: reg
-            }).then(({ data }) => {
-                if (data.status === 200) {
-                    if (data.data.length > 0) {//如果有数据的话，组装数据
-                        that.search.classOptions = data.data;
-                    } else {
-
-                    }
-                }
-            }).catch(function(error) {
-                // that.$message.error('请求错误');
-            });
-        },
-
-        // 搜索
-        onSubmit() {
-            this.loadingTab = true;
-            var that = this;
-
-            var reg = {
-                page: that.currentPage - 1,
-                size: that.pagesize,
-                commodityState: 1,
-                commodityName: that.search.name,
-                service_type_id: that.search.category,
-                businessID: this.businessid
-
-            }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
-                params: reg
-            }).then(({ data }) => {
-                if (data.status === 200) {
                     if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
                         that.tableData = data.data.commoditys
                         that.totalCount = data.data.total;
@@ -338,7 +297,7 @@ export default {
             var reg = {
                 id: comid
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/getProvideCommodity', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/getProvideCommodity`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -408,6 +367,16 @@ export default {
         comJump() {
             this.$router.push('/commodity');
             this.$store.state.adminleftnavnum = 'commodity';
+        },
+    },
+    filters: {
+        price(value) {
+            if(value==0){
+                return '面议'
+            }else{
+                return value
+            }
+
         },
     }
 }

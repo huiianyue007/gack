@@ -8,19 +8,31 @@
         </div>
         <div class="invoiceInformation_box" v-loading="loadingTab">
             <div class="expend_list">
-
                 <div class="expend_center">
                     <el-form :inline="true" :model="account" :rules="accountRules" ref="accountForm" label-width="170px" class="demo-form-inline">
+                        <div class="expend_top">
+                            纳税人种类
+                        </div>
+                        <div class="account_true">
+                            <el-radio-group class='group' v-model="account.taxpayerType">
+                                <el-radio class="radio" label="1">小规模纳税人</el-radio>
+                                <el-radio class="radio" label="2">一般纳税人</el-radio>
+                            </el-radio-group>
+                        </div>
                         <div class="expend_top">
                             填写账户信息
                         </div>
                         <div class="account_true">
+                            <el-form-item label="公司名称：" prop="companyNamebank" style="margin-bottom:10px">
+                                <el-input v-model="account.companyNamebank" :maxlength='50' :disabled="disabled[6]" placeholder="公司名称" style="width:240px;margin-right:10px"></el-input>
+                                <el-button type="text" v-if="isOne" @click="editForm(6)">修改</el-button>
+                            </el-form-item>
                             <el-form-item label="开户行名称：" prop="banAccountkName">
                                 <el-input v-model="account.banAccountkName" :maxlength='50' :disabled="disabled[0]" placeholder="开户行名称" style="width:240px;margin-right:10px"></el-input>
                                 <el-button type="text" v-if="isOne" @click="editForm(0)">修改</el-button>
                             </el-form-item>
-                            <el-form-item label="开户行账号：" required prop="bankAccountNumber">
-                                <el-input v-model="account.bankAccountNumber" :maxlength='19' :disabled="disabled[1]" placeholder="开户行账号" style="width:240px;margin-right:10px"></el-input>
+                            <el-form-item label="开户行账号：" prop="bankAccountNumber">
+                                <el-input v-model="account.bankAccountNumber" :maxlength='50' :disabled="disabled[1]" placeholder="开户行账号" style="width:240px;margin-right:10px"></el-input>
                                 <el-button type="text" v-if="isOne" @click="editForm(1)">修改</el-button>
                             </el-form-item>
                         </div>
@@ -28,11 +40,11 @@
                             填写发票信息
                         </div>
                         <div class="account_true">
-                            <el-form-item label="公司名称：" prop="companyName" :maxlength='50' style="margin-bottom:10px">
-                                <el-input v-model="account.companyName" :disabled="disabled[2]" placeholder="公司名称" style="width:240px;margin-right:10px"></el-input>
+                            <el-form-item label="发票抬头：" prop="companyName" :maxlength='50' style="margin-bottom:10px">
+                                <el-input v-model="account.companyName" :disabled="disabled[2]" placeholder="发票抬头" style="width:240px;margin-right:10px"></el-input>
                                 <el-button type="text" v-if="isOne" @click="editForm(2)">修改</el-button>
                             </el-form-item>
-                            <el-form-item label="纳税人识别号：" required prop="taxpayerIdentifier" style="margin-bottom:10px">
+                            <el-form-item label="纳税人识别号：" prop="taxpayerIdentifier" style="margin-bottom:10px">
                                 <el-input v-model="account.taxpayerIdentifier" :maxlength='18' :disabled="disabled[3]" placeholder="纳税人识别号" style="width:240px;margin-right:10px"></el-input>
                                 <el-button type="text" v-if="isOne" @click="editForm(3)">修改</el-button>
                             </el-form-item>
@@ -48,8 +60,8 @@
                             </el-form-item>
                         </div>
                         <div class="account_true">
-                            <el-form-item label="营业执照副本扫描件：" required>
-                                <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload" :on-success="handlePreview">
+                            <el-form-item label="营业执照副本扫描件：">
+                                <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload" :on-success="handlePreview">
                                     <img v-if="account.imageUrl" :src="account.imageUrl" class="avatar">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                     <div slot="tip" class="el-upload__tip" style="line-height:20px;width:300px">
@@ -58,8 +70,8 @@
                                     </div>
                                 </el-upload>
                             </el-form-item>
-                            <el-form-item label="一般纳税人资格证明：" required>
-                                <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload1" :on-success="handlePreview1">
+                            <el-form-item label="纳税人资格证明：">
+                                <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload1" :on-success="handlePreview1">
                                     <img v-if="account.orgurl" :src="account.orgurl" class="avatar">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                     <div slot="tip" class="el-upload__tip" style="line-height:20px;width:300px">
@@ -87,16 +99,16 @@
 export default {
     name: 'invoiceInformation',
     data() {
-        var validateBankAccountNumber = (rule, value, callback) => {
-            let regExp = /^[0-9a-zA-Z]{16,19}$/g
-            if (value === '') {
-                callback(new Error('请输入开户行账号'));
-            } else if (regExp.test(value) === false) {
-                callback(new Error('账号为长度在16到19个字符英文或者数字'))
-            } else {
-                callback();
-            }
-        };
+        // var validateBankAccountNumber = (rule, value, callback) => {
+        //     let regExp = /^[0-9a-zA-Z]{16,19}$/g
+        //     if (value === '') {
+        //         callback(new Error('请输入开户行账号'));
+        //     } else if (regExp.test(value) === false) {
+        //         callback(new Error('账号为长度在16到19个字符英文或者数字'))
+        //     } else {
+        //         callback();
+        //     }
+        // };
         var validateTaxpayerIdentifier = (rule, value, callback) => {
             let regExp = /^[0-9a-zA-Z]{15,18}$/g
             if (value === '') {
@@ -108,11 +120,14 @@ export default {
             }
         };
         return {
+
             isOne: false,
             submitLoading: false,
             loadingTab: false,
             account: {
                 id: '',
+                taxpayerType: '1',
+                companyNamebank: '',
                 banAccountkName: '',
                 bankAccountNumber: '',
                 companyName: '',
@@ -122,36 +137,40 @@ export default {
                 imageUrl: '',
                 orgurl: '',
             },
-            disabled: [false, false, false, false, false, false],
+            disabled: [false, false, false, false, false, false, false],
             accountRules: {
-                banAccountkName: [
-                    {
-                        required: true,
-                        message: '请输入开户行名称',
-                        trigger: 'blur'
-                    },
-                    {
-                        pattern: /^[A-Za-z\u4e00-\u9fa5]+$/,
-                        message: '请输入正确的开户行名称',
-                        trigger: 'blur'
-                    }
-                ],
-                bankAccountNumber: [
-                    {
-                        validator: validateBankAccountNumber,
-                        trigger: 'blur'
-                    }
-                ],
-                companyName: [
+                companyNamebank: [
                     {
                         required: true,
                         message: '请输入公司名称',
                         trigger: 'blur'
                     }
                 ],
+                banAccountkName: [
+                    {
+                        required: true,
+                        message: '请输入开户行名称',
+                        trigger: 'blur'
+                    }
+                ],
+                bankAccountNumber: [
+                    {
+                        required: true,
+                        message: '请输入开户行账号',
+                        trigger: 'blur'
+                    }
+                ],
+                companyName: [
+                    {
+                        required: true,
+                        message: '请输入发票抬头',
+                        trigger: 'blur'
+                    }
+                ],
                 taxpayerIdentifier: [
                     {
-                        validator: validateTaxpayerIdentifier,
+                        required: true,
+                        message: '请输入纳税人识别号',
                         trigger: 'blur'
                     }
                 ],
@@ -164,7 +183,7 @@ export default {
                 ],
                 contactNumber: [
                     { required: true, message: '请输入手机号', trigger: 'blur' },
-                    { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+                    { pattern: /^1[345678]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
                 ]
             },
             businessid: ''
@@ -186,11 +205,13 @@ export default {
             //无数据
             this.loadingTab = true;
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/findProvideInvoice', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/findProvideInvoice`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         if (data.data.id) {
                             that.account.id = data.data.id;
+                            that.account.taxpayerType = data.data.taxpayerType;
+                            that.account.companyNamebank = data.data.companyNamebank;
                             that.account.banAccountkName = data.data.banAccountkName;
                             that.account.bankAccountNumber = data.data.bankAccountNumber;
                             that.account.companyName = data.data.companyName;
@@ -200,10 +221,10 @@ export default {
                             that.account.imageUrl = data.data.businessLicensePic || '';
                             that.account.orgurl = data.data.taxpayerCertificatePic || '';
                             that.isOne = true;
-                            that.disabled = [true, true, true, true, true, true];
+                            that.disabled = [true, true, true, true, true, true, true];
                         } else {
                             that.isOne = false;
-                            that.disabled = [false, false, false, false, false, false];
+                            that.disabled = [false, false, false, false, false, false, false];
                         }
                     } else {
                         that.$message.warning(data.msg);
@@ -215,87 +236,103 @@ export default {
         },
         //新增
         setList() {
-            this.submitLoading = true;
-            let item = {
-                banAccountkName: this.account.banAccountkName,
-                bankAccountNumber: this.account.bankAccountNumber,
-                companyName: this.account.companyName,
-                taxpayerIdentifier: this.account.taxpayerIdentifier,
-                companyAddress: this.account.companyAddress,
-                contactNumber: this.account.contactNumber,
-                businessLicenseFile: this.account.imageUrl,
-                taxpayerCertificateFile: this.account.orgurl,
-                businessid: this.businessid  //服务商id
-            }
-            var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/createProvideInvoiceForPC', {}, { params: item })
-                .then(({ data }) => {
-                    that.submitLoading = false;
-                    if (data.status == 200) {
-                        if (data.data.key == 'success') {
-                            that.$message.success(data.data.value);
-                            that.list();
-                        } else {
-                            that.$message.warning(data.data.value);
-                        }
-                    } else {
-                        that.$message.warning(data.msg);
+            this.$refs.accountForm.validate((valid) => {
+                if (valid) {
+                    this.submitLoading = true;
+                    let item = {
+                        taxpayerType: this.account.taxpayerType,
+                        companyNamebank: this.account.companyNamebank,
+                        banAccountkName: this.account.banAccountkName,
+                        bankAccountNumber: this.account.bankAccountNumber,
+                        companyName: this.account.companyName,
+                        taxpayerIdentifier: this.account.taxpayerIdentifier,
+                        companyAddress: this.account.companyAddress,
+                        contactNumber: this.account.contactNumber,
+                        businessLicenseFile: this.account.imageUrl,
+                        taxpayerCertificateFile: this.account.orgurl,
+                        businessid: this.businessid  //服务商id
                     }
-                }).catch(function(err) {
-                    that.submitLoading = false;
-                });
+                    var that = this;
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/createProvideInvoiceForPC`, {}, { params: item })
+                        .then(({ data }) => {
+                            that.submitLoading = false;
+                            if (data.status == 200) {
+                                if (data.data.key == 'success') {
+                                    that.$message.success(data.data.value);
+                                    that.list();
+                                } else {
+                                    that.$message.warning(data.data.value);
+                                }
+                            } else {
+                                that.$message.warning(data.msg);
+                            }
+                        }).catch(function(err) {
+                            that.$message.warning(err.data.data.value);
+                            that.submitLoading = false;
+                        });
+                }
+            })
         },
         //修改
         editList() {
-            this.submitLoading = true;
-            let item = {
-                banAccountkName: this.account.banAccountkName,
-                bankAccountNumber: this.account.bankAccountNumber,
-                companyName: this.account.companyName,
-                taxpayerIdentifier: this.account.taxpayerIdentifier,
-                companyAddress: this.account.companyAddress,
-                contactNumber: this.account.contactNumber,
-                businessLicenseFile: this.account.imageUrl,
-                taxpayerCertificateFile: this.account.orgurl,
-                id: this.account.id  //发票id
-            }
-            var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/updateProvideInvoiceForPC', {}, { params: item })
-                .then(({ data }) => {
-                    that.submitLoading = false;
-                    if (data.status == 200) {
-                        if (data.data.key == 'success') {
-                            that.$message.success(data.data.value);
-                        } else {
-                            that.$message.warning(data.data.value);
-                        }
-                    } else {
-                        that.$message.warning(data.msg);
+            this.$refs.accountForm.validate((valid) => {
+                if (valid) {
+                    this.submitLoading = true;
+                    let item = {
+                        taxpayerType: this.account.taxpayerType,
+                        companyNamebank: this.account.companyNamebank,
+                        banAccountkName: this.account.banAccountkName,
+                        bankAccountNumber: this.account.bankAccountNumber,
+                        companyName: this.account.companyName,
+                        taxpayerIdentifier: this.account.taxpayerIdentifier,
+                        companyAddress: this.account.companyAddress,
+                        contactNumber: this.account.contactNumber,
+                        businessLicenseFile: this.account.imageUrl,
+                        taxpayerCertificateFile: this.account.orgurl,
+                        id: this.account.id  //发票id
                     }
-                }).catch(function(err) {
-                    that.submitLoading = false;
-                });
+                    var that = this;
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/updateProvideInvoiceForPC`, {}, { params: item })
+                        .then(({ data }) => {
+                            that.submitLoading = false;
+                            if (data.status == 200) {
+                                if (data.data.key == 'success') {
+                                    that.disabled = [true, true, true, true, true, true, true];
+                                    that.$message.success(data.data.value);
+                                } else {
+                                    that.$message.warning(data.data.value);
+                                }
+                            } else {
+                                that.$message.warning(data.msg);
+                            }
+                        }).catch(function(err) {
+                            that.submitLoading = false;
+                        });
+                }
+            })
         },
         editForm(index) {
             if (this.disabled[index]) {
                 this.$set(this.disabled, index, false);
             } else {
-                var accuntName = '';
-                if (index == 0) {
-                    accuntName = 'banAccountkName';
-                } else if (index == 1) {
-                    accuntName = 'bankAccountNumber';
-                } else if (index == 2) {
-                    accuntName = 'companyName';
-                } else if (index == 3) {
-                    accuntName = 'taxpayerIdentifier';
-                } else if (index == 4) {
-                    accuntName = 'companyAddress';
-                } else if (index == 5) {
-                    accuntName = 'contactNumber';
-                }
-                this.$refs.accountForm.validateField(accuntName, (valid) => {
-                    if (valid == '') {
+                // var accuntName = 'contactNumber';
+                // if (index == 0) {
+                //     accuntName = 'banAccountkName';
+                // } else if (index == 1) {
+                //     accuntName = 'bankAccountNumber';
+                // } else if (index == 2) {
+                //     accuntName = 'companyName';
+                // } else if (index == 3) {
+                //     accuntName = 'taxpayerIdentifier';
+                // } else if (index == 4) {
+                //     accuntName = 'companyAddress';
+                // } else if (index == 5) {
+                //     accuntName = 'contactNumber';
+                // } else if (index == 6) {
+                //     accuntName = 'companyNamebank';
+                // }
+                this.$refs.accountForm.validate((valid) => {
+                    if (valid) {
                         this.$set(this.disabled, index, true);
                         this.editList();
                     }
@@ -342,32 +379,33 @@ export default {
             return isJPG && isLt2M;
         },
         submitCompany() {
-            this.$refs.accountForm.validate((valid) => {
-                if (valid) {
-                    if (this.account.imageUrl == '') {
-                        this.$message.warning('请上传营业执照副本扫描件');
-                        return false;
-                    }
-                    if (this.account.orgurl == '') {
-                        this.$message.warning('请上传一般纳税人资格证明');
-                        return false;
-                    }
-                    this.setList();
-                }
-            })
+            // this.$refs.accountForm.validate((valid) => {
+            //     if (valid) {
+            //         if (this.account.imageUrl == '') {
+            //             this.$message.warning('请上传营业执照副本扫描件');
+            //             return false;
+            //         }
+            //         if (this.account.orgurl == '') {
+            //             this.$message.warning('请上传一般纳税人资格证明');
+            //             return false;
+            //         }
+
+            //     }
+            // })
+            this.setList();
         },
         editCompany() {
             this.$refs.accountForm.validate((valid) => {
                 if (valid) {
-                    if (this.account.imageUrl == '') {
-                        this.$message.warning('请上传营业执照副本扫描件');
-                        return false;
-                    }
-                    if (this.account.orgurl == '') {
-                        this.$message.warning('请上传一般纳税人资格证明');
-                        return false;
-                    }
-                    this.disabled = [false, false, false, false, false, false];
+                    // if (this.account.imageUrl == '') {
+                    //     this.$message.warning('请上传营业执照副本扫描件');
+                    //     return false;
+                    // }
+                    // if (this.account.orgurl == '') {
+                    //     this.$message.warning('请上传一般纳税人资格证明');
+                    //     return false;
+                    // }
+                    // this.disabled = [false, false, false, false, false, false, false];
                     this.editList();
                 }
             })
@@ -431,6 +469,20 @@ export default {
 
 .account_true {
     margin: 15px 0 0 0px;
+}
+
+.account_true .group {
+    width: 840px;
+    height: 50px;
+    line-height: 50px;
+    overflow: hidden;
+}
+
+.account_true .radio {
+    width: 50%;
+    margin: 0;
+    text-align: center;
+    float: left;
 }
 
 .expend_center .avatar-uploader .el-upload {

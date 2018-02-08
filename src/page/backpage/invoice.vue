@@ -20,13 +20,13 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="发票金额">
-                    <el-input v-model="search.startMoney" :maxlength="12" placeholder="金额" style="width:60px"></el-input>
+                    <el-input v-model="search.startMoney" :maxlength="12" placeholder="金额" style="width:80px"></el-input>
                     <span>-</span>
-                    <el-input v-model="search.endMoney" :maxlength="12" placeholder="金额" style="width:60px"></el-input>
+                    <el-input v-model="search.endMoney" :maxlength="12" placeholder="金额" style="width:80px"></el-input>
                 </el-form-item>
-                <el-form-item label="订单编号">
+                <!-- <el-form-item label="订单编号">
                     <el-input v-model="search.number" :maxlength="12" placeholder="订单编号" style="width:120px"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="商品名称">
                     <el-input v-model="search.name" :maxlength="12" placeholder="商品名称" style="width:120px"></el-input>
                 </el-form-item>
@@ -51,9 +51,9 @@
                 </el-table-column>
                 <el-table-column prop="invoiceMail" label="配送方式" :formatter='invoiceMailFormat' align='center'>
                 </el-table-column>
-                <el-table-column label="操作" width="140" align='center'>
+                <el-table-column label="操作" width="220" align='center'>
                     <template slot-scope="scope">
-                        <el-button type="primary" size="small" v-if="scope.row.invoiceState=='1'" @click="seeInvoice(scope.$index,scope.row)">查看发票</el-button>
+                        <el-button type="primary" size="small" @click="seeInvoice(scope.$index,scope.row)">查看发票</el-button>
                         <!-- <el-button type="text" size="small" v-if="scope.row.invoiceState=='1'">已开发票</el-button> -->
                         <el-button type="primary" size="small" v-if="scope.row.invoiceState=='0'" @click="successInvoice(scope.$index,scope.row)">确认开票</el-button>
                     </template>
@@ -65,7 +65,7 @@
             </div>
         </div>
         <!--查看发票信息  -->
-        <el-dialog title="发票详情" :visible.sync="dialogUse" size="tiny">
+        <el-dialog title="发票详情" :visible.sync="dialogUse" width="30%">
             <div class="dialogUseBox">
                 <div class="diag_tit">发票类型：</div>
                 <div class="diag_list">{{invoices.invoiceType}}</div>
@@ -151,7 +151,7 @@ export default {
                 businessid: this.businessid  //服务商id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findInvoiceOrderForm', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findInvoiceOrderForm`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.tableData.list = data.data.result;
@@ -168,7 +168,7 @@ export default {
         formatterMoney(row, column) {
             return '￥' + row.realPrice;
         },
-        //时间格式化  
+        //时间格式化
         dateFormat(row, column) {
             var date = row[column.property];
             if (date == undefined) {
@@ -177,23 +177,23 @@ export default {
             return moment(date).format("YYYY-MM-DD HH:mm:ss");
         },
         invoiceMailFormat(row, column) {
-            return row.invoiceMail == 1 ? '包邮' : row.invoiceMail == 1 ? '货到付款' : '未知';
+            return row.invoiceMail == 1 ? '包邮' : row.invoiceMail == 2 ? '货到付款' : '未知';
         },
         invoiceStateFormat(row, column) {
-            return row.invoiceState == 0 ? '待开开票' : row.invoiceState == 1 ? '已经开票' : '未知';
+            return row.invoiceState == 0 ? '待开发票' : row.invoiceState == 1 ? '已经开票' : '未知';
         },
         itemActive(item, index) {
             this.isActive = [];
-            // alert(item.invoiceState)
             this.invoiceState = item.invoiceState;
             this.$set(this.isActive, index, true);
+            this.list();
         },
         seeInvoice(index, row) {
             let item = {
                 orderid: row.id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/getOrderInvoice', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/getOrderInvoice`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.dialogUse = true;
@@ -216,22 +216,29 @@ export default {
             return value.trim();
         },
         isNum(strValue) {
-            var objRegExp = /[^\d]/g;
+            var objRegExp = /^[0-9]+([.]{1}[0-9]+){0,1}$/;
             return objRegExp.test(this.trim(strValue));
         },
         onSubmit() {
             //查询
             let isStartMoney = this.isNum(this.search.startMoney);
             let isEndMoney = this.isNum(this.search.endMoney);
-            if (!isStartMoney && !isEndMoney) {
-                this.currentPage = 1;
-                this.list();
-            } else {
+            if (!isStartMoney && this.search.startMoney != '') {
                 this.$message({
                     type: 'warning',
-                    message: '订单金额只能为数字'
+                    message: '开始订单金额只能为数字'
                 });
+                return false;
             }
+            if (!isEndMoney && this.search.endMoney != '') {
+                this.$message({
+                    type: 'warning',
+                    message: '结束订单金额只能为数字'
+                });
+                return false;
+            }
+            this.currentPage = 1;
+            this.list();
         },
         orderInvoiceState(status) {
             let index = 0;
@@ -257,7 +264,7 @@ export default {
                     orderid: row.id,  //订单ID
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/givePersonalInvoice', {}, { params: item })
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/givePersonalInvoice`, {}, { params: item })
                     .then(({ data }) => {
                         if (data.status == 200) {
                             if (data.data.key == 'success') {
@@ -279,11 +286,11 @@ export default {
         },
         //分页
         handleSizeChange(val) {
-            this.pagesize = val;
+            this.currentPage = val;
             this.list();
         },
         handleCurrentChange(val) {
-            this.pagesize = val;
+            this.currentPage = val;
             this.list();
         }
     }
@@ -292,7 +299,6 @@ export default {
 <style scoped>
 .crumbs {
     height: auto;
-    margin: 15px 0;
     margin-top: 15px;
     width: 100%;
 }

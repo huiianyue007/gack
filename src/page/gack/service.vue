@@ -4,37 +4,36 @@
       <div class="crumb">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item v-for = '(item, index) in typeArr' :key = 'index' :to = "{path: '/service', query: item}">{{ item.serverName2 ? item.serverName2 : (item.serverName1 ? item.serverName1 : item.serverName0) }}</el-breadcrumb-item>
+          <el-breadcrumb-item  v-if = "$route.query.serverName0">{{ $route.query.serverName0 }}</el-breadcrumb-item>
+          <el-breadcrumb-item v-if = 'serviceParentContent'>{{ $route.query.type == 'hotServerPcs' ? serviceParentContent.serverName : serviceParentContent.operatorServerClass.serverName }}</el-breadcrumb-item>
+          <el-breadcrumb-item v-if = 'serviceContent'>{{ serviceContent.operatorSerTwo.serverName }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <div class="oh views">
         <div class="fl views_con" v-if = 'query'>
+          <div class="ht_type" v-if = 'serviceContent && serviceContent.serverClasThree'>
+            请选择您需要服务的类型：
+            <div class="ht_active_content">
+              <el-button v-if = 'activeBusinessType' type = 'primary' @click = 'delActive'>{{ activeBusinessType.serverName }} <i class="el-icon-close"></i></el-button>
+            </div>
+            <div class="ht_content">
+              <el-button v-for='(item, index) in serviceContent.serverClasThree' :key = 'index' @click = 'selectType(item)'>
+                {{ item.serverName }}
+              </el-button>
+            </div>
+          </div>
           <div class="sub_con">
-            <!--<div class="fl ht_type">-->
-              <!--<div class="ht_li ht_title">服务类型</div>-->
-              <!--<div class="ht_li" v-for='item in typeArr' :class = '{active_li: params === item.operatorServerClass.id || paramsCon === item.operatorServerClass.id }' @click.self = 'toogleType(item)'>-->
-                <!--{{ item.operatorServerClass.serverName }}-->
-                <!--<div class="ht_con" v-if = 'item.serverClasTwo'>-->
-                  <!--<div class="ht_con_li">-->
-                    <!--<div class="ht_type_list" :class = '{"active_li": paramsCon === ""}' @click = 'changeType(item,"")'>全部</div>-->
-                    <!--<div class="ht_type_list" v-for = 'it in item.serverClasTwo' :class = '{"active_li": params === it.operatorSerTwo.id}' @click = 'changeType(item, it)'>-->
-                      <!--{{ it.operatorSerTwo.serverName}}-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
             <div class="ht_list">
-              <div class="subhead" v-if = 'params !== "jinrong" && params !== "tuijian"'>
+              <div class="subhead" v-if = 'params !== "jinrong" && params !== "tuijian" && $route.query.type !=="company"'>
                 <span :class='{active: active === 3 || active == 4}' @click='change("price")'>
                   价格排序
-                  <img src="~assets/gack/up.png" alt="" v-if = 'active === 4'>
-                  <img src="~assets/gack/down.png" alt="" v-if = 'active === 3'>
+                  <img src="~assets/images/gack/up.png" alt="" v-if = 'active === 4'>
+                  <img src="~assets/images/gack/down.png" alt="" v-if = 'active === 3'>
                 </span>
                 <span :class='{active: active === 5 || active === 6 }' @click='change("volume")'>
                   成交量排序
-                  <img src="~assets/gack/up.png" alt="" v-if = 'active === 5'>
-                  <img src="~assets/gack/down.png" alt="" v-if = 'active === 6'>
+                  <img src="~assets/images/gack/up.png" alt="" v-if = 'active === 5'>
+                  <img src="~assets/images/gack/down.png" alt="" v-if = 'active === 6'>
                 </span>
               </div>
               <component :is = 'listName' :title = 'title' :listData = 'listData' :opt = 'params' :flag = 'flag'></component>
@@ -55,8 +54,10 @@
 <script>
   import rankingList from  'components/rankingList'
   import serviceList from 'components/serviceList'
+  import companyList from 'components/companyList'
   import serviceView from 'components/serviceView'
   export default {
+    name: 'service',
     data: () => ({
       rankingList:[],
       active: 3,
@@ -65,6 +66,8 @@
       paramsCon: '',
       listName: 'service-list',
       title: '',
+      activeType: [],
+      activeBusinessType: null,
       regionStart: 0,
       countrywideStart: 0,
       currentPage: 0,
@@ -73,9 +76,13 @@
       listData: [],
       flag: true
     }),
-    activated () {
+    created () {
       this.currentPage = 0
-      this.init()
+      if (this.homePage) {
+        this.init()
+      } else {
+
+      }
       this.changeRanking('turnover')
     },
     watch: {
@@ -97,18 +104,28 @@
           this.selectPersonalInvestorDisplay()
         } else {
           this.flag = true
+          if (this.$route.query.type == 'company' && this.$route.query.index == 1) {
+            this.flag = false
+          }
           this.getServiceList({
             page: this.currentPage + 1,
             service_type_id: val,
             code: this.address.inCity.code,
             regionStart: this.regionStart,
             countrywideStart: this.countrywideStart,
-            reorderType: 0
+            reorderType: this.active
           })
         }
       },
       'address.inCity.code' (val) {
         this.$router.push("/")
+      },
+      activeBusinessType (val) {
+        if (val) {
+          this.params = val.id
+        } else {
+          this.params = this.id
+        }
       },
       active (val) {
         this.listData = []
@@ -131,29 +148,47 @@
           return this.$route.query
         }
       },
-      typeArr () {
-        if( !this.query) return false
-        let typeArr = Array.from(new Set(Object.entries(this.query).map(item => {
-          if (item[0] !== 'page') {
-            return item[0].charAt(item[0].length - 1)
+      homePage () {
+        return this.$store.state.homePage
+      },
+      serviceParentContent () {
+        if (this.$route.query.key != undefined && this.$route.query.type && this.homePage) {
+          let key = this.$route.query.key
+          if (this.$route.query.type == 'appcollaborateService') {
+            return this.homePage.appcollaborateService[key]
+          } else if (this.$route.query.type == 'appsBusinessService') {
+            return this.homePage.appsBusinessService[key]
+          } else if (this.$route.query.type == 'hotServerPcs') {
+            return this.homePage.hotServerPcs[key]
+          } else if (this.$route.query.type == 'appsknowledgeService') {
+            return this.homePage.appsknowledgeService[key]
           }
-        }))).map(item => {
-          let index = eval(item)
-          let query = {}
-          for (let i = 0; i <= index; i++) {
-            query['id' + i] = this.query['id' + i]
-            query['serverName' + i] = this.query['serverName' + i]
-            query['type' + i] = this.query['type' + i]
-          }
-          return query
-        })
-        return typeArr
+        }
+      },
+      serviceContent () {
+        if (!this.serviceParentContent) return null
+        if (this.$route.query.index != undefined && this.$route.query.type) {
+          let index = this.$route.query.index
+          return this.serviceParentContent.serverClasTwo[index]
+        }
       },
       id () {
-        return this.query.id2 ? this.query.id2 : (this.query.id1 ? this.query.id1 : this.query.id0)
+        if (this.serviceContent) {
+          return this.activeBusinessType ? this.activeBusinessType.id : this.serviceContent.operatorSerTwo.id
+        } else if (this.serviceParentContent) {
+          return this.serviceParentContent.operatorServerClass ? this.serviceParentContent.operatorServerClass.id : (this.serviceParentContent.serviceTwoId || this.serviceParentContent.serviceTwoId.serviceFirstId)
+        } else if (this.query) {
+          return this.query.id2 ? this.query.id2 : (this.query.id1 ? this.query.id1 : this.query.id0)
+        }
       }
     },
     methods: {
+      selectType (opt) {
+        this.activeBusinessType = opt
+      },
+      delActive (index) {
+          this.activeBusinessType = null
+      },
       open (opt) {
         this.$router.push(`/serde/${opt.id}/1`)
       },
@@ -168,8 +203,11 @@
           this.selectPersonalInvestorDisplay()
         } else {
           this.flag = true
+          if (this.$route.query.type == 'company' && this.$route.query.index == 1) {
+            this.flag = false
+          }
           this.getServiceList({
-            page: this.currentPage,
+            page: this.currentPage + 1,
             service_type_id: this.params,
             code: this.address.inCity.code,
             regionStart: this.regionStart,
@@ -179,7 +217,7 @@
         }
       },
       selectPersonalInvestorDisplay () {
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/selectPersonalInvestorDisplay', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/selectPersonalInvestorDisplay`, {}, {
           params: {
             page: this.currentPage,
             size: this.pageSize
@@ -204,7 +242,7 @@
           page: 1,
           type
         }
-        this.$htAjax.get('https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/selectByCommoditys', {
+        this.$htAjax.get(`${this.$config.back}/guoanmaker/provide/commodityMove/selectByCommoditys`, {
           params: data
         }).then(({ data }) => {
           this.rankingList = data.data
@@ -213,7 +251,7 @@
         })
       },
       selectPersonalPlatform () {
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/selectPersonalPlatform', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/selectPersonalPlatform`, {}, {
           params: {
             page: this.currentPage,
             size: this.pageSize
@@ -226,9 +264,14 @@
         })
       },
       init () {
+        if (this.$route.query.type == 'company' && this.$route.query.index == 1) {
+          this.flag = false
+        }
         this.params = this.id
         if (this.query.type0 == '3') {
           this.listName = 'service-view'
+        } else if (this.query.type == 'company') {
+          this.listName = 'company-list'
         } else {
           this.listName = 'service-list'
         }
@@ -241,7 +284,7 @@
         }
       },
       getServiceList (opt) {
-        this.$htAjax.get('https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/findCommdityMove', {
+        this.$htAjax.get(`${this.$config.back}/guoanmaker/provide/commodityMove/findCommdityMove`, {
           params: opt
         }).then(({ data }) => {
           this.regionStart = data.data.regionStart
@@ -273,7 +316,7 @@
       }
     },
     components: {
-      rankingList, serviceView, serviceList
+      rankingList, serviceView, serviceList, companyList
     }
   }
 </script>
@@ -335,10 +378,22 @@
   }
 
   .ht_type {
-    width: 108px;
     background: #fff;
+    margin-bottom: 15px;
+    padding: 15px;
+    box-sizing: border-box;
   }
-
+  .ht_type:after{
+    content:'';
+    display: block;
+    clear:both;
+  }
+  .ht_type .ht_active_content{
+    margin: 15px 0;
+  }
+  .ht_type .ht_content{
+    padding: 15px;
+  }
   .ht_type .ht_li {
     height: 40px;
     line-height: 40px;

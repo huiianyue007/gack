@@ -123,11 +123,13 @@ export default {
 				userid: user.id
 			}
 			let that = this;
-			this.$htAjax.post('https://apitest.gack.citic:8082/selectBusByUserid', {}, {
+			 this.$htAjax.post(`${this.$config.back}/selectBusByUserid`, {}, {
 				params: item
 			}).then(({ data }) => {
-				that.businessid = data.data.id;
-				that.init();//初始化数据
+				 if (data.status == 200) {
+					this.businessid = data.data.id;
+				  	this.init();//初始化数据
+				 }
 			}).catch(function(err) {
 				that.$message.error('请稍后重试');
 			});
@@ -139,7 +141,7 @@ export default {
 			var reg = {
 				businessId: this.businessid
 			}
-			this.$htAjax.post('https://apitest.gack.citic:8082/selectBusinessById', {}, {
+			this.$htAjax.post(`${this.$config.back}/selectBusinessById`, {}, {
 				params: reg
 			}).then(({ data }) => {
 				if (data.status === 200) {

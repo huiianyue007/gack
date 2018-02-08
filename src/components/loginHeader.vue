@@ -4,7 +4,7 @@
     <div class="logo">
       <h1>
         <router-link to='/'>
-          <img src="~assets/gack/pt_logo.png">
+          <img src="~assets/images/gack/pt_logo.png">
         </router-link>
       </h1>
     </div>
@@ -13,7 +13,7 @@
     </div>
     <div class="right" v-if = 'login'>
       <span slot = 'right'>已有账号？</span>
-      <router-link class="login" to='/login/0' slot = 'right'>登录 </router-link>
+      <router-link class="login" to='/login/0' slot = 'right' replace>登录 </router-link>
     </div>
   </div>
   </div>

@@ -1,28 +1,62 @@
-const htVuexStorage = {
+export default {
   sessionKeys: [],
-  init (sessionKeys) {
+  storageKeys: [],
+  init (storageKeys = [], sessionKeys = [], store, callback) {
+    this.storageKeys = storageKeys
     this.sessionKeys = sessionKeys
-    let sessionStorage = JSON.parse(window.sessionStorage.getItem('storeAsync'))
-    if (!sessionStorage) return false
-    for (let name in sessionStorage) {
-      if (this.sessionKeys.indexOf(name) === -1) {
-        delete sessionKeys[name]
-      }
+    if (storageKeys.length) {
+      this.initStorage(callback)
     }
-    return sessionStorage
-  },
-  reStorage (store) {
+    if (sessionKeys.length) {
+      this.initSession(callback)
+    }
     store.subscribe((mutations, state) => {
-      this.reSessionStorage(mutations, state)
+      if (sessionKeys.length) {
+        this.sessionAsync(state)
+      }
+      if (storageKeys.length) {
+        this.storeAsync(state)
+      }
     })
   },
-  reSessionStorage (mutations, state) {
-    if (!this.sessionKeys || !this.sessionKeys.length) return false
-    let storage = {}
-    this.sessionKeys.forEach(item => {
-      storage[item] = state[item]
+  initStorage (callback) {
+    let storage = JSON.parse(window.localStorage.getItem('storeAsync'))
+    let storageKeys = {}
+    if (!storage || !this.storageKeys.length) return false
+    Object.entries(storage).filter(item => {
+      return this.storageKeys[item[0]] !== -1
+    }).forEach(item => {
+      storageKeys[item[0]] = item[1]
     })
-    window.sessionStorage.setItem('storeAsync', JSON.stringify(storage))
+    callback(storageKeys)
+  },
+  initSession (callback) {
+    let session = JSON.parse(window.sessionStorage.getItem('storeAsync'))
+    let sessionKeys = {}
+    if (!session || !this.sessionKeys.length) return false
+    Object.entries(session).filter(item => {
+      return this.sessionKeys[item[0]] !== -1
+    }).forEach(item => {
+      sessionKeys[item[0]] = item[1]
+    })
+    callback(sessionKeys)
+  },
+  storeAsync (state) {
+    let storage = {}
+    Object.entries(state).filter(item => {
+      return this.storageKeys.indexOf(item[0]) !== -1
+    }).forEach(item => {
+      storage[item[0]] = item[1]
+    })
+    window.localStorage.setItem('storeAsync', JSON.stringify(storage))
+  },
+  sessionAsync (state) {
+    let session = {}
+    Object.entries(state).filter(item => {
+      return this.sessionKeys.indexOf(item[0]) !== -1
+    }).forEach(item => {
+      session[item[0]] = item[1]
+    })
+    window.sessionStorage.setItem('storeAsync', JSON.stringify(session))
   }
 }
-export default htVuexStorage

@@ -6,7 +6,7 @@
                 <el-breadcrumb-item>我的发票管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="meInvoice_box">
+        <div class="meInvoice_box" v-loading="loadingTab">
             <div class="expend_list">
                 <div class="meInvoice_tit">
                     我的账户
@@ -34,13 +34,13 @@
             </div>
         </div>
 
-        <el-dialog title="选择您所开发票信息" @close='editClose' :visible.sync="dialogInvoice" size="tiny">
+        <el-dialog title="选择您所开发票信息" @close='editClose' :visible.sync="dialogInvoice" width="30%">
             <div class="dialogInvoiceBox">
                 <el-form :model="invoiceForm" :rules="invoicerules" ref="invoiceForm" class="demo-ruleForm">
                     <el-form-item label="发票种类：" style="margin-bottom:0">
                         <el-radio-group v-model="invoiceForm.resource">
-                            <el-radio label="0">增值税专用发票</el-radio>
-                            <el-radio label="1">增值税普通发票</el-radio>
+                            <el-radio label="1">增值税专用发票</el-radio>
+                            <el-radio label="0">增值税普通发票</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="所开发票金额：" prop="money" style="margin-bottom:10px">
@@ -66,6 +66,7 @@ export default {
     name: 'meInvoice',
     data() {
         return {
+            loadingTab: false,
             dialogInvoice: false,
             submitLoading: false,
             placeholderMoney: '您目前待开发票金额为￥0元',
@@ -130,10 +131,10 @@ export default {
             let item = {
                 businessid: this.businessid  //服务商id
             }
-            //无数据
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/findProvideInvoice', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/findProvideInvoice`, {}, { params: item })
                 .then(({ data }) => {
+                    that.loadingTab = false;
                     if (data.status == 200) {
                         if (data.data.id) {
                             that.invoiceid = data.data.id;
@@ -142,6 +143,7 @@ export default {
                         that.$message.warning(data.msg);
                     }
                 }).catch(function(err) {
+                    that.loadingTab = false;
                 });
         },
         list() {
@@ -149,7 +151,8 @@ export default {
                 businessid: this.businessid
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/findInvoiceInfos', {}, { params: item })
+            this.loadingTab = true;
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/findInvoiceInfos`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         //发票累计金额
@@ -160,12 +163,12 @@ export default {
                         that.tableData.list[0].invoiced = data.data.sumInvoicing || '0';
 
                         that.payableTableData.list = data.data.result;
-
-                        that.setId();
                     } else {
                         that.$message.warning(data.msg);
                     }
+                    that.setId();
                 }).catch(function(err) {
+                    that.loadingTab = false;
                 });
         },
         //金钱格式 
@@ -198,7 +201,7 @@ export default {
                 let money = this.tableData.list[0].payableMoney;
                 this.placeholderMoney = '您目前待开发票金额为￥' + money + '元';
             } else {
-                this.$message.warning('请先提交发票信息');
+                this.$message.warning('请先填写发票信息');
             }
         },
         editClose() {
@@ -215,7 +218,7 @@ export default {
                         mailingAddress: this.invoiceForm.address   //邮寄地址
                     }
                     var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/createProvideInvoiceInfo', {}, { params: item })
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/createProvideInvoiceInfo`, {}, { params: item })
                         .then(({ data }) => {
                             that.dialogInvoice = false;
                             if (data.status == 200) {

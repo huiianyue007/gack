@@ -4,7 +4,7 @@
     <div class="label" v-if = '!user.password'><span class="inline-block label_title">绑定手机号</span> {{ user.username }}</div>
     <el-form class = 'pass_form' :model = 'setForm' ref = 'setForm' label-position="left" :rules = 'rules' prop = 'passwordOld' label-width = '100px'>
       <el-form-item label = '旧密码' required prop = 'passwordOld' v-if = 'user.password'>
-        <el-input v-model = 'setForm.passwordOld' :minlength = '6' :maxlength = '12' type = 'password' placeholder="请输入旧密码"></el-input>
+        <el-input v-model = 'setForm.passwordOld' :minlength = '6' :maxlength = '16' type = 'password' placeholder="请输入旧密码"></el-input>
       </el-form-item>
       <el-form-item class="reg_message" label="短信验证码" prop="meg" v-else>
         <el-col :span="11">
@@ -15,10 +15,10 @@
         </el-col>
       </el-form-item>
       <el-form-item label = '新密码' required prop = 'passwordNew'>
-        <el-input v-model = 'setForm.passwordNew' :minlength="6" :maxlength="12" type = 'password' placeholder="请输入新密码"></el-input>
+        <el-input v-model = 'setForm.passwordNew' :minlength="6" :maxlength="16" type = 'password' placeholder="请输入新密码"></el-input>
       </el-form-item>
       <el-form-item label = '确认密码' required prop = 'passwordConfirm'>
-        <el-input v-model = 'setForm.passwordConfirm' :minlength="6" :maxlength="12" type = 'password' placeholder="请输入新密码"></el-input>
+        <el-input v-model = 'setForm.passwordConfirm' :minlength="6" :maxlength="16" type = 'password' placeholder="请输入新密码"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button class="block" type = 'danger' @click = 'submit' :loading = 'loadding'>提交</el-button>
@@ -30,10 +30,13 @@
   import md5 from 'js-md5'
   import store from 'store'
   export default {
+    name: 'setpass',
     async beforeRouteEnter (from, to, next) {
       if (store.state.userid) {
         if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
+          await store.dispatch('findById', store.state.userid.id).catch(() => {
+            next('/login/0')
+          })
           next()
         } else {
           next()
@@ -63,6 +66,15 @@
           ]
         }
       }
+    },
+    destoryed () {
+      this.setForm = {
+        passwordNew: '',
+        passwordOld: '',
+        meg: '',
+        passwordConfirm: ''
+      },
+      this.$refs.setForm.resetFields()
     },
     computed: {
       regGetText: function() {
@@ -94,7 +106,7 @@
           telephone: this.user.username,
           isuser: '0'
         }
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/sendVerificationCode`, {}, {
           params: phone
         }).then(({ data }) => {
           this.$message.success(data.data.value);
@@ -109,11 +121,11 @@
         }
       },
       validatePass (rule, value, callback) {
-        let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/
+        let regExp = /(^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$)|(^[a-zA-Z]{6,16}$)/
         if (value === '') {
           callback(new Error('请输入密码'));
         } else if (regExp.test(value) === false) {
-          callback(new Error('6-12字母和数字组成，不能是纯数字或纯英文'))
+          callback(new Error('6-16字母和数字组成，不能是纯数字'))
         } else {
           callback();
         }
@@ -122,7 +134,7 @@
         this.$refs.setForm.validate(valit => {
           if (!valit) return false
           this.loadding = true
-          let url = this.user.password ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/changeUserPassword' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/changePassword'
+          let url = this.user.password ? `${this.$config.gack}/guoanmaker/personal/user/changeUserPassword` : `${this.$config.gack}/guoanmaker/personal/user/changePassword`
           let data = this.user.password ? {
             userid: this.user.id,
             oldPassword: md5(this.setForm.passwordOld).toUpperCase(),
@@ -141,9 +153,10 @@
               message: '密码设置成功'
             })
             this.$store.dispatch('findById', this.user.id)
-          }).catch(error => {
+            this.$router.go(-1)
+          }).catch(({ data }) => {
             this.loadding = false
-            this.$message.error('密码设置失败')
+            this.$message.error(data.data.value)
           })
         })
       }

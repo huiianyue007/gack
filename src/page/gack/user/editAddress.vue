@@ -8,24 +8,25 @@
         <div class="title">{{ query.title }}</div>
         <el-form label-position="left" label-width="80px" :rules = 'rules' :model = 'rulesForm' ref = 'ruleFrom'>
           <el-form-item label = '姓名' required prop = 'username'>
-            <el-input v-model = 'rulesForm.username' :minlength = '2' :maxlength = '7' ></el-input>
+            <el-input v-model = 'rulesForm.username' :minlength = '2' :maxlength = '7' placeholder="请输入用户名"></el-input>
           </el-form-item>
           <el-form-item label = '电话' required prop = 'phonenumber'>
-            <el-input v-model = 'rulesForm.phonenumber' :maxlength="11"></el-input>
+            <el-input v-model = 'rulesForm.phonenumber' :maxlength="11" placeholder="请输入联系电话"></el-input>
           </el-form-item>
           <el-form-item label = '详细地址' :maxlength = '50' required prop = 'addr'>
-            <el-input type="textarea" v-model = 'rulesForm.addr'></el-input>
+            <el-input type="textarea" v-model = 'rulesForm.addr' :maxlength="255" placeholder="请输入联系地址"></el-input>
           </el-form-item>
+          <div class="text-center">
+            <el-button size = 'large' @click.native = 'save'>保存</el-button>
+          </div>
         </el-form>
-        <div class="text-center">
-          <el-button size = 'large' @click.native = 'save'>保存</el-button>
-        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
   export default {
+    name: 'edit-address',
     data: () => ({
       rulesForm: {
         username: '',
@@ -50,7 +51,21 @@
     },
     watch: {
       user (val) {
-        let address = val.addresses[this.query.index]
+        if (this.query.index) {
+          let address = val.addresses[this.query.index]
+          if (address) {
+            this.rulesForm = {
+              username: address.name,
+              phonenumber: address.telephone,
+              addr: address.address
+            }
+          }
+        }
+      }
+    },
+    created () {
+      if (this.query.id) {
+        let address = this.user.addresses[this.query.index]
         if (address) {
           this.rulesForm = {
             username: address.name,
@@ -60,24 +75,16 @@
         }
       }
     },
-    mounted () {
-      if (this.query.id) {
-        let address = this.user.addresses[this.query.index]
-        console.log(address)
-        if (address) {
-          this.rulesForm = {
-            username: address.name,
-            phonenumber: address.telephone,
-            addr: address.address
-          }
-        }
+    beforeDestroy () {
+      if (!this.query.id) {
+        this.$refs.ruleFrom.resetFields()
       }
     },
     methods: {
       save () {
         this.$refs.ruleFrom.validate(valid => {
           if (valid) {
-            let url = this.$route.query.id ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/updateAddress' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/saveAddress'
+            let url = this.$route.query.id ? `${this.$config.gack}/guoanmaker/personal/user/updateAddress` : `${this.$config.gack}/guoanmaker/personal/user/saveAddress`
             let data = this.$route.query.id ? {
               name: this.rulesForm.username,
               address: this.rulesForm.addr,
@@ -90,10 +97,13 @@
               isdefault: this.user.addresses.length ? '0': '1',
               'user_id': this.user.id
             }
+            if (this.$route.query.default == '1') {
+              data.isdefault =  '1'
+            }
             this.$htAjax.post(url, {}, {
               params: data
             }).then(res => {
-              this.$store.dispatch('findById', this.user.id)
+              return this.$store.dispatch('findById', this.user.id)
             }).catch(() => {
               this.$message.error('地址保存失败')
             })

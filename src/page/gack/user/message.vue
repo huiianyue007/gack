@@ -2,40 +2,31 @@
   <div class="page_container">
     <tab-header :tabArr = 'messageType' @changeType = 'change'></tab-header>
     <el-card>
-      <div class="text-center" v-if = '!messageList.length'>
+      <div class="text-center" v-if = '!messageList.length' ref = 'tabhead'>
         暂时没有消息
       </div>
       <el-row v-for = '(item, index) in messageList' v-if = 'messageList.length' :key = 'index' :class = '[item.sendStatus !== "2" ? "active" : "message-list"]'>
-        <el-col :span = '4'>系统通知</el-col>
-        <el-col :span = '6'>{{ item.mesTitle }}</el-col>
-        <el-col :span = '8'>{{ item.sendTime | time('年-月-日 :') }}</el-col>
-        <el-col :span = '4'>
+        <el-col :span = '4' class = 'text-center'>系统通知</el-col>
+        <el-col :span = '6' class = 'text-center'>{{ item.mesTitle }}</el-col>
+        <el-col :span = '8' class = 'text-center'>{{ item.sendTime | time('年-月-日 :') }}</el-col>
+        <el-col :span = '6' class = 'text-center'>
           <el-button type = 'text' :class = '{active: item.sendStatus !== "2"}'>{{ item.sendStatus === '2' ? '已读' : '未读' }}</el-button>
           <el-button type = 'text' @click = 'selectMessage(item)'>查看</el-button>
           <el-button type = 'text' @click = 'deleteMessage(item, index)'>删除</el-button>
         </el-col>
       </el-row>
+      <div class="text-right">
+        <el-pagination @size-change="handleSizeChange" style="float:right;"  @current-change="handleCurrentChange" :page-size='pageSize' :current-page="currentPage" layout="prev, pager, next" :total="totalCount">
+        </el-pagination>
+      </div>
     </el-card>
-    <el-pagination @size-change="handleSizeChange" style="float:right;"  @current-change="handleCurrentChange" :page-size='pageSize' :current-page="currentPage" layout="prev, pager, next" :total="totalCount">
-    </el-pagination>
   </div>
 </template>
 <script>
   import tabHeader from 'components/tabHeader'
   import store from 'store'
   export default {
-    async beforeRouteEnter (from, to, next) {
-      if (store.state.userid) {
-        if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
-          next()
-        } else {
-          next()
-        }
-      } else {
-        next('/login/0')
-      }
-    },
+    name: 'message',
     data:() => ({
       messageType: [{
         title: '全部消息',
@@ -53,7 +44,7 @@
       status: null,
       messageList: []
     }),
-    activated () {
+    created () {
       this.init()
     },
     watch: {
@@ -64,23 +55,50 @@
     },
     methods: {
       selectMessage (opt) {
-        this.$router.push({
-          path: `/user/selectMessage/${opt.id}`,
-          query: {
-            title: '我的消息'
-          }
-        })
+        if (opt.mesType == '19' || opt.mesType == '站内信') {
+          this.$router.push({
+            path: `/user/selectMessage/${opt.id}`,
+            query: {
+              title: '我的消息',
+              fromtitle: '我的消息'
+            }
+          })
+        } else if (opt.mesType == '20' || opt.mesType == '21') {
+          this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/getMesToCus`, {}, {
+            params: {
+              id: opt.id
+            }
+          }).then(() => {
+            if (opt.mesType == '20' && opt.url) {
+              let arr  = opt.url.substring(opt.url.indexOf('?') + 1).split('&')
+              arr = arr.map(item => {
+                item = item.split('=')
+                return item
+              })
+              let activityid = new Map(arr).get('activityid')
+              this.$router.push(`/eventdetails/${activityid}`)
+            } else if (opt.mesType == '21') {
+              this.$router.push(`/serde/${opt.commodityid}/1`)
+            }
+          }).catch(() => {})
+        }
       },
       deleteMessage (opt, index) {
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/message/deleteMesToCus', {}, {
-          params: {
-            id: opt.id
-          }
+        this.$confirm('是否删除此信息', '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '删除',
+          type: 'warning'
         }).then(() => {
-          this.messageList.splice(index, 1)
-        }).catch(error => {
-          console.log(error)
-        })
+          this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/deleteMesToCus`, {}, {
+            params: {
+              id: opt.id
+            }
+          }).then(() => {
+            this.messageList.splice(index, 1)
+          }).catch(error => {
+            console.log(error)
+          })
+        }).catch(() => {})
       },
       change (opt) {
         this.status = opt === 'all' ? null : opt
@@ -97,7 +115,7 @@
         this.init();
       },
       init () {
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/message/getAllOperatorOperatorSendMesToCusPc', {}, {
+        this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/getAllOperatorOperatorSendMesToCusPc`, {}, {
           params: {
             page: this.currentPage -1,
             size: this.pageSize,

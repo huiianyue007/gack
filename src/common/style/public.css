@@ -2,22 +2,26 @@
 @import '~@/theme/index.css';
 /*初始化标签*/
 body,p,ol,ul,h1,h2,h3,h4,h5,h6,dl,dd,form,input{
-	margin:0;
-	padding:0;
-	list-style:none;/*去除ul ol的初始样式*/
-	font-weight:normal;
+  margin:0;
+  padding:0;
+  list-style:none;/*去除ul ol的初始样式*/
+  font-weight:normal;
   font-size:14px;
   line-height:24px;
   color: #333;
 }
 img{
-	border:0;
+  border:0;
   max-width: 100%;
   vertical-align: middle;
-	}
+}
 a{
-	color:inherit;
-	text-decoration:none;
+  color:inherit;
+  text-decoration:none;
+}
+#app,body,html{
+  width: 100%;
+  height: 100%;
 }
 .fade-enter {
   opacity:0;
@@ -45,8 +49,8 @@ a{
   margin-right:0 !important;
 }
 body{
-	font-family:"Microsoft YaHei";
-	background-color:#fff!important;
+  font-family:"Microsoft YaHei";
+  background-color:#fff!important;
 }
 .container{
   width: 1190px;
@@ -58,6 +62,9 @@ body{
 .fr{
   float:right;
 }
+.fn{
+  float:none;
+}
 .title{
   font-size:20px;
   color:#333;
@@ -65,6 +72,9 @@ body{
 }
 .subhead{
   color: #999;
+}
+.text-left{
+  text-align: left;
 }
 .text-center{
   text-align:center;
@@ -106,7 +116,7 @@ body{
   text-overflow: ellipsis;
 }
 /*.box_img img{*/
-  /*width:100%;*/
+/*width:100%;*/
 /*}*/
 .pr{
   position:relative;
@@ -157,4 +167,18 @@ body{
 
 .editorImg .ql-align-right {
   text-align: right;
+}
+.text-red{
+  color: red !important;
+}
+.el-breadcrumb {
+  line-height: 40px !important;
+}
+.el-input-group__append, .el-input-group__prepend:nth-of-type(1) {
+  color: #666;
+}.word-break{
+  word-break: break-all;
+ }
+.el-breadcrumb{
+  cursor: pointer;
 }

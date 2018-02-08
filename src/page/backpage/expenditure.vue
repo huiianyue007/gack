@@ -13,10 +13,24 @@
                 </div>
                 <div class="expend_center">
                     <div class="ec_list">
-                        <img src="../../assets/information/srze.png" />
+                        <img src="../../assets/images/information/srze.png" />
                         <span>收入总额：￥ {{incomeAmount | money}}元</span>
-                        <el-tooltip content="因账单账期缘故，展示金额可能不准，请以实际到账金额为准" placement="right" effect="dark">
-                            <img class="iconItem" src="../../assets/information/information.png" alt="">
+                        <el-tooltip content="包含订单收入和全额退款时手续费收入" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
+                    </div>
+                </div>
+            </div>
+            <div class="expend_list">
+                <div class="expend_top">
+                    结算
+                </div>
+                <div class="expend_center">
+                    <div class="ec_list">
+                        <img src="../../assets/images/information/srze.png" />
+                        <span>结算总额：￥ {{clearAmount | money}}元</span>
+                        <el-tooltip content="已经结算订单的结算总额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
                         </el-tooltip>
                     </div>
                 </div>
@@ -25,29 +39,42 @@
                 <div class="expend_top">
                     支出
                 </div>
-                <div class="expend_center">
+                <div class="expend_center" style="margin-top:0">
                     <div class="ec_list">
-                        <img src="../../assets/information/zcze.png" />
+                        <img src="../../assets/images/information/zcze.png" />
                         <span>支出总额：￥ {{costAmount | money}}元</span>
+                        <el-tooltip content="包含订单手续费支出，保证金支出，退款订单支出，佣金支出金额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
                     </div>
                     <div class="ec_list">
-                        <img src="../../assets/information/yjzzc.png" />
-                        <span>佣金总支出：￥{{divideAmount | money}}元</span>
+                        <img src="../../assets/images/information/yjzzc.png" />
+                        <span>实际佣金支出：￥{{divideAmount | money}}元</span>
+                        <el-tooltip content="已经结算订单的佣金金额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
                     </div>
                     <div class="ec_list" style="margin:0">
-                        <img src="../../assets/information/qywy.png" />
-                        <span>手续费支出总额：￥ {{feeAmount | money}}元</span>
+                        <img src="../../assets/images/information/qywy.png" />
+                        <span>实际支付渠道手续费：￥ {{feeAmount | money}}元</span>
+                        <el-tooltip content="所有成交订单的手续费总额包含退款订单的手续费支出" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
                     </div>
                 </div>
+
             </div>
             <div class="expend_list">
                 <div class="expend_top">
-                    已到账
+                    退款
                 </div>
                 <div class="expend_center">
                     <div class="ec_list" style="margin:0">
-                        <img src="../../assets/information/zhydz.png" />
-                        <span>账户已到账总额：￥ {{clearAmount | money}}元</span>
+                        <img src="../../assets/images/information/zhydz.png" />
+                        <span>总退款金额：￥ {{refundAmount | money}}元</span>
+                        <el-tooltip content="所有退款订单的总金额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
                     </div>
                 </div>
             </div>
@@ -57,15 +84,18 @@
                 </div>
                 <div class="expend_center">
                     <div class="ec_list">
-                        <img src="../../assets/information/zhwdz.png" />
+                        <img src="../../assets/images/information/zhwdz.png" />
                         <span>账户未到账总额：￥ {{noClear | money}}元</span>
-                        <el-tooltip content="因账单账期缘故，展示金额可能不准，请以实际到账金额为准" placement="right" effect="dark">
-                            <img class="iconItem" src="../../assets/information/information.png" alt="">
+                        <el-tooltip content="所有未结算的订单的总额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
                         </el-tooltip>
                     </div>
                     <div class="ec_list" style="margin:0">
-                        <img src="../../assets/information/yizzc.png" />
-                        <span>不可用保证金总额：￥ {{depositPaid | money}}元</span>
+                        <img src="../../assets/images/information/yizzc.png" />
+                        <span>实际保证金总额：￥ {{depositPaid | money}}元</span>
+                        <el-tooltip content="当前账户已收的保证金的总额" placement="right" effect="dark">
+                            <img class="iconItem" src="../../assets/images/information/information.png" alt="">
+                        </el-tooltip>
                     </div>
                 </div>
             </div>
@@ -73,17 +103,18 @@
         <div class="handle-box">
             <el-form :inline="true" :model="search" class="demo-form-inline">
                 <el-form-item label="订单时间" style="margin-right:30px">
-                    <el-date-picker v-model="search.stratTime" :editable='false' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.stratTime" :editable='false' type="date" placeholder="日期时间" style="width:160px">
                     </el-date-picker>
                     <span>-</span>
-                    <el-date-picker v-model="search.endTime" :editable='false' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.endTime" :editable='false' type="date" placeholder="日期时间" style="width:160px">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="资金流向" style="margin-right:30px">
-                    <el-select v-model="search.flow" placeholder="资金流向" @change="flowChange" style="width:150px">
+                    <el-select v-model="search.flow" placeholder="资金流向" @change="flowChange" style="width:100px">
                         <el-option label="全部" value="0"></el-option>
-                        <el-option label="收入" value="1"></el-option>
+                        <el-option label="结算" value="1"></el-option>
                         <el-option label="支出" value="2"></el-option>
+                        <el-option label="收入" value="3"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="支付流水号">
@@ -105,10 +136,6 @@
                 <el-table-column prop="type" label="资金流向" :formatter='formatterLiu' align='center'>
                 </el-table-column>
                 <el-table-column prop="type" label="资金类目" :formatter='formatterType' align='center'>
-                </el-table-column>
-                <el-table-column prop="totalCost" label="支出总计(元)" :formatter='formatterTotalCost' align='center'>
-                </el-table-column>
-                <el-table-column prop="totalIncome" label="收入总计(元)" :formatter='formatterTotalIncome' align='center'>
                 </el-table-column>
             </el-table>
             <div class="pagination">
@@ -136,10 +163,14 @@ export default {
             incomeAmount: '0',
             costAmount: '0',
             divideAmount: '0',
+            divideAmountOdd: '0',
             feeAmount: '0',
+            feeAmountOdd: '0',
             clearAmount: '0',
             noClear: '0',
+            refundAmount: '0',
             depositPaid: '0',
+            depositPaidOdd: '0',
             tableData: {
                 list: []
             },
@@ -186,22 +217,30 @@ export default {
         }
     },
     methods: {
-        init() {
-            var item = {
-                systemCode: 10,
-                originalId: this.businessid,
-                startTime: this.stratTime,
-                endTime: this.endTime,
-                type: this.search.flow,
-                id: this.search.number,
-                page: this.currentPage,
-                pageSize: this.pagesize
+        //预计
+        seeInit() {
+            let item = {
+                businessid: this.businessid
             }
-            //https://pay.gack.citic/getAccountLog.php?systemCode=10&originalId=8ab3fd565ecc74ed015f05fac4f70072&startTime=&endTime=&type=0'&id=&page=1&pageSize=10
-            //http://123.56.48.63/pay/original/getAccountLog.php
             var that = this;
-            this.$tkAjax.post('https://pay.gack.citic/getAccountLog.php?systemCode=10&originalId=' + this.businessid + '&startTime=' + this.stratTime + '&endTime=' + this.endTime + '&type=' + this.search.flow + '&id=' + this.search.number + '&page=' + this.currentPage + '&pageSize=' + this.pagesize)
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/getStatistics`, {}, { params: item })
                 .then(({ data }) => {
+                    if (data.status == 200) {
+                        //sumCommission：佣金总额
+                        //sumFee：手续费总额
+                        //sumBail：保证金总额
+                        that.divideAmountOdd = data.data.sumCommission;
+                        that.feeAmountOdd = data.data.sumFee;
+                        that.depositPaidOdd = data.data.sumBail;
+                    }
+                }).catch(() => {
+                });
+        },
+        init() {
+            var that = this;
+            this.$tkAjax.post(`${this.$config.pay}/getAccountLog.php?systemCode=10&originalId=` + this.businessid + '&startTime=' + this.stratTime + '&endTime=' + this.endTime + '&type=' + this.search.flow + '&id=' + this.search.number + '&page=' + this.currentPage + '&pageSize=' + this.pagesize)
+                .then(({ data }) => {
+                    console.log(data)
                     that.tableData.list = data.data.list;
                     that.totalCount = Number(data.data.totalCount);
                     that.incomeAmount = data.data.incomeAmount / 100 || '0';
@@ -209,6 +248,7 @@ export default {
                     that.divideAmount = data.data.divideAmount / 100 || '0';
                     that.feeAmount = data.data.feeAmount / 100 || '0';
                     that.clearAmount = data.data.clearAmount / 100 || '0';
+                    that.refundAmount = data.data.refundAmount / 100 || '0';
                     that.noClear = data.data.noClear / 100 || '0';
                     that.depositPaid = data.data.depositPaid / 100 || '0';
                 }).catch(() => {
@@ -226,12 +266,12 @@ export default {
             return '￥' + row.totalIncome / 100;
         },
         formatterType(row, column) {
-            return row.type == 1 ? '结算' : row.type == 2 ? '佣金' : row.type == 3 ? '保证金' : row.type == 4 ? '手续费' : row.type == 5 ? '退款' : '未知';
+            return row.type == 1 ? '结算' : row.type == 2 ? '佣金' : row.type == 3 ? '保证金' : row.type == 4 ? '手续费' : row.type == 5 ? '退款' : row.type == 6 ? '订单收入 ' : row.type == 7 ? '全额退款手续费收入 ' : '未知';
         },
         formatterLiu(row, column) {
-            return row.type == 1 ? '收入' : '支出';
+            return row.type == 1 ? '结算' : row.type == 2 ? '支出' : row.type == 3 ? '支出' : row.type == 4 ? '支出' : row.type == 5 ? '支出' : row.type == 6 ? '收入 ' : row.type == 7 ? '收入 ' : '未知';
         },
-        //时间格式化  
+        //时间格式化
         dateFormat(row, column) {
             var date = row[column.property];
             if (date == undefined) {

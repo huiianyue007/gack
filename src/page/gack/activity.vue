@@ -11,16 +11,15 @@
       <ul class="content">
         <li class="fl content_li" v-for = 'item in dataArr' v-if = 'dataArr.length > 0' @click = '$router.push("/eventdetails/" + item.id)'>
           <div class="img" v-if = 'item.eventPicUrl'>
-            <box-img :prop = '6/11'>
-              <img :src="item.eventPicUrl" alt="">
+            <box-img prop = '6:11' :bgImg = 'item.eventPicUrl'>
             </box-img>
-            <div class="tip" :class = '{"active": item.state !== 3}'>{{ item.state | activityStatus(activityType)}}</div>
+            <div class="tip" :class = '{"active": item.state === 5}'>{{ item.state | activityStatus(activityType)}}</div>
           </div>
           <div class="con">
             <h3 class = 'text-hidden'>{{item.eventTitle}} <span class="subhead tip">{{item.isMoney === 0 ? '免费' : ''}}</span></h3>
-            <div class="desc"><img src="~assets/gack/pxpt_icon.png" alt=""><span class="inline-block text-hidden address">{{ item.organizer }}</span></div>
-            <div class="desc"><img src="~assets/gack/px_time.png" alt="">{{ item.eventStartTime | time('年-月-日 :') }}</div>
-            <div class="desc"><img src="~assets/gack/px_wz.png" alt=""><span class="inline-block text-hidden address">{{item.eventDetailedAddress}}</span></div>
+            <div class="desc"><img src="~assets/images/gack/pxpt_icon.png" alt=""><span class="inline-block text-hidden address">{{ item.organizer }}</span></div>
+            <div class="desc"><img src="~assets/images/gack/px_time.png" alt="">{{ item.eventStartTime | time('年-月-日 :') }}</div>
+            <div class="desc"><img src="~assets/images/gack/px_wz.png" alt=""><span class="inline-block text-hidden address">{{item.eventDetailedAddress}}</span></div>
           </div>
         </li>
       </ul>
@@ -35,6 +34,7 @@
 </template>
 <script>
   export default {
+    name: 'activity',
     filters: {
       compareTime (opt) {
         let date = new Date()
@@ -92,22 +92,23 @@
         page: 1,
       }
     },
-    activated () {
+    created () {
       this.dataArr = []
       this.arr = [{
         typeName: '全部活动',
         id: 'all'
       }]
+      this.activeIndex= 'all'
       this.getNews({
         id: this.activeIndex,
         page: 1
       })
       this.page = 1
-      this.$htAjax.get('https://apitest.gack.citic:8083/guoanmaker/operator/activityType/getAllActivityType').then(({data}) => {
+      this.$htAjax.get(`${this.$config.activity}/guoanmaker/operator/activityType/getAllActivityType`).then(({data}) => {
         this.arr = this.arr.concat(data.data.filter(item =>{
           return item.state !== 0 && item.state !== 4
         })).filter(item => {
-          return item.typeName !== '抽奖'
+          return item.typeName !== '抽奖'&& item.typeName !== '秒杀'
         })
       }).catch(error => {
       })
@@ -135,7 +136,7 @@
         this.$htAjax.post('')
       },
       getNews (opt) {
-        let url = opt.id === 'all' ? 'https://apitest.gack.citic:8083/guoanmaker/operator/eventDetails/getAppAndIosAndPcOperatorEventDetailsAll' : 'https://apitest.gack.citic:8083/guoanmaker/operator/eventDetails/getselectByEventId'
+        let url = opt.id === 'all' ? `${this.$config.activity}/guoanmaker/operator/eventDetails/getAppAndIosAndPcOperatorEventDetailsAll` : `${this.$config.activity}/guoanmaker/operator/eventDetails/getselectByEventId`
         let data = {
           EventType: 1,
           page: opt.page,

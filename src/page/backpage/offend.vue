@@ -12,7 +12,7 @@
                     <el-input v-model="search.name" style="width:180px;"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit" icon="search">搜索</el-button>
+                    <el-button type="primary" @click="init()" icon="search">搜索</el-button>
                 </el-form-item>
             </el-form>
             <el-button type="primary" @click="comJump" class="add">新增商品</el-button>
@@ -29,7 +29,10 @@
                         <p class="sale_class">{{scope.row.serverName}}</p>
                     </template>
                 </el-table-column>
-                <el-table-column prop="finalPrice" label="价  格" width="100" align="center">
+                <el-table-column  label="价  格" width="100" align="center">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.finalPrice | price}}</p>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="auditOpinion" label="违规原因" align="center">
                 </el-table-column>
@@ -99,21 +102,45 @@ export default {
         }
     },
     methods: {
-        init() {
+
+        initService() {
             this.loadingTab = true;
             var that = this;
+            var reg = {
+                serverLevel: 2
+            }
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByServiceLevel`, {}, {
+                params: reg
+            }).then(({ data }) => {
+                if (data.status === 200) {
+                    if (data.data.length > 0) {//如果有数据的话，组装数据
+                        that.search.classOptions = data.data;
+                    } else {
 
+                    }
+                    that.loadingTab = false;
+                }
+            }).catch(function(error) {
+                that.loadingTab = false;
+            });
+        },
+
+        // 搜索
+        init() {
+            var that = this;
+            that.loadingTab = true;
             var reg = {
                 page: that.currentPage - 1,
                 size: that.pagesize,
                 commodityState: 5,
-                businessID: this.businessid
+                commodityName: that.search.name,
+                service_type_id: that.search.category,
+                businessID: that.businessid
 
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/findCommdity`, {}, {
                 params: reg
             }).then(({ data }) => {
-
                 if (data.status === 200) {
                     //获取未读数据
                     var num1 = '';
@@ -131,63 +158,6 @@ export default {
                     }
                     this.$emit('getNum', [num1,num2])
                     // ---------------------
-                    if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
-                        that.tableData = data.data.commoditys
-                        that.totalCount = data.data.total;
-                        that.offendNum = data.data.total;
-
-                    } else {
-                        that.tableData = [];
-                        that.totalCount = 0;
-                        that.offendNum = 0;
-                    }
-                    that.loadingTab = false;
-                }
-            }).catch(function(error) {
-                that.loadingTab = false;
-            });
-
-        },
-
-        initService() {
-            this.loadingTab = true;
-            var that = this;
-            var reg = {
-                serverLevel: 2
-            }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByServiceLevel', {}, {
-                params: reg
-            }).then(({ data }) => {
-                if (data.status === 200) {
-                    if (data.data.length > 0) {//如果有数据的话，组装数据
-                        that.search.classOptions = data.data;
-                    } else {
-
-                    }
-                    that.loadingTab = false;
-                }
-            }).catch(function(error) {
-                that.loadingTab = false;
-            });
-        },
-
-        // 搜索
-        onSubmit() {
-            var that = this;
-            that.loadingTab = true;
-            var reg = {
-                page: that.currentPage - 1,
-                size: that.pagesize,
-                commodityState: 5,
-                commodityName: that.search.name,
-                service_type_id: that.search.category,
-                businessID: this.businessid
-
-            }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
-                params: reg
-            }).then(({ data }) => {
-                if (data.status === 200) {
                     if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
                         that.tableData = data.data.commoditys
                         that.totalCount = data.data.total;
@@ -228,7 +198,7 @@ export default {
                 var reg = {
                     id: id
                 }
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/delete', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/delete`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status === 200) {
@@ -264,7 +234,7 @@ export default {
                 var reg = {
                     ids: that.delID
                 }
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/deleteIds', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/deleteIds`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status === 200) {
@@ -285,6 +255,16 @@ export default {
             this.$store.state.comId = comId;
 
             this.$store.state.stateId = '2';
+        },
+    },
+    filters: {
+        price(value) {
+            if(value==0){
+                return '面议'
+            }else{
+                return value
+            }
+
         },
     }
 

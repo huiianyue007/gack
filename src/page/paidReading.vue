@@ -29,6 +29,7 @@
 <script>
   import qrcode from 'components/qrcode'
   export default {
+    name: 'paidreading',
     data: () => ({
       news: null,
       dialogTableVisible: false,
@@ -64,7 +65,7 @@
         for (let i = 0; i< 16; i++) {
           platOrderId += arr[Math.floor(Math.random() * 16)]
         }
-        this.$tkAjax.get('https://pay.gack.citic/pay.php', {
+        this.$tkAjax.get(`${this.$config.pay}/pay.php`, {
           params: {
             uid: '8ab3fd56',
             systemCode: '10',
@@ -88,7 +89,7 @@
           this.payFlag = true
           let state = 0
           while (state == 0 && this.payFlag) {
-            let res = await this.$tkAjax.get(`https://pay.gack.citic/retrieve.php?pingId=${id}`).catch(error => {
+            let res = await this.$tkAjax.get(`${this.$config.pay}/retrieve.php?pingId=${id}`).catch(error => {
               console.log(error)
             })
             state = res.data
@@ -116,7 +117,7 @@
           this.dialogTableVisible = false
           this.$message({
             type: 'success',
-            message: '关闭成功'
+            message: '取消成功'
           })
         })
       }

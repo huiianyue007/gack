@@ -1,95 +1,19 @@
 import store from 'store'
 import Vue from 'vue'
 import Router from 'vue-router'
-// import gack from 'page/gack.vue'
-// import Index from 'page/gack/index'
-// import Help from 'page/gack/help'
-// import Space from 'page/gack/space.vue'
-// import Activity from 'page/gack/activity.vue'
-// import Aboutus from 'page/gack/aboutus.vue'
-// import paidReading from 'page/paidReading'
-// import Negotiated from 'page/gack/negotiated.vue'
-// import About from 'page/gack/about.vue'
-// import newsDetail from 'page/gack/newsDetails.vue'
-// import User from 'page/gack/user.vue'
-// import userIndex from 'page/gack/user/index'
-// import Message from 'page/gack/user/message'
-// import selectMessage from 'page/gack/user/selectMessage'
-// import Address from 'page/gack/user/address'
-// import EditAddress from 'page/gack/user/editAddress'
-// import appointment from 'page/gack/user/appointment'
-// import Order from 'page/gack/user/order'
-// import OrderList from 'page/gack/orderList'
-// import eventDetails from 'page/gack/eventDetails'
-// import submitOrder from 'page/gack/submitOrder'
-// import spaceList from 'page/gack/spaceList'
-// import invoiceOrder from 'page/gack/user/invoice'
-// import addInvoice from 'page/gack/user/addInvoice'
-// import myInvoice from 'page/gack/user/myInvoice'
-// import evaluate from 'page/gack/evaluate'
-// import Coupon from 'page/gack/user/coupon'
-// import Collection from 'page/gack/user/collection'
-// import userFeedback from 'page/gack/user/feedback'
-// import Feedback from 'page/gack/user/feedback'
-// import Service from 'page/gack/service'
-// import Concat from 'page/gack/concat'
-// import setPass from 'page/gack/user/setPassWord'
-// import appcon from 'page/gack/user/appcon'
-// import Serde from 'page/gack/serde'
-// import error from 'page/error'
-// import register from 'page/register'
-// import login from 'page/login'
-//
-// //后台
-// import backHome from 'page/backHome'
-// import middle from 'page/backpage/middle'
-// import information from 'page/backpage/information'
-// //订单列表
-// import merchandise from 'page/backpage/merchandise'
-// import merchandetails from 'page/backpage/merchandetails'
-// //雇主发票管理
-// import invoice from 'page/backpage/invoice'
-// //收支明细
-// import expenditure from 'page/backpage/expenditure'
-// // 首页
-// import backIndex from 'page/backpage/backIndex'
-// //发票信息管理
-// import invoiceInformation from 'page/backpage/invoiceInformation'
-// //我的发票管理
-// import meInvoice from 'page/backpage/meInvoice'
-// // 发布商品
-// import commodity from 'page/backpage/commodity'
-// // 商品管理
-// import manage from 'page/backpage/manage'
-// // 数据统计
-// import dataStatistics from 'page/backpage/dataStatistics'
-// // 修改密码
-// import changePassword from 'page/backpage/changePassword'
-// // 修改服务范围
-// import changeServiceArea from 'page/backpage/changeServiceArea'
-// // 编辑页面
-// import edit from 'page/backpage/edit'
-// // 评论展示
-// import reviewShow from 'page/backpage/reviewShow'
-// //空间预约
-// import SpaceBooking from 'page/backpage/SpaceBooking'
-// //空间发布
-// import spatialPublishing from 'page/backpage/spatialPublishing'
-// //空间设置
-// import spaceHome from 'page/backpage/spaceHome'
-// //报名表单
-// import entryForm from 'page/entryForm'
-// //活动详情App
-// import particulars from 'page/App/particulars'
-// // 忘记密码
-// import Profile from 'page/profile'
-// //H5详情页
-// import share from 'page/App/share'
-// const gack = () => import('/page/gack')
+import Twelve from 'page/twelve'
+import gackstatic from 'page/gackstatic'
+import interspace from 'page/interspace'
 const gack = () => import('page/gack.vue')
 const Index = () => import('page/gack/index')
+const demand = () => import('page/gack/demand')
 const Help = () => import('page/gack/help')
+const Trademark = () => import('page/trademark')
+const Contract = () => import('page/gack/contract')
 const Space = () => import('page/gack/space.vue')
+const TradeInfo = () => import('page/gack/tradeInfo.vue')
+const shopDetails = () => import('page/gack/shopDetails.vue')
+const patentInfo = () => import('page/gack/patentInfo.vue')
 const Activity = () => import('page/gack/activity.vue')
 const Aboutus = () => import('page/gack/aboutus.vue')
 const paidReading = () => import('page/paidReading')
@@ -115,15 +39,25 @@ const evaluate = () => import('page/gack/evaluate')
 const Coupon = () => import('page/gack/user/coupon')
 const Collection = () => import('page/gack/user/collection')
 const userFeedback = () => import('page/gack/user/feedback')
+const dockingRecord = () => import('page/gack/user/dockingRecord')
 const Feedback = () => import('page/gack/user/feedback')
 const Service = () => import('page/gack/service')
 const Concat = () => import('page/gack/concat')
 const setPass = () => import('page/gack/user/setPassWord')
 const appcon = () => import('page/gack/user/appcon')
 const Serde = () => import('page/gack/serde')
+const Rule = () => import('page/gack/rule')
+const Finance = () => import('page/gack/finance')
+const FinanceDesc = () => import('page/gack/financeDesc')
 const error = () => import('page/error')
 const register = () => import('page/register')
 const login = () => import('page/login')
+
+//金融
+const financial = () => import('page/gack/user/financial')
+const issueFinancial = () => import('page/gack/user/issueFinancial')
+const financing = () => import('page/gack/user/financing')
+
 
 //后台
 const backHome = () => import('page/backHome')
@@ -170,6 +104,12 @@ const particulars = () => import('page/App/particulars')
 const Profile = () => import('page/profile')
 //H5详情页
 const share = () => import('page/App/share')
+//店铺
+const shopSet = () => import('page/backpage/shopSet')
+const shopCase = () => import('page/backpage/shopCase')
+//企业创新需求管理
+const innovations = () => import('page/backpage/innovations')
+
 Vue.use(Router)
 let routes = new Router({
   // mode: 'history',
@@ -186,6 +126,10 @@ let routes = new Router({
         path: '/paidreading/:id',
         name: 'paidreading',
         component: paidReading,
+      }, {
+        path: '/demand/:id/:type',
+        name: 'demand',
+        component: demand,
       }, {
         path: '/negotiated',
         name: 'negotiated',
@@ -217,10 +161,35 @@ let routes = new Router({
           requiresAuth: true
         }
       }, {
+        path: '/gackstatic',
+        component: gackstatic,
+        name: 'gackstatic'
+      }
+        , {
+        path: '/interspace',
+        component: interspace,
+        name: 'interspace'
+      }, {
+        path: '/twelve',
+        component: Twelve,
+        name: 'twelve'
+      }, {
         path: '/serde/:id/:type',
         name: 'serde',
         component: Serde,
       }, {
+          path: '/rule',
+          component: Rule,
+          name: 'rule',
+        }, {
+          path: '/finance',
+          name: 'finance',
+          component: Finance,
+        }, {
+          path: '/financedesc/:id',
+          name: 'finance_desc',
+          component: FinanceDesc,
+        }, {
         path: '/evaluate/:id',
         component: evaluate,
         name: 'evaluate',
@@ -246,6 +215,22 @@ let routes = new Router({
         path: '/space',
         name: 'space',
         component: Space,
+      }, {
+        path: '/contract',
+        name: 'contract',
+        component: Contract,
+      }, {
+        path: '/shopDetails',
+        name: 'shopDetails',
+        component: shopDetails,
+      }, {
+        path: '/tradeinfo/:id',
+        name: 'tradeinfo',
+        component: TradeInfo,
+      }, {
+        path: '/patentinfo/:id',
+        name: 'patentinfo',
+        component: patentInfo,
       }, {
         path: '/space',
         name: 'space',
@@ -305,6 +290,27 @@ let routes = new Router({
           path: 'editaddress',
           component: EditAddress,
           name: 'edit-address',
+          meta: {
+            requiresAuth: true
+          }
+        },{
+          path: 'financial',
+          name: 'financial',
+          component: financial,
+          meta: {
+            requiresAuth: true
+          }
+        }, {
+          path: 'issueFinancial',
+          name: 'issueFinancial',
+          component: issueFinancial,
+          meta: {
+            requiresAuth: true
+          }
+        },{
+          path: 'financing',
+          name: 'financing',
+          component: financing,
           meta: {
             requiresAuth: true
           }
@@ -378,6 +384,13 @@ let routes = new Router({
           meta: {
             requiresAuth: true
           }
+        }, {
+          path: 'dockingrecord',
+          component: dockingRecord,
+          name: 'docking_record',
+          meta: {
+            requiresAuth: true
+          }
         }]
       }]
     },
@@ -385,6 +398,10 @@ let routes = new Router({
       path: '/profile',
       component: Profile,
       name: 'profile'
+    }, {
+      path: '/trademark/:id',
+      name: 'trademark',
+      component: Trademark,
     },
     {
       path: '/entryForm',
@@ -395,7 +412,7 @@ let routes = new Router({
       path: '/particulars',
       component: particulars,
       name: 'particulars',
-    },{
+    }, {
       path: '/share',
       component: share,
       name: 'share'
@@ -456,6 +473,14 @@ let routes = new Router({
           path: '/merchandise',
           component: merchandise,
           name: 'merchandise',
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/innovations',
+          component: innovations,
+          name: 'innovations',
           meta: {
             requiresAuth: true
           }
@@ -571,28 +596,39 @@ let routes = new Router({
           meta: {
             requiresAuth: true
           }
-        }
+        },
+        {
+          path: '/shopSet',
+          component: shopSet,
+          name: 'shopSet',
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/shopCase',
+          component: shopCase,
+          name: 'shopCase',
+          meta: {
+            requiresAuth: true
+          }
+        },
+
       ]
     }
   ],
-  //scrollBehavior (to, from, savedPosition) {
-  // return { x: 0, y: 0 }
-  // }
+  scrollBehavior(to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })
 
 routes.beforeEach((to, from, next) => {
-  if(to.name === 'spaceHome'){
+  if (to.name === 'spaceHome') {
     store.state.compile = ''
     sessionStorage.removeItem('compile')
   }
   // 可以在路由元信息指定哪些页面需要登录权限
   let islogin = false;// 假设没有登录（这里应从接口获取）
-  if ((/submit-order/).test(to.path)) {
-    let userid = JSON.parse(window.localStorage.getItem('userid'))
-    if (userid) {
-      store.commit('setUserId', userid)
-    }
-  }
   let userToken = store.state.userid
   if (userToken) {
     islogin = true;

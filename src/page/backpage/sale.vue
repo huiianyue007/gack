@@ -12,7 +12,7 @@
                     <el-input v-model="search.name" style="width:180px;"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit" icon="search">搜索</el-button>
+                    <el-button type="primary" @click="init()" icon="search">搜索</el-button>
                 </el-form-item>
             </el-form>
             <el-button type="primary" @click="comJump" class="add">新增商品</el-button>
@@ -29,7 +29,10 @@
                         <p class="sale_class">{{scope.row.serverName}}</p>
                     </template>
                 </el-table-column>
-                <el-table-column prop="finalPrice" label="价  格" width="100" align="center">
+                <el-table-column label="价  格" width="100" align="center">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.finalPrice | price}}</p>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="salesVolume" label="销 量" width="100" align="center">
                 </el-table-column>
@@ -40,7 +43,7 @@
                 </el-table-column>
                 <el-table-column prop="releaseTime" label="发布时间" width="120" :formatter='dateFormat' align="center">
                 </el-table-column>
-                <el-table-column label="操作" width="170" align="center">
+                <el-table-column label="操作" min-width="100" align="center">
                     <template slot-scope="scope">
                         <el-button size="small" @click='dialogBlocklock(scope.$index,scope.row,scope.row.stock,scope.row.id)'>修改库存</el-button>
                         <el-button size="small" @click='shelf(scope.$index,scope.row,scope.row.id)' type="primary">下架</el-button>
@@ -58,13 +61,13 @@
         </div>
 
         <!--修改库存-->
-        <el-dialog title="修改库存" :visible.sync="editFormStock" size="tiny" top='25%' @close='delClose' :close-on-click-modal="false">
+        <el-dialog title="修改库存" :visible.sync="editFormStock" width="30%"  @close='delClose' :close-on-click-modal="false">
             <el-form :model="editForm" :rules="editRules" ref="editForm">
                 <el-form-item label="服务商品库存量：">
                     <span>{{editForm.oldStock}}</span>
                 </el-form-item>
                 <el-form-item label="商品修改库存量：" prop="newStock" style="margin-bottom:0">
-                    <el-input v-model="editForm.newStock"></el-input>
+                    <el-input v-model="editForm.newStock" :maxlength="11"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -135,64 +138,13 @@ export default {
         }
     },
     methods: {
-        init() {
-            this.loadingTab = true;
-            var that = this;
-            var reg = {
-                page: that.currentPage - 1,
-                size: that.pagesize,
-                commodityState: 2,
-                businessID: this.businessid
-            }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
-                params: reg
-            }).then(({ data }) => {
-                if (data.status === 200) {
-                    //获取未读数据
-                    var num1='';
-                    var num2='';
-
-                    var readList=data.data.readList
-                    for (var i = 0; i < readList.length; i++) {
-                        var element = readList[i];
-                        if(element.commodityState==3){
-                            num1=element.readNumber
-                        }
-                        if(element.commodityState==5){
-                            num2=element.readNumber
-                        }
-                    }
-                    this.$emit('getNum', [num1,num2])
-                    // ---------------------
-
-                    if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
-                        that.tableData = data.data.commoditys
-                        for (var i = 0; i < that.tableData.length; i++) {
-                            if (that.tableData[i].stock == null || that.tableData[i].stock == ' ') {
-                                that.tableData[i].stock = 0
-                            }
-                        }
-                        that.totalCount = data.data.total;
-                        that.saleNum = data.data.total;
-                    } else {
-                        that.tableData = [];
-                        that.totalCount = 0;
-                        that.saleNum = 0;
-                    }
-                    that.loadingTab = false;
-                }
-            }).catch(function(error) {
-                that.loadingTab = false;
-
-            });
-        },
         initService() {
             this.loadingTab = true;
             var that = this;
             var reg = {
                 serverLevel: 2
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByServiceLevel', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByServiceLevel`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -207,11 +159,11 @@ export default {
                 that.loadingTab = false;
             });
         },
-        delClose(){
+        delClose() {
             this.$refs.editForm.resetFields();
         },
         // 搜索
-        onSubmit() {
+        init() {
             this.loadingTab = true;
             var that = this;
             var reg = {
@@ -222,10 +174,26 @@ export default {
                 commodityName: that.search.name,
                 businessID: this.businessid
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/findCommdity', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/findCommdity`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
+                    var num1 = '';
+                    var num2 = '';
+
+                    var readList = data.data.readList
+                    for (var i = 0; i < readList.length; i++) {
+                        var element = readList[i];
+                        if (element.commodityState == 3) {
+                            num1 = element.readNumber
+                        }
+                        if (element.commodityState == 5) {
+                            num2 = element.readNumber
+                        }
+                    }
+                    this.$emit('getNum', [num1, num2])
+                    // --------------------------
+
                     if (data.data.commoditys.length > 0) {//如果有数据的话，组装数据
                         that.tableData = data.data.commoditys
                         that.totalCount = data.data.total;
@@ -254,7 +222,7 @@ export default {
                 }
 
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateCommditysState', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateCommditysState`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -291,7 +259,7 @@ export default {
                     }
 
                     var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateCommditysStock', {}, {
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateCommditysStock`, {}, {
                         params: reg
                     }).then(({ data }) => {
                         that.editForm.newStock = 0;
@@ -314,7 +282,7 @@ export default {
         // 新增跳转
         comJump() {
             this.$router.push('/commodity');
-            this.$store.state.adminleftnavnum='commodity';
+            this.$store.state.adminleftnavnum = 'commodity';
         },
         // 全选
         selectBox(selection, row) {
@@ -341,7 +309,7 @@ export default {
                     state: 4, //商品状态 1:待审核 2:审核通过 3:审核失败 4:下架 5:冻结
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateCommditysState', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateCommditysState`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     that.editForm.newStock = 0;
@@ -382,6 +350,16 @@ export default {
             return moment(date).format("YYYY-MM-DD HH:mm:ss");
         },
 
+    },
+    filters: {
+        price(value) {
+            if(value==0){
+                return '面议'
+            }else{
+                return value
+            }
+
+        },
     }
 
 }

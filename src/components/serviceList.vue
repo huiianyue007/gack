@@ -1,15 +1,14 @@
 <template>
   <div class="service_list">
     <div class="sub_li cursor" v-for = "(item, key) in listData" :key = "key" @click = 'clickMe(item)'>
-      <box-img :prop = '1' class = 'inline-block img'>
-        <img :src="item.commodity_smallimage" alt="" width = '120'>
+      <box-img class = 'inline-block img' :bgImg = "item.commodity_smallimage">
       </box-img>
       <div class = 'inline-block sub_con'>
         <div class="title">{{ item.commodityName}}</div>
         <div class="subhead" >{{ item.businessName}}</div>
         <el-row :gutter = '12'>
-          <el-col class="text-red" :span = '8' v-if = 'item.startingPrice '>{{ item.startingPrice }}元起</el-col>
-          <el-col :span = '8' v-if = 'item.finalPrice'>价格: <span class="text-red price">{{ item.finalPrice }}元</span></el-col>
+          <el-col class="text-red" :span = '8' v-if = 'item.startingPrice && item.isBargaining == "1"'>{{ item.startingPrice }}元起 {{item.measurementUnit ? '/' + item.measurementUnit : '' }}</el-col>
+          <el-col :span = '8' v-if = 'item.finalPrice && item.isBargaining !== "1"'>价格: <span class="text-red price">{{ item.finalPrice }}元 {{item.measurementUnit ? '/' + item.measurementUnit : '' }}</span></el-col>
           <el-col :span = '8' class = 'volume'>成交量<span class="text-red price">{{ item.salesVolume}}</span></el-col>
         </el-row>
       </div>

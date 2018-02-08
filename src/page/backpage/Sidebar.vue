@@ -62,7 +62,11 @@ export default {
                         {
                             index: 'invoice',
                             title: '雇主发票管理'
-                        }
+                        },
+                        // {
+                        //     index: 'innovations',
+                        //     title: '企业创新需求管理'
+                        // }
                     ]
                 },
                 {
@@ -79,7 +83,7 @@ export default {
                         },
                         {
                             index: 'invoiceInformation',
-                            title: '发票信息管理'
+                            title: '账户与发票信息管理'
                         },
                         {
                             index: 'meInvoice',
@@ -104,6 +108,20 @@ export default {
                             title: '修改服务范围'
                         }
                     ]
+                },
+                {
+                    index: '8',
+                    title: '店铺设置',
+                    subs: [
+                        {
+                            index: 'shopSet',
+                            title: '基础设置'
+                        }
+                        // {
+                        //     index: 'shopCase',
+                        //     title: '案例设置'
+                        // }
+                    ]
                 }
             ],
             navtype: "backHome",
@@ -118,6 +136,8 @@ export default {
             this.$set(this.isTemActive, 0, true);
         } else if (leftNav == 'merchandise') {
             this.navselected = 'merchandise'
+        } else if (leftNav == 'innovations') {
+            this.navselected = 'innovations'
         } else if (leftNav == 'merchandetails') {
             this.navselected = 'merchandise'
         } else if (leftNav == 'invoice') {
@@ -157,9 +177,9 @@ export default {
             //空间权限
             let isRoomServers = this.$store.state.roomServer;
             if (isRoomServers == 1) {
-                if (this.items.length <= 7) {
+                if (this.items.length <= 8) {
                     let json = {
-                        index: '8',
+                        index: '9',
                         title: '空间设置',
                         subs: [
                             {
@@ -179,7 +199,7 @@ export default {
                     this.items.push(json);
                 }
             } else {
-                this.items.splice(7, 8);
+                this.items.splice(8, 9);
             }
         },
         getNavType() {
@@ -190,25 +210,26 @@ export default {
             //store.state.adminleftnavnum里值变化的时候，设置navselected
         },
         selectItems(index) {
+            this.$store.state.sideberArr = false;
             var num = 0;
             this.isTemActive = [];
             if (index == 'backHome') {
                 num = 0;
                 setTimeout(function() {
                     $('li.el-submenu').removeClass('is-opened');
-                },180)
+                }, 180)
                 this.$set(this.isTemActive, num, true);
             } else if (index == 'reviewShow') {
                 num = 3;
                 setTimeout(function() {
                     $('li.el-submenu').removeClass('is-opened');
-                },180)
+                }, 180)
                 this.$set(this.isTemActive, num, true);
             } else if (index == 'dataStatistics') {
                 num = 5;
                 setTimeout(function() {
                     $('li.el-submenu').removeClass('is-opened');
-                },180)
+                }, 180)
                 this.$set(this.isTemActive, num, true);
             }
             this.$store.state.adminleftnavnum = index;
@@ -286,6 +307,10 @@ export default {
 .sidebar .is-opened .el-submenu__title {
     background: #c7000a;
     color: #fff;
+}
+
+.sidebar .el-menu {
+    background: rgb(246, 239, 238);
 }
 </style>
 

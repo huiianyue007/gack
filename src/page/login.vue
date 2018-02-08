@@ -15,7 +15,7 @@
               <div class="login_inp">
                 <el-form-item prop="phone">
                   <div class="icon_img">
-                    <img src='../assets/reg/dhicon.png'>
+                    <img src='../assets/images/reg/dhicon.png'>
                   </div>
                   <el-input v-model.trim.lazy="loginForm.phone" :maxlength="11" placeholder="请输入手机号码"></el-input>
                 </el-form-item>
@@ -23,14 +23,14 @@
               <div class="login_inp" v-if='flag'>
                 <el-form-item prop="sign" :error="errors">
                   <div class="icon_img">
-                    <img src='../assets/reg/zc_mm.png'>
+                    <img src='../assets/images/reg/zc_mm.png'>
                   </div>
-                  <el-input type="password" v-model.trim="loginForm.sign" :minlength="6" :maxlength='12' placeholder="请输入密码" @keyup.enter.native='submitForm'></el-input>
+                  <el-input type="password" v-model.trim="loginForm.sign" :minlength="6"  placeholder="请输入密码" @keyup.enter.native='submitForm'></el-input>
                 </el-form-item>
               </div>
               <el-checkbox-group class="loginType" size="small" v-model="loginForm.type" v-if='flag'>
-                <el-checkbox label="下次自动登录" name="type"></el-checkbox>
-                <router-link to='/profile' class="el_forget">忘记密码?</router-link>
+                <el-checkbox label="记住密码" name="type"></el-checkbox>
+                <router-link to='/profile' class="el_forget" replace>忘记密码?</router-link>
               </el-checkbox-group>
               <el-form-item class="reg_message" prop="meg" v-if='!flag'>
                 <el-row>
@@ -58,7 +58,6 @@
     <v-footer></v-footer>
   </div>
 </template>
-</script>
 <script>
   import md5 from 'js-md5'
   import loginHeader from 'components/loginHeader'
@@ -155,7 +154,9 @@
         return window.localStorage.getItem('username')
       },
       password() {
-        return window.localStorage.getItem('password')
+        if (this.$store.state.remember) {
+          return window.localStorage.getItem('password')
+        }
       }
     },
     methods: {
@@ -165,7 +166,7 @@
             this.time = 60
             this.disabled = false
             this.timer()
-            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
+            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/sendVerificationCode`, {}, {
               params: {
                 telephone: this.loginForm.phone,
                 isuser: '0'
@@ -186,6 +187,28 @@
           setTimeout(this.timer, 1000);
         }
       },
+      setPass () {
+        if(!this.user.password && !this.flag) {
+          this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.push({
+              path: '/user/setpass',
+              query: {
+                title: '设置密码'
+              }
+            })
+          }).catch()
+        } else if (this.service !== '1') {
+          if (this.$store.state.parentPage === '/') {
+            this.$router.replace('/')
+          } else {
+            this.$router.go(-1)
+          }
+        }
+      },
       submitForm() {
         this.$refs.loginForm.validate((valid) => {
           if(valid) {
@@ -203,11 +226,11 @@
                 code: this.loginForm.meg
               }
             }
-            let url = this.flag ? 'https://apitest.gack.citic:8081/guoanmaker/personal/user/verify' : 'https://apitest.gack.citic:8081/guoanmaker/personal/user/fastLanding'
+            let url = this.flag ? `${this.$config.gack}/guoanmaker/personal/user/verify` : `${this.$config.gack}/guoanmaker/personal/user/fastLanding`
             this.$htAjax.post(url, {}, {
               params: userInfo
             }).then(res => {
-              this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+              this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/userstatistics/saveUserstatistics`, {}, {
                 params: {
                   userid: res.data.data.value,
                   type: '5'
@@ -227,6 +250,7 @@
                 avatar: 0,
                 id: data.data.value,
               }
+              this.$store.commit('setRemember', this.loginForm.type)
               if(this.loginForm.type) {
                 let password = window.btoa(this.loginForm.sign)
                 window.localStorage.setItem('username', this.loginForm.phone)
@@ -241,45 +265,54 @@
             }).then(() => {
               if(this.service == '1') {
                 if(this.user.isProvider != null) {
-                  this.$router.push('/backHome');
+                  this.$router.push('/backHome', () => {
+                   this.setPass()
+                  });
                 } else {
                   this.$router.push('/middle', () => {
-                    if(!this.user.password) {
-                      this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                      }).then(() => {
-                        this.$router.push({
-                          path: '/user/setpass',
-                          title: '设置密码'
-                        })
-                      }).catch()
-                    }
+                    this.setPass()
                   });
                 }
               } else if(this.service == '3' && this.$route.query.url) {
-                window.location.href = `${this.$route.query.url + ((/\?/ig).test(this.$route.query.url) ? '&' : '?')}userid=${this.$store.state.userid.id}`
-              } else {
-                this.$router.push('/', () => {
-                  if(!this.user.password) {
-                    this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
-                      confirmButtonText: '确定',
-                      cancelButtonText: '取消',
-                      type: 'warning'
-                    }).then(() => {
-                      this.$router.push({
-                        path: '/user/setpass',
-                        title: '设置密码'
-                      })
-                    }).catch()
+                let url = this.$route.query.url
+                if (!(/\?/ig).test(this.$route.query.url)) {
+                  url = url + '?' + 'userid=' + this.$store.state.userid.id
+                } else {
+                  if(url.indexOf('userid=') !== -1 && url.indexOf('&') !== -1) {
+                    let userid = url.substring(url.indexOf('userid='), url.indexOf('&', url.indexOf('userid=')))
+                    url = url.replace(userid, 'userid=' + this.$store.state.userid.id)
+                  } else if (url.indexOf('userid=') !== -1 && url.indexOf('&') === -1) {
+                    url = url.substring(0, url.indexOf('userid=')) + 'userid=' + this.$store.state.userid.id
+                  }else  {
+                    url += '$userid=' + this.$store.state.userid.id
                   }
-                });
+                }
+                window.location.replace(url)
+              } else {
+                this.setPass()
+//                this.$router.push('/', () => {
+//                  if(!this.user.password) {
+//                    this.$confirm('您的账户安全级别较低，请设置密码', '警告', {
+//                      confirmButtonText: '确定',
+//                      cancelButtonText: '取消',
+//                      type: 'warning'
+//                    }).then(() => {
+//                      this.$router.push({
+//                        path: '/user/setpass',
+//                        title: '设置密码'
+//                      })
+//                    }).catch()
+//                  }
+//                });
               }
-            }).catch((data) => {
+            }).catch(res => {
               this.submitLoading = false;
-              if(data.data.data.key) {
-                this.$message.warning(data.data.data.value);
+              if (!res.data) {
+                this.$message.error('请稍后登陆')
+                return false
+              }
+              if(res.data.data.key) {
+                this.$message.warning(res.data.data.value);
               }
             })
           }
@@ -298,7 +331,7 @@
   .contentbox {
     width: 1200px;
     height: 500px;
-    background: url(~@/assets/gack/loginbg.jpg) no-repeat;
+    background: url(~@/assets/images/gack/loginbg.jpg) no-repeat;
     margin: 0 auto;
     overflow: hidden;
   }

@@ -5,8 +5,8 @@
     </div>
     <el-form :rules = 'rules' :model = 'feedback' ref = 'ruleForm'>
       <el-form-item prop = 'feedback'>
-        <el-input type = 'textarea' v-model = 'feedback.feedback' :rows="20"  :minlength = '200' placeholder="请填写问题内容，最少200字"></el-input>
-        <div class="subhead">请至少输入200个字</div>
+        <el-input type = 'textarea' v-model = 'feedback.feedback' :rows="20"  :maxlength = '200' placeholder="请填写问题内容，最多200字"></el-input>
+        <div class="subhead">请最多输入200个字</div>
       </el-form-item>
     </el-form>
     <div>
@@ -16,13 +16,14 @@
 </template>
 <script>
   const validateText = function (rules, value, callback) {
-    if (value.length < 200) {
-      callback('输入的字符少于200字')
+    if (value.length > 200) {
+      callback('请最多输入200个字')
     } else {
       callback()
     }
   }
   export default {
+    name: 'feedback',
     data: () => ({
       feedback: {
         feedback: ''
@@ -31,28 +32,39 @@
         feedback: [{ validator: validateText, trigger: 'blur' }]
       }
     }),
+    beforeDestroy () {
+      this.$refs.ruleForm.resetFields()
+    },
     methods: {
       submit () {
         this.$refs.ruleForm.validate(valid => {
           if (valid) {
-            this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/newType/insertOperatorFeedback', {}, {
+            this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/newType/insertOperatorFeedback`, {}, {
               params: {
                 feedbackContext: this.feedback.feedback,
                 userId: this.$store.state.userid.id
               }
-            }).then(({data}) => {
-              if (data.status === 200) {
-                this.$message({
-                  type: 'success',
-                  message: '信息反馈成功'
-                })
-              } else if (data.status === 220) {
-                this.$message.error('信息包含敏感词')
-              } else if (data.status === 250) {
-                this.$message.error('信息反馈失败')
-              }
+            }).then(res => {
+                if (res.data.status == 220 || res.data.status == 250) {
+                  return Promise.reject(res)
+                }
+                let data = res.data
+                if (data.data.stauts == 1) {
+                  this.$message({
+                    type: 'success',
+                    message: '信息反馈成功'
+                  })
+                } else if (data.data.stauts == 2) {
+                  this.$message.error('信息反馈次数用完')
+                }
+                this.feedback.feedback = ''
             }).catch(error => {
-              this.$message.error('信息反馈失败')
+              console.log(error.data)
+                 if (error.data.status === 220) {
+                  this.$message.error('信息包含敏感词')
+                } else if (error.data.status === 250) {
+                  this.$message.error('信息反馈失败')
+                }
             })
           }
         })

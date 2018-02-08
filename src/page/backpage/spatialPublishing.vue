@@ -42,7 +42,7 @@
                 <el-form-item label="详细位置 : " required>
                     <el-input class="input_style" @blur="addressPosition(ruleForm.address)"
                      v-model="ruleForm.address" style="width:300px"></el-input>
-                    <img src="../../assets/information/position.png" style="width:12px;height:15px;margin-right:10px;cursor: pointer;" @click="Place" />
+                    <img src="../../assets/images/information/position.png" style="width:12px;height:15px;margin-right:10px;cursor: pointer;" @click="Place" />
                     <div class="chulai" v-if="ditu">
                         <div class="amap-page-container">
                             <el-amap-search-box ref='searches' class="search-box" :search-option="searchOption" :on-search-result="onSearchResult"></el-amap-search-box>
@@ -71,22 +71,24 @@
                     <div class="el-form-item__error" v-if="logo">至少有一个</div>
                 </el-form-item>
                 <el-form-item label="空间列表图 : " v-if="!ditu" required>
-                    <el-upload class="avatar-uploader" :style="lists?'border-color:red':''" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
-                        <img v-if="imageUrlLists" :src="imageUrlLists" class="avatar" style="width:100%;height:100%">
+                    <el-upload class="avatar-uploader" :style="lists?'border-color:red':''" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
+                        <img v-if="imageUrlLists" :src="imageUrlLists" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <div class="el-form-item__error" v-if="lists">请上传</div>
                 </el-form-item>
+                <div class="zhushi">注：建议上传图片比例 宽595px 高330px</div>
                 <br/>
                 <el-form-item label="空间展示 : " class="upLoad" v-if="!ditu" ref="oimg" required>
-                    <el-upload :class="fileList2.length >=5 ? 'active_index' : ''" action="https://apitest.gack.citic:8082/putImg" name="companyLogo" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="del" :file-list="fileList2" :on-success="bianhua" :on-progress="add" :before-upload="beforeAvatarUpload">
+                    <el-upload :class="fileList2.length >=5 ? 'active_index' : ''" :action="`${$config.back}/putImg`" name="companyLogo" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="del" :file-list="fileList2" :on-success="bianhua" :on-progress="add" :before-upload="beforeAvatarUpload">
                         <i class="el-icon-plus"></i>
                     </el-upload>
-                    <el-dialog v-model="dialogVisible" size="tiny">
+                    <el-dialog :visible.sync="dialogVisible" width="30%">
                         <img width="100%" :src="dialogImageUrl" alt="">
                     </el-dialog>
                     <div class="el-form-item__error" v-if="leastThree">最少上传3张</div>
                 </el-form-item>
+                <div class="zhushi">注：建议上传图片比列 宽450px 高250px</div>
                 <br/>
                 <el-form-item label="空间详情 : " v-if="!ditu" prop="spaceDetail" class="xiangqing" required>
                     <v-editor :fileName="'myFile'" :toolbars='toolbars' :uploadUrl="ruleForm.uploadUrl" v-model="ruleForm.spaceDetail"></v-editor>
@@ -118,7 +120,7 @@ export default {
                 roomName: '',
                 describeAsk: '',
                 address: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 spaceDetail: '',
                 roomImgOne: '',
                 roomImgTwo: '',
@@ -181,7 +183,7 @@ export default {
             //地图
             markers: [],
             searchOption: {
-                city: '北京',
+                city: '全国',
                 citylimit: true
             },
             mapCenter: [116.40387397, 39.91488908],
@@ -200,7 +202,7 @@ export default {
                                 self.$refs.searches.$data.keyword = result.formattedAddress
                                 self.$nextTick();
                             }
-                           
+
                         });
 
                     }
@@ -254,16 +256,21 @@ export default {
                 id: this.$store.state.compile
             }
 
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomById', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/selectRoomById`, {}, {
                 params: Compile
             }).then(({ data }) => {
                 if (data.status == 200) {
                     this.lng = data.data.lng
                     this.lat = data.data.lat
                     this.ruleForm = data.data;
+                    this.provinceChange(data.data.province.id)
+                    this.cityChange(data.data.city.id)
                     this.value1 = data.data.province.id;
+                    
                     this.value2 = data.data.city.id;
                     this.value3 = data.data.area.id;
+                    
+
                     let home = ['roomImgOne', 'roomImgTwo', 'roomImgThree', 'roomImgFour', 'roomImgFive']
                     let aaa = home.map(item => {
                         if (this.ruleForm[item]) {
@@ -302,7 +309,7 @@ export default {
             })
 
         } else {
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/selectAllSpacefacilities')
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/selectAllSpacefacilities`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         this.facilitys = data.data;
@@ -342,7 +349,7 @@ export default {
         },
         select() {
             return new Promise((resolve, reject) => {
-                this.$htAjax.post("https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/selectAllSpacefacilities")
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/selectAllSpacefacilities`)
                     .then(response => {
                         resolve(response)
                     }).catch(err => {
@@ -523,7 +530,7 @@ export default {
         },
         // 获取省列表
         getProvince() {
-            this.$htAjax.post('https://apitest.gack.citic:8082/selectOprtorProvice')
+            this.$htAjax.post(`${this.$config.back}/selectOprtorProvice`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         this.options1 = data.data;
@@ -548,7 +555,7 @@ export default {
                     id: value
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/selcityList3', {}, {
+                this.$htAjax.post(`${this.$config.back}/selcityList3`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status === 200) {
@@ -571,11 +578,12 @@ export default {
                 this.value3 = '';
             }
             if (value) {
+                // alert(1)
                 var reg = {
                     id: value
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/selAreaList2', {}, {
+                this.$htAjax.post(`${this.$config.back}/selAreaList2`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status === 200) {
@@ -685,7 +693,7 @@ export default {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         if (!this.logo && !this.lists && !this.leastThree && !this.op1 && !this.op2 && !this.op3) {
-                            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/updateRoomById', json)
+                            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/updateRoomById`, json)
                                 .then(({ data }) => {
                                     if (data.status === 200) {
                                         that.$message({
@@ -739,7 +747,7 @@ export default {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         if (!this.logo && !this.lists && !this.leastThree && !this.statePosition) {
-                            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/addProvideRoom', json)
+                            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/addProvideRoom`, json)
                                 .then(({ data }) => {
                                     if (data.status === 200) {
                                         that.$message({
@@ -764,7 +772,11 @@ export default {
 </script>
 
 <style scoped>
-
+.zhushi{
+    margin-left: 120px;
+    color: red;
+    font-size: 12px;
+}
 .amap-demo {
     position: fixed;
     left: 0;
@@ -843,22 +855,31 @@ export default {
     border: 1px dashed #c0ccda;
     border-radius: 6px;
     box-sizing: border-box;
-    width: 148px;
-    height: 148px;
+    /*min-width: 148px;
+    max-width: 600px;
+    height: 148px;*/
     cursor: pointer;
-    line-height: 146px;
+    /*line-height: 146px;*/
     vertical-align: top;
     text-align: center;
     font-size: 28px;
     color: #8c939d;
 }
-
-.avatar-uploader .avatar-uploader-icon {
-    width: 100%;
-    height: 100%;
+.spatialPublishing .avatar{
+    width: auto;
+    min-width: 148px;
+    max-width: 600px;
+    height: 148px;
+    display: block;
+}
+.spatialPublishing .el-icon-plus{
+    font-size: 28px;
+    color: #8c939d;
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
     text-align: center;
 }
-
 .avatar-uploader:hover {
     border-color: #c7000a;
 }
@@ -939,14 +960,6 @@ export default {
     border: 0;
 }
 
-.spatialPublishing .avatar-uploader-icon {
-    width: 100%;
-    height: 100%;
-    line-height: 1;
-}
-
-.spatialPublishing .avatar-uploader-icon {}
-
 .spatialPublishing .active_index .el-upload--picture-card {
     display: none;
 }
@@ -954,4 +967,4 @@ export default {
 .tangram-suggestion-main {
     z-index: 999;
 }
-</style> 
+</style>

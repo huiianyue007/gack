@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <div class="step">
@@ -104,26 +105,23 @@ export default {
                 if (valid) {
                     let passwordMd = md5(this.ruleForm2.checkPass);
                     let oldPassword= md5(this.ruleForm2.lodpass);
+                    
                     let item = {
                         userid: this.userid,
                         oldPassword: oldPassword.toUpperCase(),
                         newPassword: passwordMd.toUpperCase()
                     }
-                    var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/changeUserPassword', {}, { params: item })
+                    this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/changeUserPassword`, {}, { params: item })
                         .then(({ data }) => {
                             if (data.status == 200) {
                                 if (data.data.key == 'success') {
-                                    that.$message.success(data.data.value);
-                                    that.active = 2
-                                } else if (data.data.key == 'error') {
-                                    that.$message.warning(data.data.value);
-                                    that.active = 1
-                                }
-                            } else {
-                                that.$message.error(data.msg);
-                            }
-                        }).catch(function(err) {
+                                    this.$message.success(data.data.value);
+                                    this.active = 2
+                                } 
+                            } 
+                        }).catch(err => {
+                            this.$message.warning(err.data.data.value);
+                            this.active = 1
                         });
                 } else {
                     return false;
@@ -146,7 +144,8 @@ export default {
 
 .pwd {
     width: 40%;
-    margin: 30px auto;
+    margin-top: 20px;
+    margin-left: 240px;
 }
 
 .suc {

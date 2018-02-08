@@ -1,6 +1,6 @@
 <template>
   <el-card class = 'appoint' :body-style = '{overflow: "hidden",background: "#f3f3f3"}'>
-    <tab-header :tabArr = 'tabList' @changeType = 'change' defaultValue = '1'slot = 'header' class = 'tab_header'></tab-header>
+    <tab-header :tabArr = 'tabList' @changeType = 'change' :defaultValue = '$route.query.activeType ? "2" : "1"'slot = 'header' class = 'tab_header'></tab-header>
     <!--<el-table :data = 'tableData' v-if = 'activeType == "1"'>-->
       <!--<el-table-column label = '空间名字' prop = 'roomName' align = 'center'></el-table-column>-->
       <!--<el-table-column label = '联系人' prop = 'contactPerson' align = 'center'></el-table-column>-->
@@ -28,32 +28,32 @@
         <div class="fl">{{ item.roomName }}</div><div class="fr text-red">{{item.state == '0' ? '预约中' : '预约成功'}}</div>
       </div>
       <div class="time">
-        <img src="~assets/reg/canguan.png" alt="">
+        <img src="~assets/images/reg/canguan.png" alt="">
         参观时间
-        <span>{{ item.reserveTime | time('.-.- :') }}</span>
+        <span>{{ item.reserveTime | time('.-.-') }}</span>
       </div>
       <div class="time">
-        <img src="~assets/reg/number.png" alt="">
+        <img src="~assets/images/reg/number.png" alt="">
         参观人数
         <span>{{ item.reserveAmount }}</span>
       </div>
       <div class="time">
-        <img src="~assets/reg/beizhu.png" alt="">
+        <img src="~assets/images/reg/beizhu.png" alt="">
         备注信息
-        <span>{{item.remark}}</span>
+        <span class = 'inline-block' style = 'vertical-align:top;width:calc(100% - 9em)'>{{item.remark}}</span>
       </div>
     </div>
-    <router-link class="view" v-for = '(item, key) in tableData' :key = 'key'  v-if = 'activeType == "2"' tag = 'div' :to = '{path: `/user/appcon/${item.id}/yuyue`, query: {title: "我的预约"}}'>
+    <router-link class="view" v-for = '(item, key) in tableData' :key = 'key'  v-if = 'activeType == "2"' tag = 'div' :to = '{path: `/user/appcon/${item.id}/yuyue`, query: {title: "我的预约", fromtitle: "我的预约"}}'>
       <div class="view_title">
         <div class="fl">{{ item.eventTitle }}</div><div class="fr text-red" v-if = 'item.isMoney == 1'>{{item.state | activity}}</div><div class="fr text-red" v-if = 'item.isMoney == 0'>报名成功</div>
       </div>
       <div class="time">
-        <img src="~assets/reg/canguan.png" alt="">
+        <img src="~assets/images/reg/canguan.png" alt="">
         活动时间
         <span>{{ item.eventStartTime | time('.-.- :') }}</span>
       </div>
       <div class="time">
-        <img src="~assets/reg/dingwei.png" width = '15' alt="">
+        <img src="~assets/images/reg/dingwei.png" width = '15' alt="">
         活动地点
         <span>{{ item.eventDetailedAddress }}</span>
       </div>
@@ -76,6 +76,7 @@
 <script>
   import tabHeader from 'components/tabHeader'
   export default {
+    name: 'appointment',
     data: () => ({
       tabList: [{
         title: '我的预约',
@@ -101,7 +102,10 @@
         }
       }
     },
-    mounted () {
+    created () {
+      if (this.$route.query.activeType) {
+        this.activeType = '2'
+      }
       this.init(this.activeType)
     },
     watch: {
@@ -128,7 +132,7 @@
       },
       init (opt) {
 //        'http://172.16.32.123:8080/guoanmaker/operator/activityEnlist/getFenYeEnlistAndCount'
-        let url = opt == '1' ? 'https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findSpaceReserve' : 'https://apitest.gack.citic:8083/guoanmaker/operator/activityEnlist/getFenYeEnlistAndCount'
+        let url = opt == '1' ? `${this.$config.back}/guoanmaker/provide/orderform/findSpaceReserve` : `${this.$config.activity}/guoanmaker/operator/activityEnlist/getFenYeEnlistAndCount`
         let data = opt == '1' ? {
           pageSize: this.pageSize,
           pageNumber: this.currentPage -1,
@@ -158,7 +162,8 @@
         this.$router.push({
           path: `/user/appcon/${opt.id}/space`,
           query: {
-            title: '我的预约'
+            title: '我的预约',
+            fromtitle: '我的预约'
           }
         })
       },
@@ -166,7 +171,7 @@
         this.activeType = opt
       },
       cancelOrder (opt, val) {
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/activityEnlist/updateActivityEnlistState', {
+        this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/activityEnlist/updateActivityEnlistState`, {
           userId: this.$store.state.userid.id,
           id: opt.id,
           state: val

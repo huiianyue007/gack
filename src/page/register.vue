@@ -8,7 +8,7 @@
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="手机号码" prop="phone">
                         <div class="icon_img">
-                            <img src='../assets/reg/dhicon.png'>
+                            <img src='../assets/images/reg/dhicon.png'>
                         </div>
                         <el-input v-model="ruleForm.phone" :maxlength="11" placeholder="手机号码"></el-input>
                     </el-form-item>
@@ -27,25 +27,26 @@
                         </el-col>
                         <el-col :span="2">&nbsp;</el-col>
                         <el-col :span="11" class="reg-line">
-                            <el-button type="primary" @click="regGetCode()" style="background:#f6f7f8;border: 1px solid #C4C4C4;color:#4a4a4a" :disabled="disabled || time > 0">{{ verCode }}</el-button>
+                          <g-verify @click.native="regGetCode" width = '100' height="36" :code = 'verCode'></g-verify>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="设置密码" prop="password">
                         <div class="icon_img">
-                            <img src='../assets/reg/zc_mm.png'>
+                            <img src='../assets/images/reg/zc_mm.png'>
                         </div>
-                        <el-input type='password' v-model="ruleForm.password" :maxlength="12" placeholder="请设置一个6到12位的密码"></el-input>
+                        <el-input type='password' v-model="ruleForm.password"  placeholder="请设置一个6到16位的密码"></el-input>
                     </el-form-item>
                     <el-form-item label="确认密码" prop="conPassword">
                         <div class="icon_img">
-                            <img src='../assets/reg/zc_mm.png'>
+                            <img src='../assets/images/reg/zc_mm.png'>
                         </div>
-                        <el-input type='password' v-model="ruleForm.conPassword" :maxlength="12" placeholder="再次输入密码"></el-input>
+                        <el-input type='password' v-model="ruleForm.conPassword"  placeholder="再次输入密码"></el-input>
                     </el-form-item>
                     <el-form-item label="" prop="type">
                         <el-checkbox-group v-model="ruleForm.type">
-                            <el-checkbox label="我已阅读" name="type"></el-checkbox>
-                            <span class="reg_agreement">《国安创客网站注册协议》</span>
+                            <el-checkbox  name="type">
+                              我已阅读<span class="reg_agreement" @click.self  = 'showDialogTable'>《国安创客网站注册协议》</span>
+                            </el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                     <el-form-item class="reg_login">
@@ -55,7 +56,7 @@
                 </el-form>
             </div>
             <div class="reg_right">
-                <img src="../assets/reg/zc_bj.jpg">
+                <img src="../assets/images/reg/zc_bj.jpg">
             </div>
         </div>
         <el-dialog title="用户协议" :visible.sync="dialogTableVisible" lock-scroll :close-on-click-modal='false'>
@@ -113,7 +114,10 @@
                     <p>（一）因本服务条款引发的一切争议之解决均应适用中国法律。各方首先应通过友好协商解决；协商不成的，任一方均可向中信国安创客投资有限公司所在地人民法院起诉。</p>
                     <p>（二）本协议的期限自用户点击同意条款之日起算，至用户注销账号之日起自动终止。</p>
                 </div>
-                <el-button type="primary" size='large' class='同意' @click='ruleForm.type = true'>同意</el-button>
+                <div class="text-center">
+                  <el-button type="primary" size='large' class='同意' @click='hiddendialogTable'>同意</el-button>
+                  <!--<el-button type="primary" size='large' class='同意' @click='hiddendialogTable'>取消</el-button>-->
+                </div>
             </div>
         </el-dialog>
         <v-footer></v-footer>
@@ -123,14 +127,17 @@
 import md5 from 'js-md5'
 import vFooter from '../components/FooterNew'
 import loginHeader from 'components/loginHeader'
+import GVerify from 'components/GVerify'
 export default {
+  name: 'register',
     data() {
+    let self = this
         var validatePass = (rule, value, callback) => {
-            let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/
+            let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
             if (value === '') {
                 callback(new Error('请输入密码'));
             } else if (regExp.test(value) === false) {
-                callback(new Error('6-12字母和数字组成，不能是纯数字或纯英文'))
+                callback(new Error('6-16字母和数字组成，不能是纯数字'))
             } else {
                 if (this.ruleForm.conPassword !== '') {
                     this.$refs.ruleForm.validateField('conPassword');
@@ -139,11 +146,11 @@ export default {
             }
         };
         var validatePass2 = (rule, value, callback) => {
-            let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/
+            let regExp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
             if (value === '') {
                 callback(new Error('请再次输入密码'));
             } else if (regExp.test(value) === false) {
-                callback(new Error('6-12字母和数字组成，不能是纯数字或纯英文'))
+                callback(new Error('6-16字母和数字组成，不能是纯数字'))
             } else if (value !== this.ruleForm.password) {
                 callback(new Error('两次输入密码不一致!'));
             } else {
@@ -151,7 +158,7 @@ export default {
             }
         };
         const validatever = (rules, value, callback) => {
-            if (value !== this.verCode) {
+            if (value.toUpperCase() !== this.verCode.toUpperCase()) {
                 callback(new Error('验证码不正确'));
             } else {
                 callback()
@@ -172,10 +179,10 @@ export default {
                 conPassword: '',
                 type: true
             },
+            registed: false,
             rules: {
-                phone: [
-                    { required: true, message: '请输入手机号', trigger: 'blur' },
-                    { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
+                phone: [,
+                  { validator: self.validatePhone, trigger: 'blur' }
                 ],
                 meg: [
                     { required: true, message: '请输入短信验证码', trigger: 'blur' },
@@ -192,11 +199,6 @@ export default {
             }
         };
     },
-    watch: {
-        'ruleForm.type'(val) {
-            this.dialogTableVisible = !val
-        }
-    },
     //计算属性
     computed: {
         regGetText: function() {
@@ -205,8 +207,19 @@ export default {
     },
     components: {
         vFooter,
-        loginHeader
+        loginHeader,
+        GVerify
     },
+//  watch: {
+//    'ruleForm.type' (val, oldval) {
+//      if (!oldval && this.dialogTableVisible) {
+//        this.dialogTableVisible = false
+//      } else if (!oldval && !this.dialogTableVisible) {
+//        this.dialogTableVisible = true
+//        this.ruleForm.type = false
+//      }
+//    }
+//  },
     created: function() {
         //创建
     },
@@ -216,6 +229,25 @@ export default {
         this.regGetCode()
     },
     methods: {
+      validatePhone (rules, value, callback) {
+        if (!value) {
+          callback(new Error('请输入手机号'))
+        } else if (!(/^1[34578]\d{9}$/).test(value)) {
+          callback(new Error('请输入正确的手机号'))
+        } else {
+          this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/verifyUser`, {}, {
+            params: {
+              username: value
+            }
+          }).then(() => {
+            this.registed = false
+            callback()
+          }).catch(() => {
+            this.registed = true
+            callback(new Error('手机号已注册'))
+          })
+        }
+      },
         regGetCode() {
             //        let timestamp = new Date().valueOf()
             //        var index = this.verCode.indexOf('?', this.verCode)
@@ -236,6 +268,10 @@ export default {
         },
         //获取短信验证码
         regGet() {
+            if (this.registed) {
+              this.$message.error('手机号已注册')
+              return false
+            }
             var that = this;
             this.$refs.ruleForm.validateField('phone', (valid) => {
                 if (valid == '') {
@@ -246,7 +282,7 @@ export default {
                         telephone: this.ruleForm.phone,
                         isuser: '0'
                     }
-                    this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/sendVerificationCode', {}, {
+                    this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/sendVerificationCode`, {}, {
                         params: phone
                     }).then(({ data }) => {
                         that.$message.success(data.data.value);
@@ -267,6 +303,13 @@ export default {
                 }
             }
         },
+      hiddendialogTable () {
+        this.ruleForm.type = true
+        this.dialogTableVisible = false
+      },
+      showDialogTable () {
+          this.dialogTableVisible = true
+      },
         submitForm() {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
@@ -278,10 +321,10 @@ export default {
                             password: passwordMd.toUpperCase(),
                             code: this.ruleForm.meg
                         }
-                        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/registered', {}, {
+                        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/registered`, {}, {
                             params: reg
                         }).then(() => {
-                          return this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/verify', {}, {
+                          return this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/verify`, {}, {
                             params: {
                               username: this.ruleForm.phone,
                               password: passwordMd.toUpperCase()
@@ -289,14 +332,14 @@ export default {
                           })
                         }).then(res => {
                           if (this.$route.query.state) {
-                            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/setSource', {}, {
+                            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/setSource`, {}, {
                               params: {
                                 userid: res.data.data.value,
                                 channelSource: this.$route.query.state
                               }
                             })
                           }
-                          this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/userstatistics/saveUserstatistics', {}, {
+                          this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/userstatistics/saveUserstatistics`, {}, {
                             params: {
                               userid: res.data.data.value,
                               type: '4'
@@ -306,13 +349,16 @@ export default {
                         }).then(({ data }) => {
                             if (data.data.key == 'success') {
                               _czc.push(["_trackEvent",'注册','注册成功']);
-                                this.$store.commit('setFirstLogin', 1)
+                              _dgt.push(['track_userid', data.data.value])
+                              _dgt.push(['trackEvent', 'signup',['d_uid'], [data.data.value]])
+
+//                              this.$store.commit('setFirstLogin', 1)
                                 that.$message({
                                     message: '注册成功，请登录',
                                     type: 'success'
                                 });
                                 if (this.$route.query.url && this.$route.query.state) {
-                                  that.$router.push({
+                                  that.$router.replace({
                                     path: that.login,
                                     query: {
                                       url: this.$route.query.url,
@@ -320,7 +366,7 @@ export default {
                                     }
                                   });
                                 } else {
-                                  that.$router.push(that.login);
+                                  that.$router.replace(that.login);
                                 }
                             } else {
                                 that.$message.warning(data.data.value);
@@ -349,6 +395,7 @@ export default {
 <style  scoped>
 .reg_box {
     width: 100%;
+    min-width: 1190px;
     height: auto;
     overflow: hidden;
 }

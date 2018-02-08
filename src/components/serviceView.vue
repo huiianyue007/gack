@@ -29,15 +29,15 @@
     </div>
     <div class="view_list cursor" v-if = '!flag' v-for = '(item, key) in listData' :key = 'key' @click = 'routeTo(item)'>
       <el-row>
-        <el-col :span = '4' :style = '{height: "108px", background: "url(" + item.picture + ") center center no-repeat", backgroundSize: "contain"}'>
-          <!--<img :src="item.picture" alt="">-->
+        <el-col :span = '4'>
+          <box-img :bgImg = 'item.picture' :cover = 'false' prop = '2:3'></box-img>
         </el-col>
         <el-col :span = '!item.corporateName ? 16 : 20'>
           <el-row :gutter = '6'>
            <div class="oh logo">
              <div :class="{fl: item.corporateName}">
                <p>{{ item.companyProject || item.name }}</p>
-               <div class="subhead" v-if = 'item.business'><img src="~assets/reg/job.png" alt="" height = '15'> {{ item.business }}</div>
+               <div class="subhead" v-if = 'item.business'><img src="~assets/images/reg/job.png" alt="" height = '15'> {{ item.business }}</div>
                <div v-if = 'item.corporateName' class = 'tip'>{{ item.corporateName }}</div>
              </div>
              <div class="fr" v-if = 'item.corporateName'>

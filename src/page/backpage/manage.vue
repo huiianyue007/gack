@@ -104,7 +104,6 @@ export default {
 
 .crumbs {
     height: auto;
-    margin: 15px 0;
     margin-top: 15px;
     width: 100%;
 }

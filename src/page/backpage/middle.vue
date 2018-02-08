@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="middle">
-            <img src="../../assets/backImg/middle.png">
+            <img src="../../assets/images/backImg/middle.png">
             <span class="btn" @click="sellerMe">立即赚钱</span>
         </div>
     </div>
@@ -39,10 +39,10 @@ export default {
 
 
 /**
- * $Bottom 
+ * $Bottom
  **/
 
-.btn {
+.middle .btn {
     /*margin: 15px 15px 0;
   padding: .6em 1.1em;
   font-size: 26px;
@@ -81,7 +81,7 @@ export default {
 }
 
 @media screen and (max-width: 1000px) {
-    .btn {
+    .middle .btn {
         width: 100px;
         height: 30px;
         margin-left: -60px;
@@ -90,7 +90,7 @@ export default {
     }
 }
 
-.btn:hover {
+.middle .btn:hover {
     animation-play-state: paused;
     -webkit-animation-play-state: paused;
     /* Safari 和 Chrome */
@@ -110,7 +110,7 @@ export default {
 
 
 /**
- * $keyframes \ gelatine 
+ * $keyframes \ gelatine
  **/
 
 @keyframes gelatine {

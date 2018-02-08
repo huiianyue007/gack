@@ -1,27 +1,15 @@
 <template>
   <div class="layout">
-    <div class="layout_con" :style = 'layStyle' ref = 'lay'>
+    <div class="layout_con">
       <slot>
-        <img src="~assets/gack/20171013193051.png" alt="">
+        <img src="~assets/images/gack/20171013193051.png" alt="">
       </slot>
     </div>
   </div>
 </template>
 <script>
   export default {
-    data: () => ({
-      layStyle: ''
-    }),
-    mounted () {
-      this.$nextTick(() => {
-        let width = this.$refs.lay.offsetWidth
-        let height = this.$refs.lay.offsetHeight
-        this.layStyle = {
-          'top': `calc(50% - ${height / 2}px)`,
-          'left': `calc(50% - ${width / 2}px`
-        }
-      })
-    }
+    name: 'layout'
   }
 </script>
 <style scoped>
@@ -34,6 +22,9 @@
   }
   .layout_con{
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   .layout_con img{
     width: 200px;

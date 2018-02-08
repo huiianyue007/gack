@@ -17,7 +17,8 @@
           </el-col>
           <el-col :span = '19'>
             <div class="title">{{ commodity.commodityName }}</div>
-            <div class="subhead">单价: <span class="text-red">{{ commodity.finalPrice}}元</span></div>
+            <div class="subhead" v-if = 'commodity.type === "2" && commodity.isTerritoryRestriction === "1" && commodity.isBargaining !== "1"'>单价: <span class="text-red">{{ finalPrice }}元  / {{ commodity.measurementUnit }}</span></div>
+            <div class="subhead" v-else>单价: <span class="text-red">{{ commodity.finalPrice}}元 / {{ commodity.measurementUnit }}</span></div>
             <div class="subhead">地区 {{ $route.query.activeAddress }}</div>
           </el-col>
         </el-row>
@@ -25,27 +26,27 @@
       <card :bodyStyle = '{padding: "15px"}' class="form" v-if = 'commodity'>
         <div class="title" slot = 'header'>个人信息</div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class = 'form_container'>
-          <el-form-item label="联系人" prop = 'contactPerson' required>
+          <el-form-item label="联系人" prop = 'contactPerson'>
             <el-input v-model = 'ruleForm.contactPerson' :minlength = '2' :maxlength = '7' placeholder="请输入联系人"></el-input>
           </el-form-item>
-          <el-form-item label="电话" prop = 'contactNumber' required>
+          <el-form-item label="电话" prop = 'contactNumber'>
             <el-input v-model = 'ruleForm.contactNumber' :maxlength = '11' placeholder = '请输入联系电话'></el-input>
           </el-form-item>
-          <el-form-item label = '租用数量' v-if = 'commodity.type == "1"' prop = 'quantity' required>
+          <el-form-item label = '租用数量' v-if = 'commodity.type == "1"' prop = 'quantity'>
             <el-input v-model = "ruleForm.quantity" placeholder="请填写租用数量"></el-input>
           </el-form-item>
-          <el-form-item label="租赁时间范围：" label-width = '140px' required class="serverarea" v-if = 'commodity.type == "1"'>
-            <el-col :span="12">
-              <el-form-item prop="beginDate">
-                <el-date-picker :editable = 'false' v-model="ruleForm.beginDate" type="datetime" placeholder="选择起始时间" :picker-options="pickerOptions"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item prop="endDate">
-                <el-date-picker v-model="ruleForm.endDate" type="datetime" placeholder="选择结束时间"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
+          <!--<el-form-item label="租赁时间范围：" label-width = '140px' class="serverarea" v-if = 'commodity.type == "1"'>-->
+            <!--<el-col :span="12">-->
+              <!--<el-form-item prop="beginDate">-->
+                <!--<el-date-picker :editable = 'false' v-model="ruleForm.beginDate" type="date" placeholder="选择起始时间" :picker-options="pickerOptions"></el-date-picker>-->
+              <!--</el-form-item>-->
+            <!--</el-col>-->
+            <!--<el-col :span="12">-->
+              <!--<el-form-item prop="endDate">-->
+                <!--<el-date-picker :editable = 'false' v-model="ruleForm.endDate" type="date" placeholder="选择结束时间" :picker-options="pickerOptions1"></el-date-picker>-->
+              <!--</el-form-item>-->
+            <!--</el-col>-->
+          <!--</el-form-item>-->
           <el-form-item label = '请描述你的需求' :maxlength = '50' prop="endDate">
             <el-input type="textarea" :rows = '4' v-model = 'ruleForm.requirementDescription' placeholder = '请填写您的需求描述'></el-input>
           </el-form-item>
@@ -60,6 +61,7 @@
 <script>
   import card from 'components/card'
   export default {
+    name: 'negotiated',
     data () {
       const checkNumber = (rules, val, callback) => {
         if (val <= 0) {
@@ -84,6 +86,7 @@
           beginDate: '',
           endDate: ''
         },
+        finalPrice: 0,
         rules: {
           contactPerson: [{
             required: true, message: '请输入联系人', trigger: 'blur'
@@ -98,26 +101,55 @@
           }, {
             validator: checkNumber, trigger: 'blur'
           }],
-          beginDate: [{ type:'date', validator: self.checkStartTime, trigger: 'blur' }],
-          endDate: [{ type:'date', validator: self.checkEndTime, trigger: 'blur' }]
+//          beginDate: [{ type:'date', validator: self.checkStartTime, trigger: 'blur' }],
+//          endDate: [{ type:'date', validator: self.checkEndTime, trigger: 'blur' }]
         }
       }
     },
-    activated () {
-      this.$htAjax.get('https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/getProvideCommodity', {
+    created () {
+      this.$htAjax.get(`${this.$config.back}/guoanmaker/provide/commodityMove/getProvideCommodity`, {
         params: {
           id: this.query.id,
-          cityCode: this.address.inCity.code,
+          cityCode: this.$route.query.cityCode || this.address.inCity.code,
+          secckillId: this.$route.query.secckillId
         }
       }).then(({ data }) => {
           this.commodity = data.data
+          if (this.commodity.type === "2" && this.commodity.isTerritoryRestriction === "1" && this.commodity.isBargaining !== "1" && this.$route.query.rid) {
+            this.commodity.serviceRange.forEach(item => {
+              if (item.id == this.$route.query.rid) {
+                this.finalPrice = item.finalPrice
+              }
+            })
+            if (!this.finalPrice) {
+              this.finalPrice = this.commodity.finalPrice
+            }
+          }
       }).catch(error => {
         console.log(error)
       })
     },
+    beforeDestroy () {
+      this.ruleForm =  {
+        contactPerson: '',
+        contactNumber: '',
+        quantity: '',
+        requirementDescription: '',
+        beginDate: '',
+        endDate: ''
+      }
+    },
     computed: {
       query () {
         return this.$route.query
+      },
+      pickerOptions1 () {
+        let self = this
+        return {
+          disabledDate(time) {
+            return time.getTime() < (self.ruleForm.beginDate ? new Date(self.ruleForm.beginDate).getTime() : Date.now() - 8.64e7) || (self.ruleForm.beginDate ? new Date(self.ruleForm.beginDate).getTime() : Date.now()) + 6* 8.64e7 < time.getTime()
+          }
+        }
       }
     },
     methods: {
@@ -158,21 +190,34 @@
                 data[name] = this.ruleForm[name]
               }
             }
-            data.beginDate = this.timeFormat(data.beginDate)
-            data.endDate = this.timeFormat(data.endDate)
+            if (this.commodity.type == "1") {
+//              data.beginDate = this.timeFormat(data.beginDate)
+//              data.endDate = this.timeFormat(data.endDate)
+              data.beginDate = new Date().toLocaleDateString().replace(/\//ig, '-')
+              data.endDate = new Date().toLocaleDateString().replace(/\//ig, '-')
+            }
             data.userid = this.$store.state.userid.id
-            data.commodityid = this.commodity.id
             if (this.commodity.type === "2" && this.commodity.isTerritoryRestriction === "1") {
               data.serverPlace = this.$route.query.activeAddress
               data.rangeid = this.$route.query.code
             }
             let url = ''
-            if (this.commodity.isBargaining === '1') {
-              url = 'https://apitest.gack.citic:8081/guoanmaker/personal/orderform/createBargainingOrder'
-            } else if (this.commodity.type === '2') {
-              url = 'https://apitest.gack.citic:8081/guoanmaker/personal/orderform/createNotBargainingOrder'
-            } else if (this.commodity.type === '1') {
-              url = 'https://apitest.gack.citic:8081/guoanmaker/personal/orderform/createSeatLeaseOrder'
+            if (this.commodity.isSeckill == '1'){
+              data.commodityid = this.commodity.id
+              if (this.commodity.isBargaining === '1') {
+                url = `${this.$config.gack}/guoanmaker/personal/orderform/createBargainingOrder`
+              } else if (this.commodity.type === '2') {
+                url = `${this.$config.gack}/guoanmaker/personal/orderform/createNotBargainingOrder`
+              } else if (this.commodity.type === '1') {
+                url = `${this.$config.gack}/guoanmaker/personal/orderform/createSeatLeaseOrder`
+              }
+            } else if (this.commodity.isSeckill == '2') {
+              data.spikeid = this.$route.query.secckillId
+              if (this.commodity.type === '2') {
+                url = `${this.$config.gack}/guoanmaker/personal/orderform/createSpikeNotBargainingOrder`
+              } else if (this.commodity.type === '1') {
+                url = `${this.$config.gack}/guoanmaker/personal/orderform/createSpikeSeatLeaseOrder`
+              }
             }
             this.$htAjax.post(url, {}, {
               params: data
@@ -189,10 +234,14 @@
                   type: 'success',
                   message: '订单创建成功'
                 })
-                this.$router.push(`/submit-order/${data.data.value}/commodity`)
+                this.$router.replace(`/submit-order/${data.data.value}/commodity`)
               }
-            }).catch(() => {
-              this.$message.error('商品库存不足')
+            }).catch(error => {
+              if (error.data.data.value) {
+                this.$message.error(error.data.data.value)
+              } else {
+                this.$message.error('订单创建失败')
+              }
             })
           }
         });

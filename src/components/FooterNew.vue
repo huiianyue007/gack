@@ -6,10 +6,10 @@
                     友情链接&nbsp;|&nbsp;
                   <a :href="item.url" v-for = 'item in homePage.friendshiplinks' class = 'frend_link'>{{ item.linkName }}</a>
                     <span class="lianxi phone">
-                        <img src="../assets/reg/dianhua.png">&nbsp;400-851-8585&nbsp;&nbsp;&nbsp;9am-6pm&nbsp;&nbsp;&nbsp;工作日
+                        <img src="../assets/images/reg/dianhua.png">&nbsp;400-851-8585&nbsp;&nbsp;&nbsp;9am-6pm&nbsp;&nbsp;&nbsp;工作日
                     </span>
                     <span class="lianxi mail">
-                        <img src="../assets/reg/youjian.png">&nbsp;
+                        <img src="../assets/images/reg/youjian.png">&nbsp;
                         <a href="mailto:gackservice@gakj.citic.com">gackservice@gakj.citic.com</a>
                     </span>
                 </p>

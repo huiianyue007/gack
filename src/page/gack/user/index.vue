@@ -3,7 +3,7 @@
     <div class="content">
       <el-form label-position="left" label-width="80px" :model="formLabelAlign">
         <el-form-item label="头像">
-          <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess">
+          <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess">
             <img v-if="formLabelAlign.portraitFile || user.portrait" :src="formLabelAlign.portraitFile || user.portrait" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -20,7 +20,7 @@
         <p class = 'regist_time'>
           注册日期&nbsp;&nbsp;{{ user.createTime | time }}
         </p>
-        <el-button class = 'submit' @click.native = 'save'>保存</el-button>
+        <el-button class = 'submit' @click.native = 'save' type = 'primary'>保存</el-button>
       </el-form>
     </div>
   </div>
@@ -28,18 +28,7 @@
 <script>
   import store from 'store'
   export default {
-    async beforeRouteEnter (from, to, next) {
-      if (store.state.userid) {
-        if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
-          next()
-        } else {
-          next()
-        }
-      } else {
-        next('/login/0')
-      }
-    },
+    name: 'user_index',
     data () {
       return {
         formLabelAlign: {
@@ -64,7 +53,9 @@
     },
     mounted () {
       if (this.user) {
-        this.formLabelAlign = this.user
+        for (let key in this.formLabelAlign) {
+          this.formLabelAlign[key] = this.user[key]
+        }
       }
     },
     methods: {
@@ -84,7 +75,7 @@
           this.formLabelAlign.portraitFile = this.user.portrait.replace(/https/ig, 'http')
         }
         this.formLabelAlign.userid = this.user.id
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/updateUser', {}, {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/updateUser`, {}, {
           params: this.formLabelAlign
         }).then(({data}) => {
           this.$message({

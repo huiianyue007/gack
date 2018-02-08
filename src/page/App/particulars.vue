@@ -17,7 +17,7 @@ export default {
     created() {
         if (this.$route.query.id) {
             this.loadingTab = true
-            this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/eventDetails/getSelectEvent?id=' + this.$route.query.id)
+            this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/eventDetails/getSelectEvent?id=` + this.$route.query.id)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         this.eventInfor = data.data[0].eventInfor

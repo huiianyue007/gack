@@ -1,14 +1,14 @@
 <template>
   <div class="fr view_li">
-    <img src="../assets/gack/ht_trade.png" alt="" width='246' height='132'>
+    <img src="../assets/images/gack/ht_trade.png" alt="" width='246' height='132'>
     <el-row>
       <el-col :span = '12' :class = "{'active_color': deal === 'turnover'}" @click.native = 'toogle("turnover")'>按成交数</el-col>
       <el-col :span = '12' :class = "{'active_color': deal === 'transaction'}" @click.native = 'toogle("transaction")'>按成交金额</el-col>
     </el-row>
     <div class="view_list cursor" v-for = '(item, key) in listData' @click = 'routerTo(item)'>
-      <img src="../assets/gack/a.png" alt="" width = '21' height = '26' v-if = 'key === 0'>
-      <img src="../assets/gack/b.png" alt="" width = '21' height = '26' v-if = 'key === 1'>
-      <img src="../assets/gack/c.png" alt="" width = '21' height = '26' v-if = 'key === 2'>
+      <img src="../assets/images/gack/a.png" alt="" width = '21' height = '26' v-if = 'key === 0'>
+      <img src="../assets/images/gack/b.png" alt="" width = '21' height = '26' v-if = 'key === 1'>
+      <img src="../assets/images/gack/c.png" alt="" width = '21' height = '26' v-if = 'key === 2'>
       <span class = 'ranking_index'>{{ key + 1 }}</span>
       {{ item.commodityName }}
       <div class="desc">
@@ -57,6 +57,7 @@
   }
   .view_list img{
     margin: 0 5px 5px 0;
+    vertical-align: middle;
   }
   .view_list .ranking_index{
     color: #D7000F;

@@ -18,12 +18,13 @@
 </template>
 <script>
   export default {
+    name: 'newsdetail',
     data: () => ({
       newsCon: null
     }),
-    activated () {
+    created () {
       this.newsCon = null
-      this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/newsList/getNewsListById',{}, {
+      this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/newsList/getNewsListById`,{}, {
         params: {
           id: this.$route.params.id
         }

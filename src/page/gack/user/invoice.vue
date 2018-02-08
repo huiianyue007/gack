@@ -16,25 +16,25 @@
       <router-link tag = 'div' class="view_li active"  v-if =  'invoiceList' :to = '{path: "/user/myinvoice", query: {from: "order"}}'>
         <p>单位名称：{{ invoiceList.invoiceName }} </p>
         <div class="edit">
-          <el-button type = 'info' :plain = 'true' size = 'small' >{{ invoiceList.invoiceType === 0 ? '普通发票' : '专用发票' }}</el-button>
+          <el-button type = 'info' :plain = 'true' size = 'small' >{{ invoiceList.invoiceType === '0' ? '普通发票' : '专用发票' }}</el-button>
           <el-button type = 'small' :plain = 'true'>默认</el-button>
         </div>
       </router-link>
-      <el-button type = 'primary' v-else @click = '$router.push({path: "/user/addinvoice", query: {title: "我的发票"}})'>添加默认发票</el-button>
+      <el-button type = 'primary' v-else @click = '$router.push({path: "/user/addinvoice", query: {title: "我的发票", fromtitle: "我的发票", default: "1"}})'>添加默认发票</el-button>
     </card>
     <card class="view">
       <div class="view_title" slot = 'header'>
         <span class="title">地址信息</span>
       </div>
-      <router-link tag = 'div' class="view_li active"  :to = '{path: "/user/address", query: {title: "我的地址"}}' v-if = 'addressList'>
+      <router-link tag = 'div' class="view_li active"  :to = '{path: "/user/address", query: {title: "我的地址", fromtitile: "地址管理" }}' v-if = 'addressList'>
         <p>姓名：{{ addressList.name }} </p>
-        <p>电话{{addressList.telephone}}</p>
-        <p>地址 {{ addressList.address }}</p>
+        <p>电话: {{addressList.telephone}}</p>
+        <p>地址: {{ addressList.address }}</p>
         <div class="edit">
           <el-button type = 'small' :plain = 'true'>默认</el-button>
         </div>
       </router-link>
-      <el-button type = 'primary' v-else @click = '$router.push({path: "/user/address", query: {title: "我的地址"}})'>添加默认地址</el-button>
+      <el-button type = 'primary' v-else @click = '$router.push({path: "/user/editaddress", query: {title: "我的地址", fromtitle: "地址管理", default: "1"}})'>添加默认地址</el-button>
     </card>
     <div class="text-center">
       <el-button type = 'primary' size = 'large' @click = 'submit'>确认</el-button>
@@ -44,24 +44,13 @@
 <script>
   import store from 'store'
   export default {
-    async beforeRouteEnter (from, to, next) {
-      if (store.state.userid) {
-        if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
-          next()
-        } else {
-          next()
-        }
-      } else {
-        next('/login/0')
-      }
-    },
+    name: 'invoice',
     data: () => ({
       invoiceType: 'common'
     }),
     methods: {
       submit () {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/orderform/getInvoice', {}, {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/orderform/getInvoice`, {}, {
           params: {
             orderid: this.$route.params.id,
             invoiceid: this.invoiceList.id,

@@ -10,6 +10,8 @@
           <router-link to="/help">帮助中心</router-link>
           <span>|</span>
           <router-link :to="{path: '/user/feedback', query: {title: '问题反馈'}}">问题反馈</router-link>
+          <span>|</span>
+          <router-link to="/rule">规则中心</router-link>
         </p>
         <p v-if = 'homePage'>
           <span style="margin-right:20px;margin-left:0">友情链接</span>
@@ -17,13 +19,13 @@
         </p>
       </div>
       <div class="fr">
-        <p>&copy;&nbsp;2017国安创客投资有限公司</p>
+        <p>&copy;&nbsp;2017国安创客（北京）科技有限公司</p>
         <p>京公网安备110110502033396号</p>
         <p>京ICP备17032183号-1</p>
       </div>
       <div class="fr img">
-        <img src="~assets/gack/ewm1.png" alt="">
-        <img src="~assets/gack/ewm.png" alt="">
+        <img src="~assets/images/gack/ewm1.png" alt="">
+        <img src="~assets/images/gack/ewm.jpg" alt="">
       </div>
     </div>
   </div>

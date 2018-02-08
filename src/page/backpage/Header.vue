@@ -3,13 +3,13 @@
         <my-header></my-header>
         <div class="header_box">
             <div class="pb_left" @click="homeUrl">
-                <img src="../../assets/information/logo2.png"/>
+                <img src="../../assets/images/information/logo2.png"/>
                 <span>国安创客</span>
             </div>
             <div class="pb_center">商家中心</div>
             <div class="pb_right" >
                 <!-- <span>首页</span>
-                <img src="../../assets/backImg/home.png" /> -->
+                <img src="../../assets/images/backImg/home.png" /> -->
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@ export default {
         }
     },
     mounted() {
-       
+
     },
     components:{
         myHeader
@@ -50,7 +50,7 @@ export default {
     background: #c7000a;
     font-size: 22px;
     line-height: 90px;
-  
+
 }
 
 .header_box {

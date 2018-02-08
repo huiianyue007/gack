@@ -4,7 +4,7 @@
         <div class="page_top">
             <div class="pt_box">
                 <div class="pb_left" @click="homeUrl">
-                    <img src="../../assets/information/logo2.png" />
+                    <img src="../../assets/images/information/logo2.png" />
                     <span>国安创客</span>
                 </div>
                 <div class="pb_center">商家中心</div>
@@ -24,8 +24,8 @@
                         <div class="pb_title">基本信息</div>
                         <div class="pb_box" style="background:#fff;">
 
-                            <el-form-item label="公司名称" prop="name">
-                                <el-input v-model="stepOne.name" :maxlength="50" placeholder="请填写公司名称" style="width:220px"></el-input>
+                            <el-form-item label="服务商名称" prop="name">
+                                <el-input v-model="stepOne.name" :maxlength="50" placeholder="请填写服务商名称" style="width:220px"></el-input>
                             </el-form-item>
                             <el-form-item label="您的身份" prop="identity">
                                 <el-select v-model="stepOne.identity" style="width:220px">
@@ -33,7 +33,7 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="企业Logo" required>
-                                <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                                <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                                     <img v-if="stepOne.imageUrl" :src="stepOne.imageUrl" class="avatar">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                 </el-upload>
@@ -162,22 +162,22 @@
                                 </el-date-picker>
                             </el-form-item>
                             <!--<el-form-item label="组织机构代码证：" prop="cert">
-                                                                                                                    <el-input v-model="company.cert" placeholder="请填写组织机构代码证" style="width:260px"></el-input>
-                                                                                                                </el-form-item>
-                                                                                                                <el-form-item label="组织机构代码证扫描件:" required>
-                                                                                                                    <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload" :on-success="handlePreview">
-                                                                                                                        <img v-if="company.imageUrl" :src="company.imageUrl" class="avatar">
-                                                                                                                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                                                                                                        <div slot="tip" class="el-upload__tip" style="line-height:20px;width:500px">
-                                                                                                                            <div style="color:#666">证件要求：</div>必须为清晰完整的彩色原件扫描件或数码照，仅支持jpg、bmp、png、gif的图片格式，图片大小不超过200KB。必须在有效期内且年检章齐全（当年成立的公司可无年检章）必须为中国大陆工商局颁发。</div>
-                                                                                                                    </el-upload>
-                                                                                                                </el-form-item> -->
+                                                                                                                        <el-input v-model="company.cert" placeholder="请填写组织机构代码证" style="width:260px"></el-input>
+                                                                                                                    </el-form-item>
+                                                                                                                    <el-form-item label="组织机构代码证扫描件:" required>
+                                                                                                                        <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload" :on-success="handlePreview">
+                                                                                                                            <img v-if="company.imageUrl" :src="company.imageUrl" class="avatar">
+                                                                                                                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                                                                                                            <div slot="tip" class="el-upload__tip" style="line-height:20px;width:500px">
+                                                                                                                                <div style="color:#666">证件要求：</div>必须为清晰完整的彩色原件扫描件或数码照，仅支持jpg、bmp、png、gif的图片格式，图片大小不超过200KB。必须在有效期内且年检章齐全（当年成立的公司可无年检章）必须为中国大陆工商局颁发。</div>
+                                                                                                                        </el-upload>
+                                                                                                                    </el-form-item> -->
                             <el-form-item label="营业执照副本扫描件：" required style="margin-bottom:60px">
-                                <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload1" :on-success="handlePreview1">
+                                <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeCompanyUpload1" :on-success="handlePreview1">
                                     <img v-if="company.imageUrlRes" :src="company.imageUrlRes" class="avatar">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                     <div slot="tip" class="el-upload__tip" style="line-height:20px;width:500px">
-                                        <div style="color:#666">证件要求：</div> 请上传由中国大陆工商局颁发的，在有效期内且年检章齐全（当年成立的公司可无年检章）的证件图片。请提供清晰、完整的彩色原件扫描件或数码照，仅支持 jpg、bmp、png、gif的图片格式，图片大小不能超过200KB。</div>
+                                        <div style="color:#666">证件要求：</div> 请上传由中国大陆工商局颁发的，在有效期内且年检章齐全（当年成立的公司可无年检章）的证件图片。请提供清晰、完整的彩色原件扫描件或数码照，仅支持 jpg、bmp、png、gif的图片格式，因审核中文件不清晰缘故会导致审核失败，为避免这种原因请上传文件电子扫描件。</div>
                                 </el-upload>
                             </el-form-item>
                             <el-form-item style="padding:40px 0;background:#f5f5f5;margin:0;">
@@ -217,7 +217,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="证件号码：" prop="cardnum" required>
-                            <el-input v-model="legal.cardnum" :maxlength="20" placeholder="请填写营业执照注册号" style="width:260px"></el-input>
+                            <el-input v-model="legal.cardnum" :maxlength="20" placeholder="请填写证件号码" style="width:260px"></el-input>
                         </el-form-item>
                         <el-form-item label="证件有效期：" required>
                             <el-radio-group v-model="legal.resource" @change='resourcesLegal'>
@@ -230,19 +230,19 @@
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="手持身份证正面照：" required>
-                            <el-upload class="upload-demo" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUploadHold" :on-success="legalPreviewHold">
+                            <el-upload class="upload-demo" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUploadHold" :on-success="legalPreviewHold">
                                 <img v-if="legal.legimageUrlHold" :src="legal.legimageUrlHold" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
                         <el-form-item label="证件正面照片：" required>
-                            <el-upload class="upload-demo" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUpload" :on-success="legalPreview">
+                            <el-upload class="upload-demo" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUpload" :on-success="legalPreview">
                                 <img v-if="legal.legimageUrl0" :src="legal.legimageUrl0" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
                         <el-form-item label="证件背面照片：" required>
-                            <el-upload class="upload-demo" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUpload1" :on-success="legalPreview1">
+                            <el-upload class="upload-demo" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeLegalUpload1" :on-success="legalPreview1">
                                 <img v-if="legal.legimageUrl1" :src="legal.legimageUrl1" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                                 <div slot="tip" class="el-upload__tip" style="line-height:20px;width:600px;margin-top:30px">
@@ -279,7 +279,7 @@
                 </div>
                 <div class="success_box">
                     <div class="success_top">
-                        <img src="../../assets/information/u233.png">
+                        <img src="../../assets/images/information/u233.png">
                         <div class="s_top_text">认证提交成功，审核会在1-3个工作日内完成</div>
                     </div>
                     <div class="success_center">
@@ -298,7 +298,7 @@
         </div>
 
         <!--国安创客企业服务平台服务协议-->
-        <el-dialog title="国安创客企业服务平台" top="5%" @open='openDialog' v-model="agreementVisible" :close-on-click-modal="false">
+        <el-dialog title="国安创客企业服务平台" top="5%" @open='openDialog' :visible.sync="agreementVisible" :close-on-click-modal="false">
             <div class="dialog-box">
                 <div class="dialog-top">国安创客企业服务平台服务协议</div>
                 <div class="dialog-list xieyi_cont" id="myData" @scroll="scrollDialog">
@@ -429,7 +429,12 @@ export default {
                 ],
                 phone: [
                     { required: true, message: '请输入您的手机号', trigger: 'blur' },
-                    { pattern: /^1[34578]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
+                    {
+                        pattern: /^[0-9-]*$/,
+                        message: '请输入正确的电话号码',
+                        trigger: 'blur'
+                    }
+                    // { pattern: /^1[34578]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
                 ],
                 province: [
                     { required: true, message: '请选择省份', trigger: 'change' }
@@ -545,7 +550,7 @@ export default {
     methods: {
         init() {
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selectInitialData')
+            this.$htAjax.post(`${this.$config.back}/selectInitialData`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         that.classification1 = data.data.pss;
@@ -562,7 +567,7 @@ export default {
 
                 });
             //省列表
-            this.$htAjax.post('https://apitest.gack.citic:8082/selProvinceList')
+            this.$htAjax.post(`${this.$config.back}/selProvinceList`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         that.provinces = data.data;
@@ -577,7 +582,7 @@ export default {
             var item = {
                 userid: this.userid
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/selectBusByUserid', {}, {
+            this.$htAjax.post(`${this.$config.back}/selectBusByUserid`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -594,6 +599,8 @@ export default {
                         this.stepOne.city = data.data.companyCity || '';
                         this.stepOne.county = data.data.companyArea || '';
                         this.stepOne.detailed = data.data.companyAdress || '';
+                        this.provinceChange(data.data.companyProvince);
+                        this.cityChange(data.data.companyCity);
                         //选中的数据
                         let arr = [];
                         let arrId = [];
@@ -671,12 +678,13 @@ export default {
                 procode: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selcityList', {}, {
+            this.$htAjax.post(`${this.$config.back}/selcityList`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
                     that.citys = data.data;
                     that.stepOne.city = that.citys[0].code;
+                    that.cityChange(that.stepOne.city);
                 } else {
                     that.$message.error(data.msg);
                 }
@@ -692,7 +700,7 @@ export default {
                 citycode: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selAreaList', {}, {
+            this.$htAjax.post(`${this.$config.back}/selAreaList`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -710,9 +718,9 @@ export default {
             this.stepOne.logo = response.data;
         },
         beforeAvatarUpload(file) {
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过 200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
             return isLt2M;
         },
@@ -800,10 +808,10 @@ export default {
             } else {
                 isJPG = true;
             }
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
 
             return isJPG && isLt2M;
@@ -821,10 +829,10 @@ export default {
             } else {
                 isJPG = true;
             }
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
 
             return isJPG && isLt2M;
@@ -846,7 +854,7 @@ export default {
                     var reg = {
                         fatherID: 4
                     }
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dictionary/selectByfatheridList', {}, {
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dictionary/selectByfatheridList`, {}, {
                         params: reg
                     }).then(({ data }) => {
                         if (data.status === 200) {
@@ -906,13 +914,13 @@ export default {
             this.legal.time = moment(this.legal.time).toDate();
             this.$refs.legal.validate((valid) => {
                 if (valid) {
-                    if (this.legal.legimageUrlHold == '' || this.legal.legimageUrl0 == '' || this.legal.legimageUrl1 == '') {
-                        this.$message({
-                            message: '请上传证件照！',
-                            type: 'warning'
-                        });
-                        return false;
-                    }
+                    // if (this.legal.legimageUrlHold == '' || this.legal.legimageUrl0 == '' || this.legal.legimageUrl1 == '') {
+                    //     this.$message({
+                    //         message: '请上传证件照！',
+                    //         type: 'warning'
+                    //     });
+                    //     return false;
+                    // }
                     this.agreementVisible = true;
                 } else {
                     this.$message({
@@ -959,7 +967,7 @@ export default {
                     }
                 }
                 this.loadingInformation = true;
-                this.$htAjax.post('https://apitest.gack.citic:8082/save', reg)
+                this.$htAjax.post(`${this.$config.back}/save`, reg)
                     .then(({ data }) => {
                         this.loadingInformation = false;
                         if (data.status == 200) {
@@ -986,14 +994,15 @@ export default {
                 state: '1'
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/beProvider', {}, {
+            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/beProvider`, {}, {
                 params: sta
             }).then(({ data }) => {
                 this.type = '3';
                 this.active = 2;
                 this.timer();
-                this.$store.dispatch('findById', this.userid);
-                this.$message({
+                return this.$store.dispatch('findById', this.userid);
+            }).then(() => {
+              this.$message({
                     message: '提交成功',
                     type: 'success'
                 });
@@ -1035,10 +1044,10 @@ export default {
             } else {
                 isJPG = true;
             }
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
 
             return isJPG && isLt2M;
@@ -1052,10 +1061,10 @@ export default {
             } else {
                 isJPG = true;
             }
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
 
             return isJPG && isLt2M;
@@ -1078,10 +1087,10 @@ export default {
             } else {
                 isJPG = true;
             }
-            const isLt2M = file.size / 1024 / 1024 < 0.2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isLt2M) {
-                this.$message.warning('上传图片大小不能超过200KB!');
+                this.$message.warning('上传图片大小不能超过10MB!');
             }
 
             return isJPG && isLt2M;
@@ -1164,12 +1173,12 @@ Array.prototype.unique = function() {
     height: 18px;
     margin: 8px;
     margin-left: 30px;
-    background: url(../../assets/gack/dh.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/dh.png) no-repeat 0 0;
     background-size: 16px 16px;
 }
 
 .top_in .left:hover .phone_img {
-    background: url(../../assets/gack/dh1.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/dh1.png) no-repeat 0 0;
     background-size: 16px 16px;
 }
 
@@ -1229,7 +1238,7 @@ Array.prototype.unique = function() {
     display: inline-block;
     width: 16px;
     height: 16px;
-    background: url(../../assets/gack/sj_icon.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/sj_icon.png) no-repeat 0 0;
     background-size: auto 16px;
 }
 
@@ -1238,12 +1247,12 @@ Array.prototype.unique = function() {
     width: 20px;
     height: 14px;
     margin: 0 9px;
-    background: url(../../assets/reg/zc_mail.png) no-repeat 0 0;
+    background: url(../../assets/images/reg/zc_mail.png) no-repeat 0 0;
     background-size: auto 14px;
 }
 
 .gack_list:nth-of-type(3):hover .ph_img {
-    background: url(../../assets/gack/sj_icon1.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/sj_icon1.png) no-repeat 0 0;
     background-size: auto 16px;
 }
 
@@ -1251,12 +1260,12 @@ Array.prototype.unique = function() {
     display: inline-block;
     width: 16px;
     height: 16px;
-    background: url(../../assets/gack/wx_icon.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/wx_icon.png) no-repeat 0 0;
     background-size: 16px 16px;
 }
 
 .gack_list:nth-of-type(4):hover .wei_img {
-    background: url(../../assets/gack/wx_icon1.png) no-repeat 0 0;
+    background: url(../../assets/images/gack/wx_icon1.png) no-repeat 0 0;
     background-size: auto 16px;
 }
 
@@ -1264,6 +1273,7 @@ Array.prototype.unique = function() {
     float: left;
     font-weight: 400;
 }
+
 
 
 
@@ -1404,6 +1414,7 @@ Array.prototype.unique = function() {
     width: 100%;
     height: auto;
 }
+
 
 
 
@@ -1587,6 +1598,7 @@ Array.prototype.unique = function() {
 
 
 
+
 /*提交审核*/
 
 .success_top {
@@ -1752,7 +1764,7 @@ Array.prototype.unique = function() {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(../../assets/backImg/delate.png) 0 0 no-repeat;
+    background: url(../../assets/images/backImg/delate.png) 0 0 no-repeat;
     background-size: 16px 16px;
     position: absolute;
     right: -9px;
@@ -1765,7 +1777,7 @@ Array.prototype.unique = function() {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(../../assets/backImg/nopass.png) 0 0 no-repeat;
+    background: url(../../assets/images/backImg/nopass.png) 0 0 no-repeat;
     background-size: 16px 16px;
     position: absolute;
     right: -9px;

@@ -1,6 +1,5 @@
 <template>
-    <div>
-
+    <div class="share">
         <img :src="from.commodity_smallimage" alt="" class="top_img">
         <div class="info">
             <p class="info_name">{{from.commodityName}}</p>
@@ -129,7 +128,6 @@ export default {
     width: 100%;
 }
 
-
 .info {
     box-sizing: border-box;
     padding: 0.25rem;
@@ -207,7 +205,7 @@ export default {
     padding-left: 0.15rem;
 }
 
-.btn button {
+.share .btn button {
     display: block;
     width: 96%;
     height: 0.8rem;

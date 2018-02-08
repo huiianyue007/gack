@@ -20,7 +20,7 @@ class htAjax {
       return Promise.reject(error)
     })
   }
-  request (config) {
+  request (config = {}) {
     return new Promise((resolve, reject) => {
       this.instance.request(config).then(res => {
         resolve(res)

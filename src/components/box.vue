@@ -1,37 +1,63 @@
 <template>
-  <div class="box_img">
-    <slot></slot>
+  <div class="_box" :style = "style">
+    <div :style = 'padding'></div>
+    <div class="_box_content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 <script>
   export default {
     props: {
       prop: {
-        type: Number,
-        default: 1
+        type: String,
+        default: '1:1'
+      },
+      cover: {
+        type: Boolean,
+        default: true
+      },
+      bgImg: {
+        type: String
       }
     },
-    activated () {
-      this.$nextTick(() => {
-        let width = this.$el.offsetWidth
-        this.$el.style.height = width * this.prop + 'px'
-      })
-    },
-    mounted () {
-      this.$nextTick(() => {
-        let width = this.$el.offsetWidth
-        this.$el.style.height = width * this.prop + 'px'
-      })
+    computed: {
+      ratios() {
+        let arr = this.prop.split(':');
+        return arr[0] / arr[1];
+      },
+      padding() {
+        return {
+          'padding-bottom': `${this.ratios * 100}%`
+        };
+      },
+      style() {
+        if (this.bgImg && this.cover) {
+          return {
+            'background-image': `url(${this.bgImg})`,
+            backgroundSize: 'cover'
+          };
+        } else if (this.bgImg && !this.cover) {
+          return {
+            'background-image': `url(${this.bgImg})`,
+            backgroundSize: 'contain'
+          };
+        }
+      }
     }
-  }
+  };
 </script>
 <style scoped>
-  .box_img{
-    position:relative;
-    overflow:hidden;
+  ._box{
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: relative;
   }
-  .box_img img{
-    min-height: 100%;
-    min-width: 100%;
+  ._box_content {
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
   }
 </style>

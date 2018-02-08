@@ -62,6 +62,7 @@
 </template>
 <script>
   export default {
+    name: 'order-list',
     data: () => ({
       order: {
         name: '罗阳',

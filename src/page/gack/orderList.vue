@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="container">
-      <div class="back" @click = '$router.go(-1)'>
+      <div class="back" @click = 'back'>
         < 返回上一页
       </div>
       <div class="message" v-if = 'order'>
@@ -68,8 +68,7 @@
             <template slot-scope = 'scope'>
               <el-row :gutter = '12'>
                 <el-col :span = '10'>
-                  <box-img class = 'img' :prop = '1'>
-                    <img :src="scope.row.commodity_smallimage" alt="">
+                  <box-img class = 'img' :bgImg = 'scope.row.commodity_smallimage'>
                   </box-img>
                 </el-col>
                 <el-col :span = '14'>
@@ -89,22 +88,25 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="subhead shut" v-if = 'order.closeType'>
-          关闭原因: {{order.closeType | close}}
+        <div class="subhead shut" v-if = 'order.orderStatus == 7 || order.orderStatus == 15'>
+          关闭原因: {{order.closeType | close(order.spikeid)}}
+        </div>
+        <div class="subhead shut" v-if = 'order.orderStatus == 8 || order.orderStatus == 9 || order.orderStatus == 10 || order.orderStatus == 11 || order.orderStatus == 5'>
+          退款描述: {{order.orderStatus | desc}}
         </div>
         <div class="submit">
           <div class="fl li">
-            <div class="title">订单总价: <span class="price">￥{{ totalPrice }}</span></div>
+            <div class="title" v-if = '(this.order.spikePrice && this.order.spikeid) || totalPrice'>订单总价: <span class="price">￥{{this.order.spikePrice && this.order.spikeid ? this.order.spikePrice : this.order.realPrice}}</span></div>
           </div>
           <div class="fr text-right li" >
             <el-button v-if = 'order.orderStatus == "1"' @click.native.stop = '$router.push("/submit-order/" + order.id + "/order")'>去支付</el-button>
-            <el-button v-if = 'order.orderStatus == "1" || order.orderStatus == "2" || order.orderStatus == "14"'  @click.stop = 'cancelOrder'>取消订单</el-button>
+            <el-button v-if = 'order.orderStatus == "1" || order.orderStatus == "2" || order.orderStatus == "14"'  @click.native.stop = 'cancelOrder'>取消订单</el-button>
             <el-button v-if = 'order.orderStatus =="3"' type="danger" @click.stop = 'concat'>联系商户</el-button>
-            <el-button v-if = 'order.orderStatus == "7" || order.orderStatus == "11"'  @click.stop = '$router.push(`/serde/${order.commodityid}/1`)'>再次购买</el-button>
-            <el-button v-if = 'order.orderStatus == "9"' @click = 'concat'>联系国安</el-button>
-            <el-button v-if = 'order.orderStatus =="4"' @click.stop = 'confirmOrder'>确认完成</el-button>
+            <el-button v-if = 'order.orderStatus == "7" || order.orderStatus == "8"'  @click.stop = '$router.push(`/serde/${order.commodityid}/1`)'>再次购买</el-button>
+            <el-button v-if = 'order.orderStatus == "9" || order.orderStatus == "15"' @click = 'concat'>联系国安</el-button>
+            <el-button v-if = 'order.orderStatus =="4"' @click.native.stop = 'confirmOrder'>确认完成</el-button>
             <el-button @click.native.stop = 'submit' v-if = 'order.orderStatus =="3" || order.orderStatus =="4" '>我要退款</el-button>
-            <el-button v-if = 'order.orderStatus == "13" && this.order.invoiceState !== "1"' @click.stop =  '$router.push({path: `/user/invoice/${order.id}`, query: {title: "我的发票"}})'>开发票</el-button>
+            <el-button v-if = '(order.orderStatus == "13" || order.orderStatus =="6") && this.order.invoiceState !== "1" &&　!this.order.invoiceState' @click.stop =  '$router.push({path: `/user/invoice/${order.id}`, query: {title: "我的发票"}})'>开发票</el-button>
             <el-button v-if = 'order.orderStatus =="6"' @click.native.stop = '$router.push(`/evaluate/${order.id}`)'>评价</el-button>
           </div>
         </div>
@@ -121,7 +123,7 @@
         <el-form-item label="详情描述">
           <el-input type="textarea" v-model = 'refundData.desc'></el-input>
         </el-form-item>
-        <el-form-item label="退款金额" prop = 'amount' required>
+        <el-form-item label="退款金额" prop = 'amount'>
           <el-input type="input" v-model.number = 'refundData.amount' size = 'small'></el-input>
         </el-form-item>
       </el-form>
@@ -148,10 +150,13 @@
     }
   }
   export default {
+    name: 'order-list',
     async beforeRouteEnter (from, to, next) {
       if (store.state.userid) {
         if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
+          await store.dispatch('findById', store.state.userid.id).catch(() => {
+            next('/login/0')
+          })
           next()
         } else {
           next()
@@ -161,16 +166,33 @@
       }
     },
     filters: {
-      close (opt) {
-        if (opt == '1') {
+      desc (opt) {
+        if (opt == '5') {
+          return '您已发起退款，等待服务商处理'
+        } else if (opt == '9') {
+          return '商家已拒绝退款,请联系国安'
+        } else if (opt == '10') {
+          return '服务商接受退款并向财务发起退款，等待财务平台处理'
+        } else if (opt == '11') {
+          return '您已发起关闭订单，等待财务平台退款'
+        } else if (opt == '8') {
+          return '退款已完成'
+        }
+      },
+      close (opt, val) {
+        if (opt == '1' && val) {
+          return '十分钟未付款自动关闭'
+        } if (opt == '2' && val) {
+          return '十分钟未接单自动关闭'
+        } else if (opt == '1') {
           return '二十四小时未付款自动关闭'
         } if (opt == '2') {
           return '二十四小时未接单自动关闭'
-        } if (opt == '3') {
+        } else if (opt == '3') {
           return '用户关闭'
-        } if (opt == '4') {
+        } else if (opt == '4') {
           return '运营商关闭'
-        } if (opt == '5') {
+        } else  if (opt == '5') {
           return '服务商关闭'
         }
       }
@@ -189,21 +211,21 @@
       orderData: [],
       OrderInvoice: null
     }),
-    activated () {
-      this.orderData = []
-      this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/orderform/findByid', {}, {
+    created () {
+      this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/orderform/findByid`, {}, {
         params: {
           id: this.query.id
         }
       }).then(({ data }) => {
         this.order = data.data
         this.order.orderStatus = eval(this.order.orderStatus)
-        this.orderData.push(data.data)
+        this.order.preferentialMoney = (this.order.returnPreferentialMoney || 0) + (this.order.preferentialMoney || 0)
+        this.orderData.push(this.order)
         if (data.data.invoiceState == '1') {
           return Promise.resolve(data.data)
         }
       }).then( data => {
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/getOrderInvoice', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/getOrderInvoice`, {}, {
           params: {
             orderid: this.query.id
           }
@@ -220,7 +242,7 @@
       },
       totalPrice () {
         if (this.order) {
-          return this.order.realPrice - (this.order.preferentialMoney ? this.order.preferentialMoney : 0)
+          return parseInt((this.order.realPrice - (this.order.preferentialMoney ? this.order.preferentialMoney : 0) - (this.order.returnPreferentialMoney ? this.order.returnPreferentialMoney : 0)) * 100)  / 100
         }
       },
       address () {
@@ -235,27 +257,41 @@
       }
     },
     methods: {
+      back () {
+        if (this.$route.query.type == '1') {
+          this.$router.push(`/serde/${this.order.commodityid}/1`)
+        } else {
+          this.$router.go(-1)
+        }
+      },
       confirmOrder () {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/orderform/confirmOrder', {}, {
-          params: {
-            id: this.order.id
-          }
-        }).then(({ data }) => {
-          if (data.data.key === 'success') {
-            this.$message({
-              type: 'success',
-              message: data.data.value
-            })
-          } else {
-            return Promise.reject(data)
-          }
-        }).catch(error => {
-          this.$message.error(error.data.value)
+        this.$confirm('是否确认完成订单','', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/orderform/confirmOrder`, {}, {
+            params: {
+              id: this.order.id
+            }
+          }).then(({ data }) => {
+            if (data.data.key === 'success') {
+              this.$message({
+                type: 'success',
+                message: data.data.value
+              })
+              this.order.orderStauts = 6
+            } else {
+              return Promise.reject(data)
+            }
+          }).catch(error => {
+            this.$message.error(error.data.value)
+          })
         })
       },
       setOrder (opt) {
         return new Promise((resolve, reject) => {
-          this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/closeOrder', {}, {
+          this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/closeOrder`, {}, {
             params: opt
           }).then(res => {
             resolve(res)
@@ -299,7 +335,7 @@
         });
       },
       refundMoney () {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/orderform/initiateRefunds', {}, {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/orderform/initiateRefunds`, {}, {
           params: {
             refundsReason: this.refundsReason,
             id: this.order.id,
@@ -310,29 +346,34 @@
             return Promise.reject(data)
           } else {
             this.$message({
-              type: 'sucess',
+              type: 'success',
               message: data.data.value
             })
+            this.order.orderStatus = '5'
           }
         }).catch(error => {
           this.$message.error(error.data.data.value)
         })
       },
-      cancelOrder (opt) {
+      cancelOrder () {
         this.$confirm('是否取消订单','', {
-          confirmButtonText: '取消',
-          cancelButtonText: '取消订单',
+          confirmButtonText: '取消订单',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-        }).catch(() => {
           this.setOrder({
             id: this.order.id,
             closeType: '3'
           }).then(res => {
-            this.$set(opt, 'orderStatus', '7')
+            if (this.order.orderStatus == '2') {
+              this.$set(this.order, 'orderStatus', '5')
+            } else {
+              this.$set(this.order, 'orderStatus', '7')
+            }
           }).catch(() => {
             this.$message.error('订单取消失败')
           })
+        }).catch(() => {
         })
       }
     }
@@ -343,6 +384,7 @@
     color: #ff0000;
     line-height:50px;
     font-size:14px;
+    cursor: pointer;
   }
   .message{
     background:#fff;
@@ -413,8 +455,7 @@
   }
   .shut{
     line-height: 2em;
-    margin-top: 15px;
-    border-bottom: 1px solid #efefef;
+    margin: 15px 0;
   }
   .text-red{
     color:#f67;

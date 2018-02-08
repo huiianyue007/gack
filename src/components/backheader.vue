@@ -5,7 +5,7 @@
         <span>客服热线 ：400-851-8585</span>
         <div class="inline-block icon sj"></div>
         <div class="inline-block icon wx">
-          <img src="../assets/gack/ewm_u155.png" alt="">
+          <img src="../assets/images/gack/ewm_u155.png" alt="">
         </div>
       </div>
       <div class="fr">
@@ -72,6 +72,7 @@ export default {
           type: 'success',
           message: '成功退出系统!'
         })
+        this.newList = []
         this.$store.commit('setUserInfo', null)
         this.$store.commit('setUserId', null)
         this.$router.push('/')
@@ -85,7 +86,7 @@ export default {
       let item = {
         businessid: this.businessid  //服务商id
       }
-      this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/message/MessageForBusiness', {}, {
+      this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/MessageForBusiness`, {}, {
         params: item
       }).then(({ data }) => {
         if (data.status == 200) {
@@ -100,8 +101,10 @@ export default {
               element.type = '发票';
             } else if (element.type == 5) {
               element.type = '系统';
-            } else {
+            } else if(element.type == 6) {
               element.type = '空间';
+            }else {
+              element.type = '店铺';
             }
           });
           this.newsNum = data.data.notReadnum;
@@ -127,7 +130,7 @@ export default {
       var that = this;
       setTimeout(() => {
         this.newsbox = false;
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/message/MessageSetIsread', {}, {
+        this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/MessageSetIsread`, {}, {
           params: item
         }).then(({ data }) => {
           if (data.status == 200) {
@@ -152,16 +155,21 @@ export default {
         this.$store.state.adminleftnavnum = 'invoice';
         this.$router.push('/invoice');
       } else if (item.type == '系统') {
-
-      } else {
+        this.$store.state.adminleftnavnum = 'backHome';
+        this.$router.push('/backHome');
+      } else if (item.type == '空间') {
         this.$store.state.adminleftnavnum = 'spaceHome';
         this.$router.push('/spaceHome');
+      } else {
+        this.$store.state.adminleftnavnum = 'shopSet';
+        this.$router.push('/shopSet');
       }
       let itemJson = {
-        businessid: this.businessid  //服务商id
+        businessid: this.businessid,  //服务商id
+        id: item.id
       }
       this.newsbox = false;
-      this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/message/MessageSetIsread', {}, {
+      this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/message/MessageSetIsread`, {}, {
         params: itemJson
       }).then(({ data }) => {
         if (data.status == 200) {
@@ -173,7 +181,7 @@ export default {
     },
     siginOut() {
       return new Promise((resolve, reject) => {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/signOut').then(res => {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/signOut`).then(res => {
           resolve(res)
         }).catch(() => {
           reject()
@@ -223,11 +231,11 @@ export default {
 .header .icon.wx {
   margin-left: 15px;
   position: relative;
-  background-image: url(~@/assets/gack/wx_icon.png);
+  background-image: url(~@/assets/images/gack/wx_icon.png);
 }
 
 .header .icon.wx:hover {
-  background-image: url(~@/assets/gack/wx_icon1.png);
+  background-image: url(~@/assets/images/gack/wx_icon1.png);
 }
 
 .header .icon.wx img {
@@ -249,13 +257,13 @@ export default {
 }
 
 .header .icon.sj {
-  background-image: url(~@/assets/gack/sj_icon.png);
+  background-image: url(~@/assets/images/gack/sj_icon.png);
   background-size: 13px 18px;
 }
 
 .header .icon.sj:hover {
   transition: all linear .2s;
-  background-image: url(~@/assets/gack/sj_icon1.png);
+  background-image: url(~@/assets/images/gack/sj_icon1.png);
 }
 
 .header .news_box {
@@ -347,7 +355,6 @@ export default {
   margin: 0!important;
   position: relative;
   left: -5px;
-  width: 50px;
   float: left;
   color: #999;
 }

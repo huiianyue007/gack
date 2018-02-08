@@ -8,7 +8,7 @@
       </div>
       <el-row :gutter = '20'>
         <el-col :span = '4'>
-          <router-link :to = '{path: item.url, query: {title: item.title}}' tag = 'div' class="list" v-for = '(item, key) in userArr' :class = '{active: $route.path === item.url}' :key = 'key'>
+          <router-link :to = '{path: item.url, query: {title: item.title}}' tag = 'div' class="list" v-for = '(item, key) in userArr' :class = '{active: $route.path === item.url || $route.query.fromtitle === item.title || $route.query.title == item.title}' :key = 'key'>
             {{ item.title }}
           </router-link>
         </el-col>
@@ -22,7 +22,9 @@
   </div>
 </template>
 <script>
+  import store from 'store'
   export default {
+    name: 'user',
     data () {
       return {
         userArr: [{
@@ -55,7 +57,26 @@
         }, {
           title: '用户反馈',
           url: '/user/feedback'
+        },{
+          title: '金融服务',
+          url: '/user/financial'
+        },{
+          title: '大企业合作记录',
+          url: '/user/dockingrecord'
         }]
+      }
+    },
+    async beforeRouteEnter (to, from, next) {
+
+      if (!store.state.userid) {
+        next('/login/0')
+      } else if (!store.state.userInfo){
+        await store.dispatch('findById', store.state.userid.id).catch(() => {
+          next('/login/0')
+        })
+        next()
+      } else {
+        next()
       }
     }
   }

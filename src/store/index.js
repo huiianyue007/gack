@@ -1,6 +1,7 @@
 import 'es6-promise/auto'
 import Vue from 'vue'
 import Vuex from 'vuex'
+import config from '@/config'
 Vue.use(Vuex)
 
 const state = {
@@ -23,12 +24,45 @@ const state = {
   sessionid: '',
   appoint: null,
   firstLogin: 0,
+  remember: true,
+  payType: '',
+  parentPage: '',
+  trade: null,
+  tradeList: [],
+  patent: null,
+  patentsList: [],
+  tradeNum: false,
+  sideberArr:false
 }
 
 //改变状态  缪
 const mutations = {
+  setTrade (state, opt) {
+    state.trade = opt
+  },
+  setTradeNum (state, opt) {
+    state.tradeNum = opt
+  },
+  setTradeList (state, opt) {
+    state.tradeList = opt
+  },
+  setPatents (state, opt) {
+    state.patents = opt
+  },
+  setPatentsList (state, opt) {
+    state.patentsList = opt
+  },
+  setRemember (state, opt) {
+    state.remember = opt
+  },
   setFirstLogin (state, opt) {
     state.firstLogin = opt
+  },
+  setParentPage (state, opt) {
+    state.parentPage = opt
+  },
+  setPayType (state,opt) {
+    state.payType = opt
   },
   increment(state) {
     state.count++
@@ -67,10 +101,10 @@ const mutations = {
   setHomePage (state, opt) {
     state.homePage = opt
   },
-  initStore (state, opt) {
-    for (let name in opt) {
-      state[name] = opt[name]
-    }
+  'initForm' (state, opt) {
+    Object.entries(opt).forEach(item => {
+      state[item[0]] = item[1]
+    })
   },
   businessInfo(state, opt) {
     state.business = opt
@@ -92,7 +126,7 @@ const getters = {
 const actions = {
   findById({ commit }, opt) {
     return new Promise((resolve, reject) => {
-      Vue.prototype.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/findById', {}, {
+      Vue.prototype.$htAjax.post(`${config.gack}/guoanmaker/personal/user/findById`, {}, {
         params: {
           userid: opt
         }

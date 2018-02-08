@@ -5,7 +5,7 @@
         <div class="title">
           帮助中心
         </div>
-        <div class="cursor li" :class = '{active: activeType === index}' v-for = '(item, index) in allHelp' @click = 'changeType(index)'>
+        <div class="text-hidden cursor li" :class = '{active: activeType === index}' v-for = '(item, index) in allHelp' @click = 'changeType(index)'>
           {{ item.title }}
         </div>
       </el-col>
@@ -21,12 +21,13 @@
 </template>
 <script>
   export default {
+    name: 'help',
     data: () => ({
       activeType: 0,
       allHelp: null
     }),
     created () {
-      this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/help/getAllHelp').then(({data}) => {
+      this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/help/getAllHelp`).then(({data}) => {
         this.allHelp = data.data
       }).catch(error => {
       })
@@ -58,6 +59,7 @@
     border-bottom: 1px solid #eee;
   }
   .list .li{
+    padding: 0 2em;
     line-height:35px;
   }
   .con{

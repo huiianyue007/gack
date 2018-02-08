@@ -8,8 +8,7 @@
     </div>
     <div class="container news_content">
       <div class="cursor news_list" v-for = '(item, key) in newArr' @click = 'routeTo(item, key)' v-if = 'newArr.length'>
-        <box-img class="fl img" :prop = '146/260'>
-          <img :src="item.photoPath">
+        <box-img class="fl img" prop = '146:260' :bgImg = 'item.photoPath'>
         </box-img>
         <div class="fl news_con">
           <h2 class = 'title'>{{ item.newsTitle }}</h2>
@@ -29,6 +28,7 @@
 <script>
   import newType from 'assets/js/article'
   export default {
+    name: 'aboutus',
     data () {
       return {
         newArr: [],
@@ -37,7 +37,10 @@
         totalCount: 0
       }
     },
-    activated () {
+    created () {
+      this.totalPage = 0
+      this.currentPage =  1
+      this.totalCount = 0
       this.init(0)
     },
     watch: {
@@ -49,7 +52,7 @@
       init () {
         this.newArr =  []
         if (this.$route.params.id == '1') {
-          this.$htAjax.get('https://apitest.gack.citic:8083/guoanmaker/operator/newsList/getpcNewList', {
+          this.$htAjax.get(`${this.$config.activity}/guoanmaker/operator/newsList/getpcNewList`, {
             params: {
               page: this.currentPage - 1,
               size: 5

@@ -1,10 +1,10 @@
 <template>
   <div class="app_con">
-    <div class="app" @click = '$router.go(-1)'><img src="~assets/gack/arrow_l.png" alt=""> 返回上一页</div>
+    <div class="app" @click = '$router.go(-1)'><img src="~assets/images/gack/arrow_l.png" alt=""> 返回上一页</div>
     <el-card class="app_content" v-if = '$route.params.type == "space" && appoint'>
       <div class="app_title" slot = 'header'>
         <div class="fl">{{ appoint.roomName }}</div>
-        <div class="fr text-red">{{ appoint.state == '0' ? '预约' : '预约成功' }}</div>
+        <div class="fr text-red">{{ appoint.state == '0' ? '预约中' : '预约成功' }}</div>
       </div>
       <div class="time">
         <div class="inline-block label">联系人</div><p class="inline-block text-hidden">{{ appoint.contactPerson }}</p>
@@ -13,16 +13,16 @@
         <div class="inline-block label">联系电话</div><p class="inline-block text-hidden">{{ appoint.contactNumber }}</p>
       </div>
       <div class="time">
-        <div class="inline-block label">参观时间</div><p class="inline-block text-hidden">{{ appoint.reserveTime | time('.-.- :') }}</p>
+        <div class="inline-block label">参观时间</div><p class="inline-block text-hidden">{{ appoint.reserveTime | time('.-.-') }}</p>
       </div>
       <div class="time">
-        <div class="inline-block label">活动时间</div><p class="inline-block text-hidden">{{ appoint.createTime | time('.-.- :') }}</p>
+        <div class="inline-block label">创建时间</div><p class="inline-block text-hidden">{{ appoint.createTime | time('.-.-') }}</p>
       </div>
       <div class="time">
         <div class="inline-block label">参观人数</div><p class="inline-block text-hidden">{{ appoint.reserveAmount }}</p>
       </div>
       <div class="time">
-        <div class="inline-block label">需求描述</div><p class="inline-block text-hidden">{{ appoint.remark }}</p>
+        <div class="inline-block label">需求描述</div><p class="word-break inline-block" style = 'vertical-align:top;width: calc(100% - 7em)'>{{ appoint.remark }}</p>
       </div>
     </el-card>
     <el-card v-if = '$route.params.type === "yuyue" && orderInfo' class = 'view'>
@@ -59,7 +59,7 @@
         <div class="fr">
           <el-button size = 'small' @click.stop = 'cancelOrder("2")'  v-if = 'orderInfo.state ==0 '>取消报名</el-button>
           <el-button size = 'small' @click.stop = '$router.push(`/submit-order/${orderInfo.id}/activity`)' v-if = 'orderInfo.state == 0'>立即支付</el-button>
-          <el-button size = 'small' @click.stop = 'cancelOrder("0")' v-if = 'orderInfo.state == 2'>再次报名</el-button>
+          <el-button size = 'small' @click.stop = '$router.push(`/eventdetails/${orderInfo.id}`)' v-if = 'orderInfo.state == 2'>再次报名</el-button>
         </div>
       </div>
     </el-card>
@@ -67,9 +67,9 @@
 </template>
 <script>
   export default {
+    name: 'appcon',
     data: () => ({
-      orderInfo: null,
-      appoint: null
+      orderInfo: null
     }),
     filters: {
       activity (opt) {
@@ -82,9 +82,9 @@
         }
       }
     },
-    activated () {
+    created () {
       if (this.$route.params.type == 'yuyue') {
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/activityEnlist/getActivityEnlist', {}, {
+        this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/activityEnlist/getActivityEnlist`, {}, {
           params: {
             Id: this.$route.params.id
           }
@@ -93,27 +93,27 @@
         }).catch(error => {
           console.log(error)
         })
-      } else if (this.$route.params.type == 'space') {
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findSpaceReserveById', {}, {
+      } else if (this.$route.params.type == 'space' && !this.appoint) {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findSpaceReserveById`, {}, {
           params: {
             id: this.$route.params.id
           }
         }).then(({data}) => {
-          this.appoint = data.data
+          this.$store.commit('setAppoint', data.data)
         }).catch(error => {
         })
       }
     },
-//    computed: {
-//      appoint () {
-//        if (this.$route.params.type == 'space') {
-//          return this.$store.state.appoint
-//        }
-//      }
-//    },
+      computed: {
+        appoint () {
+          if (this.$route.params.type == 'space') {
+            return this.$store.state.appoint
+          }
+        }
+      },
     methods: {
       cancelOrder (val) {
-        this.$htAjax.post('https://apitest.gack.citic:8083/guoanmaker/operator/activityEnlist/updateActivityEnlistState', {
+        this.$htAjax.post(`${this.$config.activity}/guoanmaker/operator/activityEnlist/updateActivityEnlistState`, {
           userId: this.$store.state.userid.id,
           id: this.orderInfo.id,
           state: val

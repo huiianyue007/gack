@@ -102,7 +102,7 @@ export default {
         }
         var that = this;
         //获取基本数据
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dataStatistics/routineData', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dataStatistics/routineData`, {}, {
             params: item
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -112,7 +112,7 @@ export default {
 
         });
         //获取近一年的销量走势
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dataStatistics/salesTrendInThePastYear', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dataStatistics/salesTrendInThePastYear`, {}, {
             params: item
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -129,7 +129,7 @@ export default {
         }
         var that = this;
         //获取销量走势
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dataStatistics/salesTrend', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dataStatistics/salesTrend`, {}, {
             params: item2
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -170,7 +170,7 @@ export default {
                 businessId: this.businessid,
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dataStatistics/salesTrend', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dataStatistics/salesTrend`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status === 200) {

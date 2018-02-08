@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import store from 'store'
-import global from 'assets/js/global'
-import * as filter from 'assets/js/filters'
+import global from '@/config/global'
+import * as filter from '@/config/filters'
 import elementUI from 'element-ui'
 import echarts from 'echarts'
 import HtAjax from 'assets/js/htAjax'
 import 'plugins/globalComponents'
-import config from 'assets/js/config'
+import config from '@/config'
 import htVuexStorage from 'assets/js/htVuexStorage'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import router from '@/router'
 // import BaiduMap from 'vue-baidu-map'
 // import { map, getCurrentPosition } from 'assets/js/map'
 import qs from 'qs'
@@ -30,6 +31,7 @@ Vue.prototype.$htAjaxGlobal = htAjaxGlobal
 Vue.prototype.$tkAjax = tkAjax
 Vue.prototype.$tkAjaxGlobal = tkAjaxGlobal
 Vue.prototype.$qs = qs
+Vue.prototype.$config = config
 for (let name in filter) {
   Vue.filter(name, filter[name])
 }
@@ -38,10 +40,19 @@ Vue.use(VueAwesomeSwiper)
 //   /* Visit http://lbsyun.baidu.com/apiconsole/key for details about app key. */
 //   ak: 'gxyx1HZFGWDf6ogXwRQYi5jmTKop0TiQ'
 // })
-let storage = htVuexStorage.init(config.sessionKeys)
-store.commit('initStore', storage)
-htVuexStorage.reStorage(store)
+htVuexStorage.init(config.storageKeys, config.sessionKeys, store, storage => {
+  store.commit('initForm', storage)
+})
 htAjaxGlobal.midwares = [res => {
+  return new Promise((resolve, reject) => {
+    if (res.data.status == 99) {
+      router.push('/login/0')
+      reject(res)
+    } else {
+      resolve(res)
+    }
+  })
+}, res => {
   return new Promise((resolve, reject) => {
     if (res.data.success || res.data.status == 'SUCCESS') {
       resolve(res)
@@ -58,17 +69,6 @@ htAjaxGlobal.midwares = [res => {
     }
   })
 }]
-let href = window.location.href
-let flag = false
-href.split('/').forEach(function (item, index) {
-  if (index > 2 &&　(/submit-order/).test(item)) {
-    flag = true
-  }
-})
-if (flag && !store.state.sessionid) {
-  let sessionid = window.localStorage.getItem('sessionid')
-  store.commit('setSessionId', sessionid)
-}
 if (store.state.sessionid) {
   htAjaxGlobal.headers = {
     'Authorization': `Bearer ${store.state.sessionid}`
@@ -81,13 +81,16 @@ if (store.state.sessionid) {
 //   if (store.state.userid) {
 //     user = await store.dispatch('findById', store.state.userid.id)
 //   }
-//   return htAjax.get(`https://apitest.gack.citic:8083/guoanmaker/operator/2app/getOpenCity2App?cityName=${position.address.city}&username=${user ? user.username : ''}&landType=1`)
+//   return htAjax.get(`${config.activity}/guoanmaker/operator/2app/getOpenCity2App?cityName=${position.address.city}&username=${user ? user.username : ''}&landType=1`)
 // }).then(function ({ data }) {
 //   store.commit('setLocalPosition', data.data)
 // }).catch(() => {
 //   store.dispatch('findById', store.state.userid.id)
 // })
 if (store.state.userid) {
-  _czc.push(["_setCustomVar","是否登录","已登录",72000]);
-  store.dispatch('findById', store.state.userid.id)
+  store.dispatch('findById', store.state.userid.id).then(() => {
+    _czc.push(["_setCustomVar","是否登录","已登录",72000]);
+  }).catch(() => {
+
+  })
 }

@@ -121,10 +121,10 @@
                         <el-button @click="changeState2">编辑</el-button>
                     </el-form-item>
                     <el-form-item label="商品名称：" prop="name">
-                        <el-input v-model="ruleForm1.name" style="width:500px;" :maxlength="50"></el-input>
+                        <el-input v-model="ruleForm1.name" style="width:500px;" :maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="商品描述：" prop="brief">
-                        <el-input v-model="ruleForm1.brief" style="width:500px;" :maxlength="15"></el-input>
+                        <el-input v-model="ruleForm1.brief" style="width:500px;" :maxlength="33"></el-input>
                     </el-form-item>
 
                     <el-form-item label="商品价格：" prop="price">
@@ -155,14 +155,14 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item label="商品图片logo：" required>
-                        <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess11">
+                        <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess11">
                             <img v-if="ruleForm1.imageUrl1" :src="ruleForm1.imageUrl1" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                     </el-form-item>
                     <el-form-item label="商品图片：" required>
-                        <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess1">
+                        <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess1">
                             <img v-if="ruleForm1.imageUrl" :src="ruleForm1.imageUrl" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
@@ -177,9 +177,6 @@
                     <el-form-item label="工位介绍：" class="quillcon" required>
                         <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar3' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.case"></editor>
                     </el-form-item>
-                    <!--<el-form-item label="入孵尊享：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar4' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.process"></editor>
-                        </el-form-item>-->
                     <el-form-item style="text-align: center;">
                         <el-button type="primary" @click="submitForm1()" :loading="submitLoading">提交发布商品</el-button>
                         <el-button type="primary" @click="dialogTableVisible = true">预览</el-button>
@@ -215,10 +212,6 @@
                                 <p>工位介绍：</p>
                                 <p v-html="ruleForm1.case"></p>
                             </div>
-                            <!--<div>
-                                    <p>入孵尊享：</p>
-                                    <p v-html="ruleForm1.process"></p>
-                                </div>-->
                         </div>
                     </el-dialog>
                 </el-form>
@@ -234,10 +227,10 @@
                         <el-button @click="changeState2">编辑</el-button>
                     </el-form-item>
                     <el-form-item label="商品名称：" prop="name">
-                        <el-input v-model="ruleForm2.name" style="width:500px;" :maxlength="50"></el-input>
+                        <el-input v-model="ruleForm2.name" style="width:500px;" :maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="商品描述：" prop="brief">
-                        <el-input v-model="ruleForm2.brief" style="width:500px;" :maxlength="15"></el-input>
+                        <el-input v-model="ruleForm2.brief" style="width:500px;" :maxlength="33"></el-input>
                     </el-form-item>
                     <el-form-item label="商品价格：" prop="price">
                         <el-input placeholder="请输入金额" v-model="ruleForm2.price" style="width:220px;" :maxlength="11">
@@ -274,31 +267,22 @@
                         </el-col>
                     </el-form-item>
                     <el-form-item label="商品图片logo：" required>
-                        <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess22">
+                        <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess22">
                             <img v-if="ruleForm2.imageUrl1" :src="ruleForm2.imageUrl1" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                     </el-form-item>
                     <el-form-item label="商品图片：" required>
-                        <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess2">
+                        <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess2">
                             <img v-if="ruleForm2.imageUrl" :src="ruleForm2.imageUrl" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                     </el-form-item>
-                    <!--<el-form-item label="商品介绍：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar1' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.introduce"></editor>
-                        </el-form-item>-->
                     <el-form-item label="商品介绍：" class="quillcon" required>
                         <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar2' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.describe"></editor>
                     </el-form-item>
-                    <!--<el-form-item label="课程概述：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar3' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.case"></editor>
-                        </el-form-item>
-                        <el-form-item label="培训师/机构介绍：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar4' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.process"></editor>
-                        </el-form-item>-->
                     <el-form-item label="服务承诺：" class="quillcon" required>
                         <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar5' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.promise"></editor>
                     </el-form-item>
@@ -325,22 +309,10 @@
                     </div>
                     <div class="comdetails">
                         <p class="title">商品详情介绍</p>
-                        <!--<div>
-                                <p>商品介绍：</p>
-                                <p v-html="ruleForm2.introduce"></p>
-                            </div>-->
                         <div>
                             <p>商品介绍：</p>
                             <p v-html="ruleForm2.describe"></p>
                         </div>
-                        <!--<div>
-                                <p>课程概述：</p>
-                                <p v-html="ruleForm2.case"></p>
-                            </div>
-                            <div>
-                                <p>培训师/机构介绍：</p>
-                                <p v-html="ruleForm2.process"></p>
-                            </div>-->
                         <div>
                             <p>服务承诺：</p>
                             <p v-html="ruleForm2.promise"></p>
@@ -359,10 +331,10 @@
                         <el-button @click="changeState2">编辑</el-button>
                     </el-form-item>
                     <el-form-item label="商品名称：" prop="name">
-                        <el-input v-model="ruleForm3.name" style="width:500px;" :maxlength="50"></el-input>
+                        <el-input v-model="ruleForm3.name" style="width:500px;" :maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="商品描述：" prop="brief">
-                        <el-input v-model="ruleForm3.brief" style="width:500px;" :maxlength="15"></el-input>
+                        <el-input v-model="ruleForm3.brief" style="width:500px;" :maxlength="33"></el-input>
                     </el-form-item>
                     <el-form-item label="商品是否允许议价：" required>
                         <template>
@@ -372,7 +344,7 @@
                         <br>
                         <span>商品议价为线下与用户联系确定价格后在议价商品订单中修改。</span>
                     </el-form-item>
-                    <el-form-item label="是否有地域限制：" prop="region">
+                    <el-form-item label="是否有地域限制：">
                         <template>
                             <el-radio class="radio" v-model="ruleForm3.region" label="1">有</el-radio>
                             <el-radio class="radio" v-model="ruleForm3.region" label="2">没有</el-radio>
@@ -401,7 +373,7 @@
                             <template slot="append">元</template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="促销时间范围："  v-if="ruleForm3.bargaining == '2' && ruleForm3.region=='2' && ruleForm3.promotion == '1'">
+                    <el-form-item label="促销时间范围：" v-if="ruleForm3.bargaining == '2' && ruleForm3.region=='2' && ruleForm3.promotion == '1'">
                         <el-col :span="6">
                             <el-form-item prop="startTime" style="border:0!important">
                                 <el-date-picker v-model="ruleForm3.startTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
@@ -521,31 +493,22 @@
                         <el-button type="primary" @click="addServiceArea()" v-if="index == '0'">增加</el-button>
                     </el-form-item>
                     <el-form-item label="商品图片logo：" required>
-                        <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess33">
+                        <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess33">
                             <img v-if="ruleForm3.imageUrl1" :src="ruleForm3.imageUrl1" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                     </el-form-item>
                     <el-form-item label="商品图片：" required>
-                        <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
+                        <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
                             <img v-if="ruleForm3.imageUrl" :src="ruleForm3.imageUrl" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                     </el-form-item>
-                    <!--<el-form-item label="商品介绍：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar1' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.introduce"></editor>
-                        </el-form-item>-->
                     <el-form-item label="商品介绍：" class="quillcon" required>
                         <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar2' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.describe"></editor>
                     </el-form-item>
-                    <!--<el-form-item label="服务案例：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar3' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.case"></editor>
-                        </el-form-item>
-                        <el-form-item label="服务流程：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar4' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.process"></editor>
-                        </el-form-item>-->
                     <el-form-item label="服务承诺：" class="quillcon" required>
                         <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar5' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.promise"></editor>
                     </el-form-item>
@@ -587,22 +550,10 @@
                     </div>
                     <div class="comdetails">
                         <p class="title">商品详情介绍</p>
-                        <!--<div>
-                                <p>商品介绍：</p>
-                                <p v-html="ruleForm3.introduce"></p>
-                            </div>-->
                         <div>
                             <p>商品介绍：</p>
                             <p v-html="ruleForm3.describe"></p>
                         </div>
-                        <!--<div>
-                                <p>服务案例：</p>
-                                <p v-html="ruleForm3.case"></p>
-                            </div>
-                            <div>
-                                <p>服务流程：</p>
-                                <p v-html="ruleForm3.process"></p>
-                            </div>-->
                         <div>
                             <p>服务承诺:</p>
                             <p v-html="ruleForm3.promise"></p>
@@ -610,6 +561,122 @@
                     </div>
                 </el-dialog>
             </div>
+            <div class="tab" v-if="detailsType === '3'">
+                <p class="tab_title">商品基本信息</p>
+                <el-form :model="ruleForm4" :rules="rules" ref="ruleForm4" label-width="150px" class="demo-ruleForm">
+                    <el-form-item label="分类:">
+                        {{commodityType1}}
+                        <span v-if="commodityType2!='' ">＞</span> {{commodityType2}}
+                        <span v-if="commodityType3!=''">＞</span> {{commodityType3}}
+                        <span v-if="commodityType4!=''">＞</span>{{commodityType4}}
+                        <el-button @click="changeState2">编辑</el-button>
+                    </el-form-item>
+                    <el-form-item label="名称：" prop="name">
+                        <el-input v-model="ruleForm4.name" style="width:500px;" :maxlength="16"></el-input>
+                    </el-form-item>
+                    <el-form-item label="服务描述：" prop="brief">
+                        <el-input v-model="ruleForm4.brief" style="width:500px;" :maxlength="33"></el-input>
+                    </el-form-item>
+                    <el-form-item label="服务是否允许议价：" required>
+                        <template>
+                            <el-radio class="radio" v-model="ruleForm4.bargain" label="1">是</el-radio>
+                            <el-radio class="radio" v-model="ruleForm4.bargain" label="2">否</el-radio>
+                        </template>
+                    </el-form-item>
+                    <el-form-item label="价格是否面议：" v-if="ruleForm4.bargain==1">
+                        <template>
+                            <el-radio class="radio" v-model="ruleForm4.negotiable" label="1">是</el-radio>
+                            <el-radio class="radio" v-model="ruleForm4.negotiable" label="2">否</el-radio>
+                        </template>
+                    </el-form-item>
+                    <el-form-item label="价格是否促销：" v-if="ruleForm4.bargain==2">
+                        <template>
+                            <el-radio class="radio" v-model="ruleForm4.promotion" label="1">是</el-radio>
+                            <el-radio class="radio" v-model="ruleForm4.promotion" label="2">否</el-radio>
+                        </template>
+                    </el-form-item>
+                    <el-form-item label="服务价格：" prop="startPrice" v-if="ruleForm4.bargain==1 && ruleForm4.negotiable==2">
+                        <el-input placeholder="请输入金额" v-model="ruleForm4.startPrice" style="width:220px;" :maxlength="11">
+                            <template slot="append">元起</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="服务价格：" prop="price" v-if="ruleForm4.bargain==2">
+                        <el-input placeholder="请输入金额" v-model="ruleForm4.price" style="width:220px;" :maxlength="11">
+                            <template slot="append">元</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="服务促销价格：" prop="promotionPrice" v-if="ruleForm4.bargain==2  && ruleForm4.promotion ==1">
+                        <el-input placeholder="请输入金额" v-model="ruleForm4.promotionPrice" style="width:220px;" :maxlength="11">
+                            <template slot="append">元</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="促销时间范围：" class="serverarea" v-if="ruleForm4.bargain==2 && ruleForm4.promotion ==1">
+                        <el-col :span="6">
+                            <el-form-item prop="startTime">
+                                <el-date-picker v-model="ruleForm4.startTime" type="datetime" placeholder="选择日期时间" @change="getStartDate"></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                        <el-col class="line" :span="1">-</el-col>
+                        <el-col :span="5">
+                            <el-form-item prop="endTime">
+                                <el-date-picker v-model="ruleForm4.endTime" type="datetime" placeholder="选择日期时间" @change="getEndDate"></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="服务单位：" prop="company">
+                        <el-select v-model="ruleForm4.company" placeholder="请选择">
+                            <el-option v-for="item in ruleForm4.companyOptions" :key="item.id" :label="item.dictName" :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="发票邮寄方式：" prop="mail">
+                        <template>
+                            <el-radio class="radio" v-model="ruleForm4.mail" label="1">包邮</el-radio>
+                            <el-radio class="radio" v-model="ruleForm4.mail" label="2">货到付款</el-radio>
+                        </template>
+                    </el-form-item>
+                    <el-form-item label="服务logo：" required>
+                        <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess4">
+                            <img v-if="ruleForm4.upImgUrl" :src="ruleForm4.upImgUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                        <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
+                    </el-form-item>
+                    <el-form-item label="服务详情：" class="quillcon" required>
+                        <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm4.toolbar1' :uploadUrl="ruleForm4.uploadUrl" v-model="ruleForm4.introduce"></editor>
+                    </el-form-item>
+                    <el-form-item style="text-align: center;">
+                        <el-button type="primary" @click="submitForm4()" :loading="submitLoading">提交发布商品</el-button>
+                        <el-button type="primary" @click="dialogTableVisible = true">预览</el-button>
+                    </el-form-item>
+
+                    <!--预览弹窗-->
+                    <el-dialog :visible.sync="dialogTableVisible">
+                        <div class="cominfo">
+                            <div class="img">
+                                <img :src="ruleForm4.upImgUrl" alt="" width="150" height="150">
+                            </div>
+                            <div class="info">
+                                <ul>
+                                    <li>{{ruleForm4.name}}</li>
+                                    <li>{{ruleForm4.brief}}</li>
+                                    <li>价格：
+                                        <span>{{ruleForm4.price}}元</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="comdetails">
+                            <p class="title">商品详情介绍</p>
+                            <div>
+                                <p>服务详情：</p>
+                                <p v-html="ruleForm4.introduce"></p>
+                            </div>
+                        </div>
+                    </el-dialog>
+                </el-form>
+            </div>
+
         </div>
         <!--商品发布成功-->
         <div class="con1" v-if="type === '2'">
@@ -726,7 +793,7 @@ export default {
                 process: '',
                 // 承诺
                 promise: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
@@ -760,13 +827,12 @@ export default {
                 process: '',
                 // 承诺
                 promise: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
                 toolbar4: 'toolbar4',
                 toolbar5: 'toolbar5',
-
             },
             // 其他服务数据
             ruleForm3: {
@@ -842,24 +908,59 @@ export default {
                 process: '',
                 // 承诺
                 promise: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
                 toolbar4: 'toolbar4',
                 toolbar5: 'toolbar5',
             },
+            ruleForm4: {
+                name: '',
+                brief: '',
+                bargain: '2',
+                negotiable: '2',
+                startPrice: '',
+                price: '',
+                promotion: '2',
+                // 促销价
+                promotionPrice: '',
+                // 促销开始时间
+                startTime: null,
+                // 促销结束时间
+                endTime: null,
+                companyOptions: [],
+                company: '',
+                mail: '1',
+                // 商品图片上传
+                imageUrl: '',
+                upImgUrl: '',
+                // 介绍
+                introduce: '',
+                // 描述
+                describe: '',
+                uploadUrl: `${this.$config.back}/putImg`,
+                toolbar1: 'toolbar1',
+            },
             rules: {
                 name: [
-                    { required: true, message: '商品标题名称长度至少3个字符，最长50个汉字', trigger: 'blur' },
-                    { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' },
+                    { required: true, message: '商品标题名称长度至少3个字符，最长16个汉字', trigger: 'blur' },
+                    { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' },
                 ],
                 brief: [
-                    { required: true, message: '一句话描述您的商品，字数限制为 15 个字', trigger: 'blur' },
-                    { max: 15, message: '最长为15个字符', trigger: 'blur' },
+                    { required: true, message: '一句话描述您的商品，字数限制为 33 个字', trigger: 'blur' },
+                    { max: 33, message: '最长为33个字符', trigger: 'blur' },
                 ],
                 bargaining: [
                     { required: true, message: '请选择是否议价', trigger: 'change' }
+                ],
+                startPrice: [
+                    { required: true, message: '请输入商品价格', trigger: 'change' },
+                    {
+                        pattern: /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/,
+                        message: '商品价格格式不正确',
+                        trigger: 'blur'
+                    }
                 ],
                 price: [
                     { required: true, message: '请输入商品价格', trigger: 'change' },
@@ -975,7 +1076,7 @@ export default {
             businessId: this.businessid
         }
         var that = this;
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByBusinessCon', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByBusinessCon`, {}, {
             params: reg
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -994,10 +1095,11 @@ export default {
         var reg2 = {
             fatherID: 100
         }
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dictionary/selectByfatheridList', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dictionary/selectByfatheridList`, {}, {
             params: reg2
         }).then(({ data }) => {
             if (data.status === 200) {
+                that.ruleForm4.companyOptions = data.data;
                 that.ruleForm3.companyOptions = data.data;
                 that.ruleForm2.companyOptions = data.data;
                 that.ruleForm1.companyOptions = data.data;
@@ -1013,7 +1115,7 @@ export default {
             roomState: 2
         }
         //加载空间列表
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomListStauts', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/selectRoomListStauts`, {}, {
             params: rooms
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -1159,7 +1261,7 @@ export default {
         //省列表
         getProvinceList(index, type) {
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selectOprtorProvice')
+            this.$htAjax.post(`${this.$config.back}/selectOprtorProvice`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         if (type == 1) {
@@ -1195,8 +1297,10 @@ export default {
                 this.detailsType = '0';
             } else if (this.serverType == 3) {
                 this.detailsType = '1';
-            } else {
+            } else if (this.serverType == 2) {
                 this.detailsType = '2';
+            } else if (this.serverType == 4) {
+                this.detailsType = '3';
             }
             this.commodityType2 = '';
             this.commodityType3 = '';
@@ -1278,11 +1382,14 @@ export default {
         handleAvatarSuccess22(response, file, fileList) {
             this.ruleForm2.imageUrl1 = URL.createObjectURL(file.raw);
             this.ruleForm2.upImgUrl1 = response.data;
-
         },
         handleAvatarSuccess3(response, file, fileList) {
             this.ruleForm3.imageUrl = URL.createObjectURL(file.raw);
             this.ruleForm3.upImgUrl = response.data;
+        },
+        handleAvatarSuccess4(response, file, fileList) {
+            this.ruleForm4.imageUrl = URL.createObjectURL(file.raw);
+            this.ruleForm4.upImgUrl = response.data;
         },
         handleAvatarSuccess33(response, file, fileList) {
             this.ruleForm3.imageUrl1 = URL.createObjectURL(file.raw);
@@ -1401,7 +1508,7 @@ export default {
                         return false;
                     } else {
                         var that = this;
-                        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/addProvideCommodity', reg)
+                        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/addProvideCommodity`, reg)
                             .then(({ data }) => {
                                 if (data.status == 200) {
                                     that.submitLoading = false;
@@ -1484,7 +1591,7 @@ export default {
                         return false;
                     } else {
                         var that = this;
-                        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/addProvideCommodity', reg)
+                        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/addProvideCommodity`, reg)
                             .then(({ data }) => {
                                 if (data.status === 200) {
                                     that.submitLoading = false;
@@ -1525,11 +1632,11 @@ export default {
             this.$refs.ruleForm3.validate((valid) => {
                 var serviceRange = [];
                 var price = 0.0;
-                var isPromotions='2';
+                var isPromotions = '2';
                 if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '1') {
                     var length = this.ruleForm3.serviceAreas.length
                     price = this.ruleForm3.price;
-                    isPromotions=this.ruleForm3.promotion;
+                    isPromotions = this.ruleForm3.promotion;
                     for (var i = 0; i < length; i++) {
                         var service = {
                             area: {
@@ -1568,7 +1675,7 @@ export default {
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '1') {
                     var length = this.ruleForm3.twoServiceAreas.length
                     price = this.ruleForm3.twoServiceAreas[0].price;
-                    isPromotions='2';
+                    isPromotions = '2';
                     for (var i = 0; i < length; i++) {
                         var service = {
                             province: {
@@ -1614,10 +1721,10 @@ export default {
 
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.nowPrice;
-                    isPromotions=this.ruleForm3.promotion;
+                    isPromotions = this.ruleForm3.promotion;
                 } else if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.price;
-                    isPromotions=this.ruleForm3.promotion;
+                    isPromotions = this.ruleForm3.promotion;
                 }
                 var startTime = ''
                 if (this.ruleForm3.startTime == undefined) {
@@ -1731,7 +1838,7 @@ export default {
                         return false;
                     } else {
                         var that = this
-                        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/addProvideCommodity', reg)
+                        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/addProvideCommodity`, reg)
                             .then(({ data }) => {
                                 if (data.status === 200) {
                                     that.submitLoading = false;
@@ -1769,13 +1876,155 @@ export default {
                 }
             });
         },
+        submitForm4() {
+            this.$refs.ruleForm4.validate((valid) => {
+                var comType = '';
+                var comPrice = '';
+                var finalPrice = '';
+                var commodityPricePromotion = '';
+                var startTime = '';
+                var endTime = '';
+                var comTypeIndex = this.commodityType2.indexOf('需求')
+                if (comTypeIndex > 0) {
+                    comType = 4
+                } else {
+                    comType = 5
+                }
+                if (this.ruleForm4.negotiable == 1) {
+                    comPrice = 0
+                } else {
+                    comPrice = this.ruleForm4.startPrice
+                }
+                if (this.ruleForm4.bargain == 1) {
+                    if (this.ruleForm4.negotiable == 1) {
+                        finalPrice = 0
+                    } else {
+                        finalPrice = this.ruleForm4.startPrice
+                    }
+                } else {
+                    finalPrice = this.ruleForm4.price;
+                }
+
+                if (this.ruleForm4.promotion == 1) {
+                    commodityPricePromotion = this.ruleForm4.promotionPrice;
+                    if (this.ruleForm4.startTime == null) {
+                        this.$message.warning('请选择促销开始时间');
+                        return false;
+                    } else {
+                        startTime = this.ruleForm4.startTime;
+                    }
+                    if (this.ruleForm4.endTime == null) {
+                        this.$message.warning('请选择促销结束时间');
+                        return false;
+                    } else {
+                        endTime = this.ruleForm4.endTime
+                    }
+                } else {
+                    commodityPricePromotion = null
+                    startTime = null
+                    endTime = null
+                }
+                if (valid) {
+                    this.submitLoading = true;
+                    var reg = {
+                        commodityName: this.ruleForm4.name,
+                        invoiceMail: this.ruleForm4.mail,
+                        startingPrice: comPrice,
+                        commodityPrice: this.ruleForm4.price,
+                        commodity_bigimage: this.ruleForm4.upImgUrl,
+                        commodity_smallimage: this.ruleForm4.upImgUrl,
+                        isBargaining: this.ruleForm4.bargain,
+                        commodityState: 1,
+                        finalPrice: finalPrice,
+                        synopsis: this.ruleForm4.brief,
+                        introduce: this.ruleForm4.introduce,
+                        isTerritoryRestriction: 2,
+                        stock: 10000,
+                        isPromotion: this.ruleForm4.promotion,
+                        commodityPricePromotion: commodityPricePromotion,
+                        startTime: startTime,
+                        endTime: endTime,
+                        type: comType,
+                        measurementUnit: {
+                            id: this.ruleForm4.company
+                        },
+                        serviceType: {
+                            id: this.serverLastId
+                        },
+                        providerBusiness: {
+                            id: this.businessid
+                        }
+                    }
+                    if (reg.commodity_smallimage == null || reg.commodity_smallimage == '') {
+                        this.$message.warning('请上传服务logo图');
+                        this.submitLoading = false;
+                        return false;
+                    }
+
+                    if (reg.introduce == null || reg.introduce == '') {
+                        this.$message.warning('请仔细填写页面信息');
+                        this.submitLoading = false;
+                        return false;
+                    }
+                    var that = this;
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/addProvideCommodity`, reg)
+                        .then(({ data }) => {
+                            if (data.status == 200) {
+                                that.submitLoading = false;
+                                that.type = "2"
+                            } else if (data.status === 300) {
+                                that.submitLoading = false;
+                                that.$message({
+                                    type: 'warning',
+                                    message: '所上架服务不在服务范围内!'
+                                });
+                            } else if (data.status === 250) {
+                                that.submitLoading = false;
+                                that.$message({
+                                    type: 'error',
+                                    message: '发布失败!'
+                                });
+                                return;
+                            }
+                        }).catch(function(err) {
+                            that.submitLoading = false;
+                        });
+
+                } else {
+                    this.$message.warning('请仔细检查页面信息后，再次发布商品！');
+                    this.submitLoading = false;
+                    return false;
+                }
+            });
+
+        },
+        getStartDate() {
+            var nowTime = new Date().getTime();
+            if (nowTime - new Date(this.ruleForm4.startTime).getTime() > 1000) {
+                this.ruleForm4.startTime = '';
+                this.$message.warning('促销开始时间需应大于等于此刻时间');
+                return false;
+            }
+        },
+        getEndDate() {
+            if (this.ruleForm4.startTime == null) {
+                this.$message.warning('请先选择促销开始时间');
+                this.ruleForm4.endTime = '';
+                return false;
+            }
+            if (new Date(this.ruleForm4.startTime).getTime() > new Date(this.ruleForm4.endTime).getTime()) {
+                this.$message.warning('促销开始时间需应小于促销结束时间');
+                this.ruleForm4.endTime = '';
+                return false;
+            }
+        },
         //省变化
         provinceChange(item, index, type) {
             var reg = {
                 id: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selcityList3', {}, {
+            this.$htAjax.post(`${this.$config.back}/selcityList3`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -1808,7 +2057,7 @@ export default {
                 id: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selAreaList2', {}, {
+            this.$htAjax.post(`${this.$config.back}/selAreaList2`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -2052,6 +2301,11 @@ export default {
 
 
 
+
+
+
+
+
 /*填写商品详情*/
 
 .tab {
@@ -2069,6 +2323,11 @@ export default {
     font-size: 12px;
     color: red;
 }
+
+
+
+
+
 
 
 
@@ -2116,6 +2375,11 @@ export default {
     margin-left: 175px;
     line-height: 50px;
 }
+
+
+
+
+
 
 
 
@@ -2245,6 +2509,11 @@ export default {
     line-height: 178px;
     text-align: center;
 }
+
+
+
+
+
 
 
 /*.commodity .avatar {

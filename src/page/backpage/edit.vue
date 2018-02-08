@@ -1,6 +1,6 @@
 <template>
     <div v-loading.body="loading" class="comEdit">
-        <div class="tab" v-if="detailsType === '1'">
+        <div class="tab" v-if="detailsType == '1'">
             <p class="tab_title">商品基本信息</p>
             <el-form :model="ruleForm1" :rules="rules" ref="ruleForm1" label-width="150px" class="demo-ruleForm">
                 <el-form-item label="商品分类:" prop="classoptions">
@@ -8,10 +8,10 @@
                     <el-button type="primary" @click="edit">编辑</el-button>
                 </el-form-item>
                 <el-form-item label="商品名称:" prop="name">
-                    <el-input v-model="ruleForm1.name" style="width:500px;" :maxlength="50"></el-input>
+                    <el-input v-model="ruleForm1.name" style="width:500px;" :maxlength="16"></el-input>
                 </el-form-item>
                 <el-form-item label="商品描述:" prop="brief">
-                    <el-input v-model="ruleForm1.brief" style="width:500px;" :maxlength="15"></el-input>
+                    <el-input v-model="ruleForm1.brief" style="width:500px;" :maxlength="33"></el-input>
                 </el-form-item>
                 <el-form-item label="商品价格:" prop="price">
                     <el-input placeholder="请输入金额" v-model="ruleForm1.price" style="width:220px;" :maxlength="11">
@@ -40,15 +40,15 @@
                     <el-input placeholder="请输入库存量" v-model="ruleForm1.stock" style="width:220px;" :maxlength="11">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="商品图片logo:" required>
-                    <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess11">
+                <el-form-item label="商品图片logo:" >
+                    <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess11">
                         <img v-if="ruleForm1.imageUrl1" :src="ruleForm1.imageUrl1" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                 </el-form-item>
-                <el-form-item label="商品图片:" required>
-                    <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess1">
+                <el-form-item label="商品图片:" >
+                    <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess1">
                         <img v-if="ruleForm1.imageUrl" :src="ruleForm1.imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
@@ -63,16 +63,13 @@
                 <el-form-item label="工位介绍：" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar3' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.case"></editor>
                 </el-form-item>
-                <!--<el-form-item label="入孵尊享：" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm1.toolbar4' :uploadUrl="ruleForm1.uploadUrl" v-model="ruleForm1.process"></editor>
-                        </el-form-item>-->
                 <el-form-item style="text-align: center;">
                     <el-button type="primary" @click="submitForm1()" :loading="submitLoading">提交发布商品</el-button>
                     <el-button type="primary" @click="cancel">取消</el-button>
                 </el-form-item>
             </el-form>
         </div>
-        <div class="tab" v-if="detailsType === '3'">
+        <div class="tab" v-if="detailsType == '3'">
             <p class="tab_title">商品基本信息</p>
             <el-form :model="ruleForm2" :rules="rules" ref="ruleForm2" label-width="150px" class="demo-ruleForm">
                 <el-form-item label="商品分类:" prop="classoptions">
@@ -80,10 +77,10 @@
                     <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
                 </el-form-item>
                 <el-form-item label="商品名称:" prop="name">
-                    <el-input v-model="ruleForm2.name" style="width:500px;" :maxlength="50"></el-input>
+                    <el-input v-model="ruleForm2.name" style="width:500px;" :maxlength="16"></el-input>
                 </el-form-item>
                 <el-form-item label="商品描述:" prop="brief">
-                    <el-input v-model="ruleForm2.brief" style="width:500px;" :maxlength="15"></el-input>
+                    <el-input v-model="ruleForm2.brief" style="width:500px;" :maxlength="33"></el-input>
                 </el-form-item>
                 <el-form-item label="商品价格:" prop="price">
                     <el-input placeholder="请输入金额" v-model="ruleForm2.price" style="width:220px;" :maxlength="11">
@@ -119,32 +116,32 @@
                         </el-form-item>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="商品图片logo:" required>
-                    <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess22">
+                <el-form-item label="商品图片logo:" >
+                    <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess22">
                         <img v-if="ruleForm2.imageUrl1" :src="ruleForm2.imageUrl1" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                 </el-form-item>
-                <el-form-item label="商品图片:" required>
-                    <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess2">
+                <el-form-item label="商品图片:" >
+                    <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess2">
                         <img v-if="ruleForm2.imageUrl" :src="ruleForm2.imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                 </el-form-item>
                 <!--<el-form-item label="培训受众：" prop="details" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar1' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.introduce"></editor>
-                        </el-form-item>-->
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar1' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.introduce"></editor>
+                                </el-form-item>-->
                 <el-form-item label="商品介绍：" prop="details" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar2' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.describe"></editor>
                 </el-form-item>
                 <!--<el-form-item label="课程概述：" prop="details" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar3' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.case"></editor>
-                        </el-form-item>
-                        <el-form-item label="培训师/机构介绍：" prop="details" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar4' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.process"></editor>
-                        </el-form-item>-->
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar3' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.case"></editor>
+                                </el-form-item>
+                                <el-form-item label="培训师/机构介绍：" prop="details" class="quillcon" required>
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar4' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.process"></editor>
+                                </el-form-item>-->
                 <el-form-item label="服务承诺：" prop="details" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm2.toolbar5' :uploadUrl="ruleForm2.uploadUrl" v-model="ruleForm2.promise"></editor>
                 </el-form-item>
@@ -154,7 +151,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="tab" v-if="detailsType === '2'">
+        <div class="tab" v-if="detailsType == '2'">
             <p class="tab_title">商品基本信息</p>
             <el-form :model="ruleForm3" :rules="rules" ref="ruleForm3" label-width="150px" class="demo-ruleForm">
                 <el-form-item label="商品分类:" prop="classoptions">
@@ -162,10 +159,10 @@
                     <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
                 </el-form-item>
                 <el-form-item label="商品名称:" prop="name">
-                    <el-input v-model="ruleForm3.name" style="width:500px;" :maxlength="50"></el-input>
+                    <el-input v-model="ruleForm3.name" style="width:500px;" :maxlength="16"></el-input>
                 </el-form-item>
                 <el-form-item label="商品描述:" prop="brief">
-                    <el-input v-model="ruleForm3.brief" style="width:500px;" :maxlength="15"></el-input>
+                    <el-input v-model="ruleForm3.brief" style="width:500px;" :maxlength="33"></el-input>
                 </el-form-item>
                 <el-form-item label="商品是否允许议价:" prop="bargaining" @change="clearServiceRange()">
                     <template>
@@ -294,7 +291,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value1" placeholder="请选择省" style="width:150px;margin-right:10px;" @change="provinceChange(serviceArea.value1,index,2)">
-                                <el-option v-for="(item,index) in serviceArea.options1" :key="index" :label="item.name" :value="item.id"></el-option>
+                                <el-option v-for="(item,index) in serviceArea.options1" :key="item.name" :label="item.name" :value="item.id"></el-option>
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -303,7 +300,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value2" placeholder="请选择市" style="width:150px; margin-right:10px;" @change="cityChange(serviceArea.value2,index,2)">
-                                <el-option v-for="item in serviceArea.options2" :key="item.id" :label="item.name" :value="item.id">
+                                <el-option v-for="item in serviceArea.options2" :key="item.name" :label="item.name" :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -312,7 +309,7 @@
                     <el-col :span="5">
                         <el-form-item>
                             <el-select v-model="serviceArea.value3" placeholder="请选择县/区" style="width:150px;margin-right:10px;">
-                                <el-option v-for="item in serviceArea.options3" :key="item.id" :label="item.name" :value="item.id">
+                                <el-option v-for="item in serviceArea.options3" :key="item.name" :label="item.name" :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -322,39 +319,127 @@
                     <el-button @click.prevent="removeServiceArea(serviceArea)" v-if="index != '0'">删除</el-button>
                     <el-button type="primary" @click="addServiceArea(index)" v-if="index == '0'">增加</el-button>
                 </el-form-item>
-                <el-form-item label="商品图片logo:" required>
+                <el-form-item label="商品图片logo:">
 
-                    <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess33">
+                    <el-upload class="avatar-uploader" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess33">
                         <img v-if="ruleForm3.imageUrl1" :src="ruleForm3.imageUrl1" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
                 </el-form-item>
-                <el-form-item label="商品图片:" required>
+                <el-form-item label="商品图片:">
 
-                    <el-upload class="avatar-uploader comImg" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
+                    <el-upload class="avatar-uploader comImg" name="companyLogo" :action="`${$config.back}/putImg`" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess3">
                         <img v-if="ruleForm3.imageUrl" :src="ruleForm3.imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传750*416的图片</span>
                 </el-form-item>
                 <!--<el-form-item label="商品介绍:" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar1' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.introduce"></editor>
-                        </el-form-item>-->
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar1' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.introduce"></editor>
+                                </el-form-item>-->
                 <el-form-item label="商品介绍:" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar2' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.describe"></editor>
                 </el-form-item>
                 <!--<el-form-item label="服务案例:" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar3' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.case"></editor>
-                        </el-form-item>
-                        <el-form-item label="服务流程:" class="quillcon" required>
-                            <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar4' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.process"></editor>
-                        </el-form-item>-->
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar3' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.case"></editor>
+                                </el-form-item>
+                                <el-form-item label="服务流程:" class="quillcon" required>
+                                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar4' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.process"></editor>
+                                </el-form-item>-->
                 <el-form-item label="服务承诺:" class="quillcon" required>
                     <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm3.toolbar5' :uploadUrl="ruleForm3.uploadUrl" v-model="ruleForm3.promise"></editor>
                 </el-form-item>
                 <el-form-item style="text-align: center;">
-                    <el-button type="primary" @click="submitForm3()" :loading="submitLoading">提交发布商品</el-button>
+                    <el-button type="primary" @click="submitForm3('newForm')" :loading="submitLoading">提交发布商品</el-button>
+                    <el-button type="primary" @click="cancel">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="tab" v-if="detailsType == '4'">
+            <p class="tab_title">商品基本信息</p>
+            <el-form :model="ruleForm4" :rules="rules" ref="ruleForm4" label-width="150px" class="demo-ruleForm">
+                <el-form-item label="商品分类:" prop="classoptions">
+                    <el-input v-model="ruleForm4.comClass" placeholder="请输入内容" style="width:220px;"></el-input>
+                    <el-button type="primary" @click="edit">编辑</el-button>
+                </el-form-item>
+                <el-form-item label="名称：" prop="name">
+                    <el-input v-model="ruleForm4.name" style="width:500px;" :maxlength="16"></el-input>
+                </el-form-item>
+                <el-form-item label="服务描述：" prop="brief">
+                    <el-input v-model="ruleForm4.brief" style="width:500px;" :maxlength="33"></el-input>
+                </el-form-item>
+                <el-form-item label="服务是否允许议价：">
+                    <template>
+                        <el-radio class="radio" v-model="ruleForm4.bargain" label="1">是</el-radio>
+                        <el-radio class="radio" v-model="ruleForm4.bargain" label="2">否</el-radio>
+                    </template>
+                </el-form-item>
+                <el-form-item label="价格是否面议：" v-if="ruleForm4.bargain==1">
+                    <template>
+                        <el-radio class="radio" v-model="ruleForm4.negotiable" label="1">是</el-radio>
+                        <el-radio class="radio" v-model="ruleForm4.negotiable" label="2">否</el-radio>
+                    </template>
+                </el-form-item>
+                <el-form-item label="价格是否促销：" v-if="ruleForm4.bargain==2">
+                    <template>
+                        <el-radio class="radio" v-model="ruleForm4.promotion" label="1">是</el-radio>
+                        <el-radio class="radio" v-model="ruleForm4.promotion" label="2">否</el-radio>
+                    </template>
+                </el-form-item>
+                <el-form-item label="服务价格：" prop="startPrice" v-if="ruleForm4.bargain==1 && ruleForm4.negotiable==2">
+                    <el-input placeholder="请输入金额" v-model="ruleForm4.startPrice" style="width:220px;" :maxlength="11">
+                        <template slot="append">元起</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="服务价格：" prop="price" v-if="ruleForm4.bargain==2">
+                    <el-input placeholder="请输入金额" v-model="ruleForm4.price" style="width:220px;" :maxlength="11">
+                        <template slot="append">元</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="服务促销价格：" prop="promotionPrice" v-if="ruleForm4.bargain==2  && ruleForm4.promotion ==1">
+                    <el-input placeholder="请输入金额" v-model="ruleForm4.promotionPrice" style="width:220px;" :maxlength="11">
+                        <template slot="append">元</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="促销时间范围：" class="serverarea" v-if="ruleForm4.bargain==2 && ruleForm4.promotion ==1">
+                    <el-col :span="6">
+                        <el-form-item prop="startTime">
+                            <el-date-picker v-model="ruleForm4.startTime" type="datetime" placeholder="选择日期时间" @change="getStartDate"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col class="line" :span="1">-</el-col>
+                    <el-col :span="5">
+                        <!---->
+                        <el-form-item prop="endTime">
+                            <el-date-picker v-model="ruleForm4.endTime" type="datetime" placeholder="选择日期时间" @change="getEndDate"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="服务单位：" prop="company">
+                    <el-select v-model="ruleForm4.company" placeholder="请选择">
+                        <el-option v-for="item in ruleForm4.companyOptions" :key="item.id" :label="item.dictName" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="发票邮寄方式：" prop="mail">
+                    <template>
+                        <el-radio class="radio" v-model="ruleForm4.mail" label="1">包邮</el-radio>
+                        <el-radio class="radio" v-model="ruleForm4.mail" label="2">货到付款</el-radio>
+                    </template>
+                </el-form-item>
+                <el-form-item label="服务logo：">
+                    <el-upload class="avatar-uploader" name="companyLogo" action="https://apitest.gack.citic:8082/putImg" :show-file-list="false" :multiple="false" :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess4">
+                        <img v-if="ruleForm4.upImgUrl" :src="ruleForm4.upImgUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <span>上传商品默认主图，仅支持jpg、bmp、png、gif的图片格式，图片大小不能超过200KB，为了展示效果更加清晰，建议上传180*180的图片</span>
+                </el-form-item>
+                <el-form-item label="服务详情：" class="quillcon" required>
+                    <editor ref="myTextEditor" :fileName="'myFile'" :toolbars='ruleForm4.toolbar1' :uploadUrl="ruleForm4.uploadUrl" v-model="ruleForm4.introduce"></editor>
+                </el-form-item>
+                <el-form-item style="text-align: center;">
+                    <el-button type="primary" @click="submitForm4()" :loading="submitLoading">提交发布商品</el-button>
                     <el-button type="primary" @click="cancel">取消</el-button>
                 </el-form-item>
             </el-form>
@@ -460,7 +545,7 @@ export default {
                 process: '',
                 // 承诺
                 promise: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
@@ -500,7 +585,7 @@ export default {
                 process: '',
                 // 承诺
                 promise: '',
-                uploadUrl: 'https://apitest.gack.citic:8082/api/upload',
+                uploadUrl: `${this.$config.back}/api/upload`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
@@ -581,29 +666,64 @@ export default {
                     // something config
                 },
                 id: null,
-                uploadUrl: 'https://apitest.gack.citic:8082/putImg',
+                uploadUrl: `${this.$config.back}/putImg`,
                 toolbar1: 'toolbar1',
                 toolbar2: 'toolbar2',
                 toolbar3: 'toolbar3',
                 toolbar4: 'toolbar4',
                 toolbar5: 'toolbar5',
             },
+            ruleForm4: {
+
+                id: '',
+                comClass: '',
+                name: '',
+                brief: '',
+                bargain: '2',
+                negotiable: '2',
+                startPrice: '',
+                price: '',
+                promotion: '2',
+                // 促销价
+                promotionPrice: '',
+                // 促销开始时间
+                startTime: null,
+                // 促销结束时间
+                endTime: null,
+                companyOptions: [],
+                company: '',
+                mail: '1',
+                stock: '',
+                // 商品图片上传
+                imageUrl: '',
+                upImgUrl: '',
+                // 介绍
+                introduce: '',
+                // 描述
+                describe: '',
+                uploadUrl: `${this.$config.back}/putImg`,
+                toolbar1: 'toolbar1',
+                finalClass: '',
+                finalType: '',
+            },
             rules: {
                 name: [
-                    { required: true, message: '商品标题名称长度至少3个字符，最长50个汉字', trigger: 'change' },
-                    { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'change' },
-                ],
-                describe: [
-                    { required: true, message: '一句话描述您的商品，字数限制为 15 个字', trigger: 'change' },
-                    { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'change' },
+                    { required: true, message: '商品标题名称长度至少3个字符，最长16个汉字', trigger: 'change' },
+                    { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'change' },
                 ],
                 brief: [
-                    { required: true, message: '一句话描述您的商品，字数限制为 15 个字', trigger: 'change' },
-                    { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'change' },
-                    { pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '不可以出现特殊字符' },
+                    { required: true, message: '一句话描述您的商品，字数限制为 33 个字', trigger: 'blur' },
+                    { max: 33, message: '最长为33个字符', trigger: 'blur' },
                 ],
                 bargaining: [
                     { required: true, message: '请选择是否议价', trigger: 'change' }
+                ],
+                startPrice: [
+                    { required: true, message: '请输入商品价格' },
+                    {
+                        pattern: /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/,
+                        message: '商品价格格式不正确'
+                    }
                 ],
                 price: [
                     { required: true, message: '请输入商品价格' },
@@ -703,7 +823,7 @@ export default {
             businessId: this.businessid
         }
         var that = this;
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/serverClass/getServerClassByBusinessCon', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/serverClass/getServerClassByBusinessCon`, {}, {
             params: reg
         }).then(({ data }) => {
             if (data.status === 200) {
@@ -730,10 +850,11 @@ export default {
         }
 
         var that = this;
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/dictionary/selectByfatheridList', {}, {
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/dictionary/selectByfatheridList`, {}, {
             params: reg2
         }).then(({ data }) => {
             if (data.status === 200) {
+                that.ruleForm4.companyOptions = data.data;
                 that.ruleForm3.companyOptions = data.data;
                 that.ruleForm2.companyOptions = data.data;
                 that.ruleForm1.companyOptions = data.data;
@@ -751,96 +872,135 @@ export default {
 
         init(comid, businessid) {
             this.loading = true;
-            var that = this;
             var reg = {
                 id: comid
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/getProvideCommodity', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/getProvideCommodity`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
-                    that.detailsType = data.data.type;
-                    that.serverLastId = data.data.serviceType.id;
-                    that.commodityCode = data.data.commodityCode
-                    // 空间
-                    that.ruleForm1.comClass = data.data.serviceType.serverName
-                    that.ruleForm1.name = data.data.commodityName;
-                    that.ruleForm1.mail = data.data.invoiceMail;
-                    that.ruleForm1.brief = data.data.synopsis
-                    that.ruleForm1.imageUrl = data.data.commodity_bigimage
-                    that.ruleForm1.upImgUrl = data.data.commodity_bigimage
-                    that.ruleForm1.imageUrl1 = data.data.commodity_smallimage
-                    that.ruleForm1.upImgUrl1 = data.data.commodity_smallimage
-                    that.ruleForm1.id = data.data.id
-                    that.ruleForm1.company = data.data.measurementUnit.id
-                    that.ruleForm1.introduce = data.data.introduce
-                    that.ruleForm1.describe = data.data.description
-                    that.ruleForm1.case = data.data.commodityCase
-                    that.ruleForm1.process = data.data.process
-                    that.ruleForm1.promise = data.data.promise
-                    that.ruleForm1.salesVolume = data.data.salesVolume
-                    that.ruleForm1.evaluateValue = data.data.evaluateValue
-                    //培训
-                    that.ruleForm2.comClass = data.data.serviceType.serverName
-                    that.ruleForm2.name = data.data.commodityName
-                    that.ruleForm2.mail = data.data.invoiceMail
-                    that.ruleForm2.brief = data.data.synopsis
-                    that.ruleForm2.imageUrl = data.data.commodity_bigimage
-                    that.ruleForm2.upImgUrl = data.data.commodity_bigimage
-                    that.ruleForm2.imageUrl1 = data.data.commodity_smallimage
-                    that.ruleForm2.upImgUrl1 = data.data.commodity_smallimage
-                    that.ruleForm2.id = data.data.id
-                    that.ruleForm2.company = data.data.measurementUnit.id
-                    that.ruleForm2.introduce = data.data.introduce
-                    that.ruleForm2.describe = data.data.description
-                    that.ruleForm2.case = data.data.commodityCase
-                    that.ruleForm2.process = data.data.process
-                    that.ruleForm2.promise = data.data.promise
-                    that.ruleForm2.salesVolume = data.data.salesVolume
-                    that.ruleForm2.evaluateValue = data.data.evaluateValue
-                    // 其他
-                    that.ruleForm3.comClass = data.data.serviceType.serverName
-                    that.ruleForm3.name = data.data.commodityName
-                    that.ruleForm3.mail = data.data.invoiceMail
-                    that.ruleForm3.brief = data.data.synopsis
-                    that.ruleForm3.imageUrl = data.data.commodity_bigimage
-                    that.ruleForm3.upImgUrl = data.data.commodity_bigimage
-                    that.ruleForm3.imageUrl1 = data.data.commodity_smallimage
-                    that.ruleForm3.upImgUrl1 = data.data.commodity_smallimage
-                    that.ruleForm3.id = data.data.id
-                    that.ruleForm3.company = data.data.measurementUnit.id
-                    that.ruleForm3.introduce = data.data.introduce
-                    that.ruleForm3.describe = data.data.description
-                    that.ruleForm3.case = data.data.commodityCase
-                    that.ruleForm3.process = data.data.process
-                    that.ruleForm3.promise = data.data.promise
-                    that.ruleForm3.salesVolume = data.data.salesVolume
-                    that.ruleForm3.evaluateValue = data.data.evaluateValue
-                    if (that.detailsType == 1) {
-                        that.getRooms(data.data.romm.id, businessid, data.data.romm.roomName);
-                        that.ruleForm1.price = (data.data.commodityPrice).toString()
-                        that.ruleForm1.stock = data.data.stock
-                        that.ruleForm1.details = data.data.description
-                    } else if (that.detailsType == 3) {
-                        that.ruleForm2.price = data.data.commodityPrice
-                        that.ruleForm2.personNum = data.data.populationRestriction
-                        that.ruleForm2.datavalue1 = data.data.registrationStartTime
-                        that.ruleForm2.datavalue2 = data.data.registrationEndTime
+                    if (data.data.type == 5) {
+                        this.detailsType = 4
                     } else {
-                        that.ruleForm3.bargaining = data.data.isBargaining
-                        that.ruleForm3.region = data.data.isTerritoryRestriction
-                        // console.log()
-                        that.ruleForm3.stock = data.data.stock
-                        that.ruleForm3.price = data.data.startingPrice
-                        that.ruleForm3.nowPrice = data.data.commodityPrice
-                        that.ruleForm3.promotion = data.data.isPromotion.toString()
-                        if (data.data.commodityPricePromotion == null) {
-                            that.ruleForm3.promotionPrice == null;
+                        this.detailsType = data.data.type;
+                    }
+                    this.serverLastId = data.data.serviceType.id;
+                    this.commodityCode = data.data.commodityCode
+                    // 空间
+                    this.ruleForm1.comClass = data.data.serviceType.serverName
+                    this.ruleForm1.name = data.data.commodityName;
+                    this.ruleForm1.mail = data.data.invoiceMail;
+                    this.ruleForm1.brief = data.data.synopsis
+                    this.ruleForm1.imageUrl = data.data.commodity_bigimage
+                    this.ruleForm1.upImgUrl = data.data.commodity_bigimage
+                    this.ruleForm1.imageUrl1 = data.data.commodity_smallimage
+                    this.ruleForm1.upImgUrl1 = data.data.commodity_smallimage
+                    this.ruleForm1.id = data.data.id
+                    this.ruleForm1.company = data.data.measurementUnit.id
+                    this.ruleForm1.introduce = data.data.introduce
+                    this.ruleForm1.describe = data.data.description
+                    this.ruleForm1.case = data.data.commodityCase
+                    this.ruleForm1.process = data.data.process
+                    this.ruleForm1.promise = data.data.promise
+                    this.ruleForm1.salesVolume = data.data.salesVolume
+                    this.ruleForm1.evaluateValue = data.data.evaluateValue
+                   
+                    //培训
+                    this.ruleForm2.comClass = data.data.serviceType.serverName
+                    this.ruleForm2.name = data.data.commodityName
+                    this.ruleForm2.mail = data.data.invoiceMail
+                    this.ruleForm2.brief = data.data.synopsis
+                    this.ruleForm2.imageUrl = data.data.commodity_bigimage
+                    this.ruleForm2.upImgUrl = data.data.commodity_bigimage
+                    this.ruleForm2.imageUrl1 = data.data.commodity_smallimage
+                    this.ruleForm2.upImgUrl1 = data.data.commodity_smallimage
+                    this.ruleForm2.id = data.data.id
+                    this.ruleForm2.company = data.data.measurementUnit.id
+                    this.ruleForm2.introduce = data.data.introduce
+                    this.ruleForm2.describe = data.data.description
+                    this.ruleForm2.case = data.data.commodityCase
+                    this.ruleForm2.process = data.data.process
+                    this.ruleForm2.promise = data.data.promise
+                    this.ruleForm2.salesVolume = data.data.salesVolume
+                    this.ruleForm2.evaluateValue = data.data.evaluateValue
+                     
+                    // 其他
+                    this.ruleForm3.comClass = data.data.serviceType.serverName
+                    this.ruleForm3.name = data.data.commodityName
+                    this.ruleForm3.mail = data.data.invoiceMail
+                    this.ruleForm3.brief = data.data.synopsis
+                    this.ruleForm3.imageUrl = data.data.commodity_bigimage
+                    this.ruleForm3.upImgUrl = data.data.commodity_bigimage
+                    this.ruleForm3.imageUrl1 = data.data.commodity_smallimage
+                    this.ruleForm3.upImgUrl1 = data.data.commodity_smallimage
+                    this.ruleForm3.id = data.data.id
+                    this.ruleForm3.company = data.data.measurementUnit.id
+                    this.ruleForm3.introduce = data.data.introduce
+                    this.ruleForm3.describe = data.data.description
+                    this.ruleForm3.case = data.data.commodityCase
+                    this.ruleForm3.process = data.data.process
+                    this.ruleForm3.promise = data.data.promise
+                    this.ruleForm3.salesVolume = data.data.salesVolume
+                    this.ruleForm3.evaluateValue = data.data.evaluateValue
+                    
+                    //大企业合作
+                    this.ruleForm4.comClass = data.data.serviceType.serverName
+                    this.ruleForm4.name = data.data.commodityName;
+                    this.ruleForm4.mail = data.data.invoiceMail;
+                    this.ruleForm4.brief = data.data.synopsis
+                    this.ruleForm4.imageUrl = data.data.commodity_smallimage
+                    this.ruleForm4.upImgUrl = data.data.commodity_smallimage
+                    this.ruleForm4.id = data.data.id
+                    this.ruleForm4.company = data.data.measurementUnit.id
+                    this.ruleForm4.introduce = data.data.introduce
+                    if (data.data.commodityPricePromotion == null) {
+                        this.ruleForm4.promotionPrice == null;
+                    } else {
+                        this.ruleForm4.promotionPrice = data.data.commodityPricePromotion
+                    }
+                    this.ruleForm4.startTime = data.data.startTime
+                    this.ruleForm4.endTime = data.data.endTime
+                    
+                    if (this.detailsType == 1) {
+                        this.getRooms(data.data.romm.id, businessid, data.data.romm.roomName);
+                        this.ruleForm1.price = (data.data.commodityPrice).toString()
+                        this.ruleForm1.stock = data.data.stock
+                        this.ruleForm1.details = data.data.description
+                    } else if (this.detailsType == 4) {
+                        this.ruleForm4.promotion = data.data.isPromotion.toString()
+                        this.ruleForm4.finalType = data.data.type
+                        this.ruleForm4.stock = data.data.stock
+                        if (data.data.isBargaining == 2) {
+                            this.ruleForm4.bargain = '2';
+                            this.ruleForm4.price = data.data.commodityPrice
                         } else {
-                            that.ruleForm3.promotionPrice = data.data.commodityPricePromotion.toString()
+                            this.ruleForm4.bargain = '1';
+                            if (data.data.startingPrice == 0) {
+                                this.ruleForm4.negotiable = '1'
+                            } else {
+                                this.ruleForm4.negotiable = '2'
+                                this.ruleForm4.startPrice = data.data.startingPrice
+                            }
                         }
-                        that.ruleForm3.startTime = data.data.startTime
-                        that.ruleForm3.endTime = data.data.endTime
+                    } else if (this.detailsType == 3) {
+                        this.ruleForm2.price = data.data.commodityPrice
+                        this.ruleForm2.personNum = data.data.populationRestriction
+                        this.ruleForm2.datavalue1 = data.data.registrationStartTime
+                        this.ruleForm2.datavalue2 = data.data.registrationEndTime
+                    } else if (this.detailsType == 2) {
+                        this.ruleForm3.bargaining = data.data.isBargaining
+                        this.ruleForm3.region = data.data.isTerritoryRestriction
+                        this.ruleForm3.stock = data.data.stock
+                        this.ruleForm3.price = data.data.startingPrice
+                        this.ruleForm3.nowPrice = data.data.commodityPrice
+                        this.ruleForm3.promotion = data.data.isPromotion.toString()
+                        if (data.data.commodityPricePromotion == null) {
+                            this.ruleForm3.promotionPrice == null;
+                        } else {
+                            this.ruleForm3.promotionPrice = data.data.commodityPricePromotion.toString()
+                        }
+                        this.ruleForm3.startTime = data.data.startTime
+                        this.ruleForm3.endTime = data.data.endTime
                         var range = data.data.serviceRange
                         var serverAreas = [];
 
@@ -905,23 +1065,22 @@ export default {
                             serverAreas.push(area)
                         }
                         if (serverAreas.length > 0) {
-                            that.ruleForm3.serviceAreas = serverAreas
+                            this.ruleForm3.serviceAreas = serverAreas
                         } else if (serverAreas.length == 0) {
-                            that.ruleForm3.serviceAreas.concat(serverAreas)
+                            this.ruleForm3.serviceAreas.concat(serverAreas)
                         }
-                        // that.ruleForm3.serviceAreas = serverAreas
-                        if (that.ruleForm3.region == '1') {
-                            that.zhi = 1;
+                        if (this.ruleForm3.region == '1') {
+                            this.zhi = 1;
                         }
 
                     }
-                    that.loading = false;
+                    this.loading = false;
                 } else {
-                    that.loading = false;
-                    that.$message.warning(data.msg);
+                    this.loading = false;
+                    this.$message.warning(data.msg);
                 }
             }).catch(function(error) {
-                that.loading = false;
+                
             });
 
         },
@@ -933,7 +1092,7 @@ export default {
                 roomState: 2
             }
             //加载空间列表
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomListStauts', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/selectRoomListStauts`, {}, {
                 params: rooms
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -953,7 +1112,7 @@ export default {
         //省列表
         getProvinceList(index, type) {
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selectOprtorProvice')
+            this.$htAjax.post(`${this.$config.back}/selectOprtorProvice`)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         that.ruleForm3.serviceAreas[index].options1 = data.data;
@@ -987,6 +1146,10 @@ export default {
         handleAvatarSuccess3(response, file, fileList) {
             this.ruleForm3.imageUrl = URL.createObjectURL(file.raw);
             this.ruleForm3.upImgUrl = response.data;
+        },
+        handleAvatarSuccess4(response, file, fileList) {
+            this.ruleForm4.imageUrl = URL.createObjectURL(file.raw);
+            this.ruleForm4.upImgUrl = response.data;
         },
         handleAvatarSuccess33(response, file, fileList) {
             this.ruleForm3.imageUrl1 = URL.createObjectURL(file.raw);
@@ -1037,7 +1200,7 @@ export default {
                     id: this.ruleForm3.serviceAreas[index].id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/deleteServiceRange', {}, {
+                this.$htAjax.post(`${this.$config.back}/deleteServiceRange`, {}, {
                     params: reg
                 }).then(({ data }) => {
                     if (data.status === 200) {
@@ -1139,7 +1302,7 @@ export default {
                         return false;
                     }
                     var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateProvideCommodity', reg)
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateProvideCommodity`, reg)
                         .then(({ data }) => {
                             that.submitLoading = false;
                             if (data.status == 200) {
@@ -1227,7 +1390,7 @@ export default {
                         return false;
                     }
                     var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateProvideCommodity', reg)
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateProvideCommodity`, reg)
                         .then(({ data }) => {
                             that.submitLoading = false;
                             if (data.status === 200) {
@@ -1264,144 +1427,77 @@ export default {
             this.ruleForm3.endTime = moment(this.ruleForm3.endTime).toDate();
             this.$refs.ruleForm3.validate((valid) => {
                 var serviceRange = [];
+                var length = this.ruleForm3.serviceAreas.length
+                for (var i = 0; i < length; i++) {
+                    var service = {
+                        area: {
+                            id: null
+                        },
+                        city: {
+                            id: null
+                        },
+                        province: {
+                            id: null
+                        },
+                        isPromotion: '2',
+                        commodityPrice: null,
+                        commodityPricePromotion: null,
+                        startTime: null,
+                        endTime: null,
+                        id: null
+                    }
+                    if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
+                        service.area.id = null;
+                    } else {
+                        service.area.id = this.ruleForm3.serviceAreas[i].value3;
+                    }
+                    if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
+                        service.city.id = null;
+                    } else {
+                        service.city.id = this.ruleForm3.serviceAreas[i].value2;
+                    }
+                    if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
+                        service.province.id = null;
+                    } else {
+                        service.province.id = this.ruleForm3.serviceAreas[i].value1;
+                    }
+                    if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
+                        service.isPromotion = '2'
+                    } else {
+                        service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
+                    }
+                    if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
+                        this.ruleForm3.serviceAreas[i].price = null
+                    } else {
+                        service.commodityPrice = this.ruleForm3.serviceAreas[i].price
+                    }
+                    if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
+                        service.commodityPricePromotion = null
+                    } else {
+                        service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
+                    }
+                    if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
+                        service.startTime = null
+                    } else {
+                        service.startTime = this.ruleForm3.serviceAreas[i].startTime
+                    }
+                    if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
+                        service.endTime = null
+                    } else {
+                        service.endTime = this.ruleForm3.serviceAreas[i].endTime
+                    }
+                    service.id = this.ruleForm3.serviceAreas[i].id;
+                    serviceRange.push(service);
+                }
                 var price = 0.0;
-                var isPromotions = '';
                 if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '1') {
                     price = this.ruleForm3.price;
-                    isPromotions = this.ruleForm3.promotion;
-                    var length = this.ruleForm3.serviceAreas.length
-                    for (var i = 0; i < length; i++) {
-                        var service = {
-                            area: {
-                                id: null
-                            },
-                            city: {
-                                id: null
-                            },
-                            province: {
-                                id: null
-                            },
-                            isPromotion: '2',
-                            commodityPrice: null,
-                            commodityPricePromotion: null,
-                            startTime: null,
-                            endTime: null,
-                            id: null
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
-                            service.area.id = null;
-                        } else {
-                            service.area.id = this.ruleForm3.serviceAreas[i].value3;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
-                            service.city.id = null;
-                        } else {
-                            service.city.id = this.ruleForm3.serviceAreas[i].value2;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
-                            service.province.id = null;
-                        } else {
-                            service.province.id = this.ruleForm3.serviceAreas[i].value1;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
-                            service.isPromotion = '2'
-                        } else {
-                            service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
-                        }
-                        if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
-                            this.ruleForm3.serviceAreas[i].price = null
-                        } else {
-                            service.commodityPrice = this.ruleForm3.serviceAreas[i].price
-                        }
-                        if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
-                            service.commodityPricePromotion = null
-                        } else {
-                            service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
-                        }
-                        if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
-                            service.startTime = null
-                        } else {
-                            service.startTime = this.ruleForm3.serviceAreas[i].startTime
-                        }
-                        if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
-                            service.endTime = null
-                        } else {
-                            service.endTime = this.ruleForm3.serviceAreas[i].endTime
-                        }
-                        service.id = this.ruleForm3.serviceAreas[i].id;
-                        serviceRange.push(service);
-                    }
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '1') {
                     price = this.ruleForm3.serviceAreas[0].price;
-                    isPromotions = '2';
-                    var length = this.ruleForm3.serviceAreas.length
-                    for (var i = 0; i < length; i++) {
-                        var service = {
-                            area: {
-                                id: null
-                            },
-                            city: {
-                                id: null
-                            },
-                            province: {
-                                id: null
-                            },
-                            isPromotion: '2',
-                            commodityPrice: null,
-                            commodityPricePromotion: null,
-                            startTime: null,
-                            endTime: null,
-                            id: null
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value3 == "" || this.ruleForm3.serviceAreas[i].value3 == null) {
-                            service.area.id = null;
-                        } else {
-                            service.area.id = this.ruleForm3.serviceAreas[i].value3;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value2 == "" || this.ruleForm3.serviceAreas[i].value2 == null) {
-                            service.city.id = null;
-                        } else {
-                            service.city.id = this.ruleForm3.serviceAreas[i].value2;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].value1 == "" || this.ruleForm3.serviceAreas[i].value1 == null) {
-                            service.province.id = null;
-                        } else {
-                            service.province.id = this.ruleForm3.serviceAreas[i].value1;
-                        }
-                        if (this.ruleForm3.serviceAreas[i].bargain == null || this.ruleForm3.serviceAreas[i].bargain == '') {
-                            service.isPromotion = '2'
-                        } else {
-                            service.isPromotion = this.ruleForm3.serviceAreas[i].bargain
-                        }
-                        if (this.ruleForm3.serviceAreas[i].price == null || this.ruleForm3.serviceAreas[i].price == '') {
-                            this.ruleForm3.serviceAreas[i].price = null
-                        } else {
-                            service.commodityPrice = this.ruleForm3.serviceAreas[i].price
-                        }
-                        if (this.ruleForm3.serviceAreas[i].promotionPrice == null || this.ruleForm3.serviceAreas[i].promotionPrice == '') {
-                            service.commodityPricePromotion = null
-                        } else {
-                            service.commodityPricePromotion = this.ruleForm3.serviceAreas[i].promotionPrice
-                        }
-                        if (this.ruleForm3.serviceAreas[i].startTime == null || this.ruleForm3.serviceAreas[i].startTime == '') {
-                            service.startTime = null
-                        } else {
-                            service.startTime = this.ruleForm3.serviceAreas[i].startTime
-                        }
-                        if (this.ruleForm3.serviceAreas[i].endTime == null || this.ruleForm3.serviceAreas[i].endTime == ' ') {
-                            service.endTime = null
-                        } else {
-                            service.endTime = this.ruleForm3.serviceAreas[i].endTime
-                        }
-                        service.id = this.ruleForm3.serviceAreas[i].id;
-                        serviceRange.push(service);
-                    }
                 } else if (this.ruleForm3.bargaining == '2' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.nowPrice;
-                    isPromotions = this.ruleForm3.promotion;
                 } else if (this.ruleForm3.bargaining == '1' && this.ruleForm3.region == '2') {
                     price = this.ruleForm3.price;
-                    isPromotions = this.ruleForm3.promotion;
                 }
                 if (valid) {
                     this.submitLoading = true;
@@ -1412,7 +1508,7 @@ export default {
                         startingPrice: this.ruleForm3.price,
                         invoiceMail: this.ruleForm3.mail,
                         isTerritoryRestriction: this.ruleForm3.region,
-                        isPromotion: isPromotions,
+                        isPromotion: this.ruleForm3.promotion,
                         commodityPrice: this.ruleForm3.nowPrice,
                         commodityPricePromotion: this.ruleForm3.promotionPrice,
                         startTime: this.ruleForm3.startTime,
@@ -1507,7 +1603,7 @@ export default {
                         return false;
                     } else {
                         var that = this;
-                        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/commodity/updateProvideCommodity', reg)
+                        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateProvideCommodity`, reg)
                             .then(({ data }) => {
                                 if (data.status === 200) {
                                     that.submitLoading = false;
@@ -1542,13 +1638,166 @@ export default {
 
 
         },
+        submitForm4() {
+            this.ruleForm4.startTime = moment(this.ruleForm4.startTime).toDate();
+            this.ruleForm4.endTime = moment(this.ruleForm4.endTime).toDate();
+            this.$refs.ruleForm4.validate((valid) => {
+                var comType = '';
+                var comPrice = '';
+                var finalPrice = '';
+                var commodityPricePromotion = '';
+                var startTime = '';
+                var endTime = '';
+                if (this.ruleForm4.finalClass == null || this.ruleForm4.finalClass == '' || this.ruleForm4.finalClass == undefined) {
+                    comType = this.ruleForm4.finalType
+                } else {
+                    var comTypeIndex = this.ruleForm4.finalClass.indexOf('需求')
+                    if (comTypeIndex > 0) {
+                        comType = 4
+                    } else {
+                        comType = 5
+                    }
+                }
+                if (this.ruleForm4.negotiable == 1) {
+                    comPrice = 0
+
+                } else {
+                    comPrice = this.ruleForm4.startPrice
+                }
+                if (this.ruleForm4.bargain == 1) {
+                    this.ruleForm4.price = 0;
+                    if (this.ruleForm4.negotiable == 1) {
+                        finalPrice = 0
+                    } else {
+                        finalPrice = this.ruleForm4.startPrice
+                    }
+                } else {
+                    finalPrice = this.ruleForm4.price;
+                }
+
+                if (this.ruleForm4.promotion == 1) {
+                    commodityPricePromotion = this.ruleForm4.promotionPrice;
+                    if (this.ruleForm4.startTime == null) {
+                        this.$message.warning('请选择促销开始时间');
+                        return false;
+                    } else {
+                        startTime = this.ruleForm4.startTime;
+                    }
+                    if (this.ruleForm4.endTime == null) {
+                        this.$message.warning('请选择促销结束时间');
+                        return false;
+                    } else {
+                        endTime = this.ruleForm4.endTime
+                    }
+                } else {
+                    commodityPricePromotion = null
+                    startTime = null
+                    endTime = null
+                }
+                if (valid) {
+                    this.submitLoading = true;
+                    var reg = {
+                        commodityCode: this.commodityCode,
+                        commodityName: this.ruleForm4.name,
+                        invoiceMail: this.ruleForm4.mail,
+                        startingPrice: comPrice,
+                        commodityPrice: this.ruleForm4.price,
+                        commodity_smallimage: this.ruleForm4.upImgUrl,
+                        isBargaining: this.ruleForm4.bargain,
+                        commodityState: 1,
+                        finalPrice: finalPrice,
+                        synopsis: this.ruleForm4.brief,
+                        introduce: this.ruleForm4.introduce,
+                        isTerritoryRestriction: 2,
+                        stock: this.ruleForm4.stock,
+                        isPromotion: this.ruleForm4.promotion,
+                        commodityPricePromotion: commodityPricePromotion,
+                        startTime: startTime,
+                        endTime: endTime,
+                        type: comType,
+                        measurementUnit: {
+                            id: this.ruleForm4.company
+                        },
+                        serviceType: {
+                            id: this.serverLastId
+                        },
+                        providerBusiness: {
+                            id: this.businessid
+                        },
+                        id: this.ruleForm4.id
+                    }
+                    if (reg.commodity_smallimage == null || reg.commodity_smallimage == '') {
+                        this.$message.warning('请上传服务logo图');
+                        this.submitLoading = false;
+                        return false;
+                    }
+
+                    if (reg.introduce == null || reg.introduce == '') {
+                        this.$message.warning('请仔细填写页面信息');
+                        this.submitLoading = false;
+                        return false;
+                    }
+                    var that = this;
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/commodity/updateProvideCommodity`, reg)
+                        .then(({ data }) => {
+                            that.submitLoading = false;
+                            if (data.status === 200) {
+                                that.submitLoading = false;
+
+                                that.$store.state.stateId2 = that.$store.state.stateId
+
+                                that.$router.push('/manage');
+                            } else if (data.status === 300) {
+                                that.$message({
+                                    type: 'warning',
+                                    message: '所发布服务不在服务范围内!'
+                                });
+                            } else if (data.status === 250) {
+                                that.$message({
+                                    type: 'error',
+                                    message: '发布失败!'
+                                });
+                                return;
+                            }
+                        }).catch(function(err) {
+                            that.submitLoading = false;
+                        });
+
+                } else {
+                    this.$message.warning('请仔细检查页面信息后，再次发布商品！');
+                    this.submitLoading = false;
+                    return false;
+                }
+            });
+
+        },
+        getStartDate() {
+            var nowTime = new Date().getTime();
+            if (nowTime-new Date(this.ruleForm4.startTime).getTime()>1000) {
+                this.ruleForm4.startTime = '';
+                this.$message.warning('促销开始时间需应大于等于此刻时间');
+                return false;
+            }
+        },
+        getEndDate() {
+            if (this.ruleForm4.startTime == null) {
+                this.$message.warning('请先选择促销开始时间');
+                this.ruleForm4.endTime = '';
+                return false;
+            }
+            if (new Date(this.ruleForm4.startTime).getTime() > new Date(this.ruleForm4.endTime).getTime()) {
+                this.$message.warning('促销开始时间需应小于促销结束时间');
+                this.ruleForm4.endTime = '';
+                return false;
+            }
+        },
         //省变化
         provinceChange(item, index, type) {
             var reg = {
                 id: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selcityList3', {}, {
+            this.$htAjax.post(`${this.$config.back}/selcityList3`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -1578,7 +1827,7 @@ export default {
                 id: item
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/selAreaList2', {}, {
+            this.$htAjax.post(`${this.$config.back}/selAreaList2`, {}, {
                 params: reg
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -1669,22 +1918,31 @@ export default {
                 this.detailsType = '1';
             } else if (this.serverType == 3) {
                 this.detailsType = '3';
-            } else {
+            } else if (this.serverType == 2) {
                 this.detailsType = '2';
+            } else {
+
+                this.detailsType = '4';
+                this.ruleForm4.finalClass = this.commodityType2;
+                // that.ruleForm4.finalType=data.data.type
             }
             if (this.commodityType4 != "") {
                 this.ruleForm1.comClass = this.commodityType4
                 this.ruleForm2.comClass = this.commodityType4
                 this.ruleForm3.comClass = this.commodityType4
+                this.ruleForm4.comClass = this.commodityType4
             } else if (this.commodityType3 != "") {
                 this.ruleForm1.comClass = this.commodityType3
                 this.ruleForm2.comClass = this.commodityType3
                 this.ruleForm3.comClass = this.commodityType3
+                this.ruleForm4.comClass = this.commodityType3
             } else {
                 this.ruleForm1.comClass = this.commodityType2
                 this.ruleForm2.comClass = this.commodityType2
                 this.ruleForm3.comClass = this.commodityType2
+                this.ruleForm4.comClass = this.commodityType2
             }
+
             this.dialogVisible = false;
         },
         // 取消事件
@@ -1729,7 +1987,7 @@ export default {
         'zhi': function(newVal, oldVal) {
             if (newVal != oldVal) {
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/selectOprtorProvice')
+                this.$htAjax.post(`${this.$config.back}/selectOprtorProvice`)
                     .then(({ data }) => {
                         if (data.status === 200) {
                             var len = that.ruleForm3.serviceAreas.length;
@@ -1781,6 +2039,8 @@ export default {
     font-size: 12px;
     color: red;
 }
+
+
 
 
 

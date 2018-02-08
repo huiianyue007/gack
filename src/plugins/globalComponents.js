@@ -4,13 +4,15 @@ import loadding from 'components/loadding'
 import layout from 'components/layout'
 import card from 'components/card'
 import boxImg from 'components/box'
+import cardTitle from 'components/title'
 const components = {
   page,
   layout,
   loadding,
   card,
-  boxImg
+  boxImg,
+  cardTitle
 }
-for (let name in components) {
-  Vue.component(name, components[name])
-}
+Object.entries(components).forEach(item => {
+  Vue.component(item[0], item[1])
+})

@@ -16,14 +16,14 @@
         <div class="handle-box">
             <el-form :inline="true" :model="search" class="demo-form-inline">
                 <el-form-item label="时间筛选">
-                    <el-date-picker v-model="search.beginTime" :editable='false' @change='compareTime' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.beginTime" :editable='false' @change='compareTime' type="date" placeholder="日期时间" style="width:180px">
                     </el-date-picker>
                     <span>-</span>
-                    <el-date-picker v-model="search.endTime" :editable='false' @change='compareTime' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.endTime" :editable='false' @change='compareTime' type="date" placeholder="日期时间" style="width:180px">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="search.likeStr" :maxlength="12" placeholder="请输入预约空间、联系人、备注信息关键字" style="margin-left:120px;width:300px"></el-input>
+                    <el-input v-model="search.likeStr" :maxlength="12" placeholder="请输入预约空间、联系人、备注信息关键字" style="margin-left:80px;width:300px"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit" icon="search">查询</el-button>
@@ -131,7 +131,7 @@ export default {
                 userid: ''//String类型，用户id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findSpaceReserve', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findSpaceReserve`, {}, {
                 params: json
             }).then(({ data }) => {
                 
@@ -161,7 +161,7 @@ export default {
         //确认
         isOk(index, ok) {
             var that = this;
-           this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/overReserve' + '?id=' + ok.id)
+           this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/overReserve` + '?id=' + ok.id)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         that.Order();

@@ -5,8 +5,9 @@
         <span>客服热线 ：400-851-8585</span>
         <div class="inline-block icon sj"></div>
         <div class="inline-block icon wx">
-          <img src="../assets/gack/ewm_u155.png" alt="">
+          <img src="../assets/images/gack/ewm_u155.png" alt="">
         </div>
+        <slot name="home"></slot>
       </div>
       <div class="fr">
         <router-link to='/login/0' v-if='!user'>登录</router-link>
@@ -47,9 +48,6 @@ export default {
           type: 'success',
           message: '成功退出系统!'
         })
-        this.$store.commit('setUserInfo', null)
-        this.$store.commit('setUserId', null)
-        window.localStorage.removeItem('password')
         this.$router.push('/')
         this.siginOut()
       }).catch(() => {
@@ -57,7 +55,11 @@ export default {
     },
     siginOut() {
       return new Promise((resolve, reject) => {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/signOut').then(res => {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/signOut`).then(res => {
+          _czc.push(["_deleteCustomVar","是否登录"]);
+          this.$store.commit('setUserInfo', null)
+          this.$store.commit('setUserId', null)
+          this.$store.commit('setSessionId', null)
           resolve(res)
         }).catch(() => {
           reject()
@@ -102,11 +104,11 @@ export default {
 .header .icon.wx {
   margin-left: 15px;
   position: relative;
-  background-image: url(~@/assets/gack/wx_icon.png);
+  background-image: url(~@/assets/images/gack/wx_icon.png);
 }
 
 .header .icon.wx:hover {
-  background-image: url(~@/assets/gack/wx_icon1.png);
+  background-image: url(~@/assets/images/gack/wx_icon1.png);
 }
 
 .header .icon.wx img {
@@ -128,12 +130,12 @@ export default {
 }
 
 .header .icon.sj {
-  background-image: url(~@/assets/gack/sj_icon.png);
+  background-image: url(~@/assets/images/gack/sj_icon.png);
   background-size: 13px 18px;
 }
 
 .header .icon.sj:hover {
   transition: all linear .2s;
-  background-image: url(~@/assets/gack/sj_icon1.png);
+  background-image: url(~@/assets/images/gack/sj_icon1.png);
 }
 </style>

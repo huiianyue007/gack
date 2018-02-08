@@ -11,8 +11,9 @@
     <div class="li" v-for = '(item, key) in addressList' v-if = 'addressList.length'  :class = '{active: item.isdefault === "1"}'>
       <p>收件人: {{item.name}}</p>
       <p>电话: {{  item.telephone }}</p>
-      <p>地址： {{ item.address }}</p>
-      <div class="close" @click = 'delAddress(item.id)'>关闭</div>
+      <div>地址：<div class = 'inline-block word-break' style="vertical-align: top;width: calc(100% - 4em)">{{ item.address }}</div></div>
+      <div class="close" @click = 'delAddress(item)'>删除</div>
+      <div class="deault" v-if = 'item.isdefault === "1"'></div>
       <div class="edit">
         <el-button size = 'small' @click.native = 'setDefault(item.id)' v-if = 'item.isdefault === "0"'>设置为默认地址</el-button>
         <el-button size = 'small' @click.native = 'routeTo("编辑地址", key, item.id)'>编辑</el-button>
@@ -24,35 +25,25 @@
 <script>
   import store from 'store'
   export default {
-    async beforeRouteEnter (from, to, next) {
-      if (store.state.userid) {
-        if (!store.state.userInfo) {
-          await store.dispatch('findById', store.state.userid.id)
-          next()
-        } else {
-          next()
-        }
-      } else {
-        next('/login/0')
-      }
-    },
+    name: 'address',
     data: () => ({
       title: '地址管理'
     }),
     methods: {
-      delAddress (key) {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/deleteAddress', {}, {
+      delAddress (opt) {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/deleteAddress`, {}, {
           params: {
-            id: key
+            id: opt.id
           }
         }).then(() => {
-          this.$store.dispatch('findById', this.user.id)
+          return this.$store.dispatch('findById', this.user.id)
         }).catch(() => {
         })
       },
       routeTo (opt, key, id) {
         let query = {
           title: opt,
+          fromtitle: '地址管理',
           id
         }
         if (typeof key !== 'undefined') {
@@ -64,13 +55,13 @@
         })
       },
       setDefault (key) {
-        this.$htAjax.post('https://apitest.gack.citic:8081/guoanmaker/personal/user/updateAddress', {}, {
+        this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/user/updateAddress`, {}, {
           params: {
             id: key,
             isdefault: '1'
           }
         }).then(() => {
-          this.$store.dispatch('findById', this.user.id)
+          return this.$store.dispatch('findById', this.user.id)
         }).catch(error => {
         })
       }
@@ -99,7 +90,7 @@
   }
   .address .li{
     border: 1px dashed #f0f0f0;
-    padding: 5px 15px;
+    padding: 30px 15px 60px;
     margin-top: 10px;
     position:relative;
   }
@@ -107,7 +98,15 @@
     line-height: 3em
   }
   .address .li.active{
-    border: 1px dashed #ff0000;
+    border: 1px solid #ff0000;
+  }
+  .address .li .deault {
+    position:absolute;
+    left:0;
+    top:0;
+    width: 50px;
+    height: 50px;
+    background:url('~@/assets/images/gack/default.png') no-repeat center center/cover;
   }
   .address .li .close{
     position:absolute;

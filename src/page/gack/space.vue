@@ -16,7 +16,7 @@
             <div class="login_inp">
               <el-form-item prop = 'username' required>
                 <div class="icon_img">
-                  <img src='~assets/reg/username.png'>
+                  <img src='~assets/images/reg/username.png'>
                 </div>
                 <el-input v-model='formData.username' :minlength = '2' :maxlength = '7' placeholder="输入联系人姓名"></el-input>
               </el-form-item>
@@ -24,15 +24,15 @@
             <div class="login_inp">
               <el-form-item prop = 'phonenumber' required>
                 <div class="icon_img">
-                  <img src='~assets/reg/phonenumber.png'>
+                  <img src='~assets/images/reg/phonenumber.png'>
                 </div>
                 <el-input v-model='formData.phonenumber' :maxlength = '11' placeholder="输入联系电话"></el-input>
               </el-form-item>
             </div>
             <div class="login_inp">
-              <el-form-item prop = 'date' required>
+              <el-form-item prop = 'date'>
                 <div class="icon_img">
-                  <img src='~assets/reg/canguan.png'>
+                  <img src='~assets/images/reg/canguan.png'>
                 </div>
                 <el-date-picker v-model="formData.date" :editable = 'false' type="date" placeholder="选择日期" :picker-options="pickerOptions">
                 </el-date-picker>
@@ -41,29 +41,28 @@
             <div class="login_inp">
               <el-form-item prop = 'number' required>
                 <div class="icon_img">
-                  <img src='~assets/reg/number.png'>
+                  <img src='~assets/images/reg/number.png'>
                 </div>
-                <el-input v-model.number='formData.number' placeholder="输入参观人数"></el-input>
+                <el-input v-model.number='formData.number'  placeholder="输入参观人数"></el-input>
               </el-form-item>
             </div>
             <div class="login_inp">
-              <el-form-item>
+              <el-form-item prop = 'desc'>
                 <div class="icon_img">
-                  <img src='~assets/reg/beizhu.png'>
+                  <img src='~assets/images/reg/beizhu.png'>
                 </div>
-                <el-input v-model='formData.desc' placeholder="备注信息"></el-input>
+                <el-input v-model='formData.desc' type="textarea" :rows = '3'  placeholder="请填写参观目的和公司信息"></el-input>
               </el-form-item>
             </div>
           </el-form>
           <div class="submit" @click = 'submit'>预约参观</div>
-          <div class="lx"><img src="~assets/gack/fwxq_icon.png" alt="" width='22' height='22'>010-85757521</div>
+          <div class="lx"><img src="~assets/images/gack/fwxq_icon.png" alt="" width='22' height='22'>010-85757521</div>
         </div>
       </div>
       <div class="fr desc">
         <el-carousel :interval="3000" height = '376.667px'>
           <el-carousel-item v-for="(item,index) in swiperImg" :key="index">
-            <box-img :prop = '1 / 1.8' >
-              <img :src='item' class="ban_img">
+            <box-img prop = '1:1.8' :bgImg = 'item'>
             </box-img>
           </el-carousel-item>
         </el-carousel>
@@ -82,10 +81,14 @@
           <div class="desc_con">
             <el-row class="con_li" :gutter='12'>
               <el-col :span='8' v-for='(pic, key) in item.commoditys' :key='key' @click.native = "$router.push(`/serde/${pic.id}/1`)">
-              <img :src="pic.commodity_smallimage" alt="" width = '301' height = '228'>
+              <box-img :bgImg = 'pic.commodity_smallimage' prop = '228:301'></box-img>
               <div class='oh desc_licon' v-if='pic.finalPrice'>
-                <div class="fl">{{ pic.commodityName }}</div>
-                <div class="fr price">￥{{ pic.finalPrice }}元/天</div>
+                <div class="fl" style="width:calc(100% - 7em)">
+                  <el-tooltip effect="dark" :disabled = 'pic.commodityName.length <= 9' :content="pic.commodityName" placement="top">
+                    <div class = 'text-hidden' :class = '{cursor: pic.commodityName.length > 9}'>{{ pic.commodityName }}</div>
+                  </el-tooltip>
+                </div>
+                <div class="fr price">￥{{ pic.finalPrice }}元/{{ pic.measurementUnit }}</div>
               </div>
               <div class="con_title" v-else>{{ pic.commodityName }}</div>
               </el-col>
@@ -129,6 +132,7 @@
 </template>
 <script>
   export default {
+    name: 'space',
     data() {
       const checkAmount = (rule, value, callback) => {
         if (!value) {
@@ -141,9 +145,28 @@
         } else {
           if (value <= 0) {
             return callback(new Error('参观人数必须大于0'));
+          } else if (value > 50) {
+            this.$set(this.formData, 'number', 50)
+            this.$message.error('参观人数不能大于50')
+            return callback(new Error('参观人数不能大于50'));
           } else {
             callback();
           }
+        }
+      }
+      const checkDesc= (rule, value, callback) => {
+        let len = value.replace(/[\u0391-\uFFE5]/g,"aa").length
+        if (len > 255) {
+          return callback(new Error('输入的字数超过125个字'));
+        } else {
+          callback();
+        }
+      }
+      const checkDate = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('请输入参观时间'));
+        } else {
+          callback();
         }
       }
       return {
@@ -179,8 +202,9 @@
             pattern: /1[3|4|5|7|8][0-9]{9}/,
             message: '请输入正确的手机号码'
           }],
-          date: [{ required: true, message: '请输入参观日期', trigger: 'blur' }],
-          number: [{ validator: checkAmount, trigger: 'blur' }]
+          date: [ {validator: checkDate, trigger: 'blur' }],
+          number: [{ validator: checkAmount, trigger: 'blur' }],
+          desc: [{ validator: checkDesc, trigger: 'blur' }]
         }
 //        center: {
 //          lng: 116.404,
@@ -196,17 +220,27 @@
         }
       })
     },
-    activated () {
+    beforeDestroy () {
+      this.formData = {
+        username: '',
+        phonenumber: '',
+        date: '',
+        number: 0,
+        desc: ''
+      }
+      this.$refs.rulesForm.resetFields()
+    },
+    created () {
       let url = '',data= {}
       if (this.query.code) {
-        url = 'https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/getProvideCommodityOrRoomMove'
+        url = `${this.$config.back}/guoanmaker/provide/commodityMove/getProvideCommodityOrRoomMove`
         data = {
           code: this.query.code,
           cityCode: this.address.inCity.code,
           userId: this.$store.userid ? this.$store.userid.id : ''
         }
       } else if (this.query.id) {
-        url = 'https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/findProvideRoomCommodityMoves'
+        url = `${this.$config.back}/guoanmaker/provide/commodityMove/findProvideRoomCommodityMoves`
         data = {
           roomId: this.query.id
         }
@@ -238,7 +272,7 @@
         }
         this.$refs.rulesForm.validate(valid => {
           if (valid) {
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/createProvideSpaceReserve', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/createProvideSpaceReserve`, {}, {
               params: {
                 reserveTime: this.formData.date.toLocaleDateString().replace(/\//g, '-'),
                 contactPerson: this.formData.username,
@@ -256,7 +290,8 @@
               this.$router.push({
                 path: `/user/appointment`,
                 query: {
-                  title: '我的预约'
+                  title: '我的预约',
+                  fromtitle: '我的预约'
                 }
               })
             }).catch(error => {
@@ -387,7 +422,7 @@
   }
 
   .submit {
-    width: 392px;
+    width: 100%;
     height: 48px;
     line-height: 46px;
     background: #FF4F4C;
@@ -446,12 +481,10 @@
     top: 0;
     bottom: 0;
   }
-</style>
-<style>
- .el-date-picker{
-    z-index: 10;
-  }
-  .login_inp  .el-input__inner{
+  .login_inp  >>> .el-input__inner, .login_inp >>>  .el-textarea__inner{
     padding-left: 35px;
+  }
+  space_content >>> .el-date-picker{
+    z-index: 10;
   }
 </style>

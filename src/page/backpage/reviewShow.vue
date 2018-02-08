@@ -69,20 +69,40 @@
         </div>
         <div class="employer">
             <p class="title">雇主的评论</p>
-            <div class="info" v-for="comment in comments">
+            <div class="info" v-for="(comment,index) in comments" :key="comment">
                 <ul>
                     <li>商品名称：{{comment.commodityName}}</li>
                     <li>
                         <span style="float:left;padding-right:10px;">完成评价</span>
-                        <el-rate v-model="comment.averageValue" disabled show-text text-color="#C7000A" :colors="['#C7000A', '#C7000A', '#C7000A']" text-template="{value}">
-                        </el-rate>
+                      <el-rate v-model="comment.averageValue" disabled show-text text-color="#C7000A" :colors="[ '#C7000A', '#C7000A','#C7000A','#C7000A','#C7000A']"  :low-threshold="2" :high-threshold="4" :texts="['差评','差评','中评','中评','好评']">
+                      </el-rate>
                     </li>
-                    <li>评价人: {{comment.appraiseUser}}&nbsp;&nbsp;&nbsp;&nbsp;{{comment.appraiseTime | formatDate}}</li>
+                    <li>评价人: {{comment.username}}&nbsp;&nbsp;&nbsp;&nbsp;{{comment.appraiseTime | formatDate}}</li>
+                    <li v-show="comment.reply==null">
+                        <el-button type="primary" size="mini" @click="reply(index)">回复</el-button>
+                    </li>
                 </ul>
                 <p class="pl">
                     <span>买家评论：</span>
                     {{comment.appraise}}
                 </p>
+                <p class="pl" v-if="comment.reply!=null">
+                    <span>卖家回复：</span>
+                    {{comment.reply}}
+                </p>
+                <div class="pl" v-if="replyType==index+1 && replyType!=''">
+                    <span>卖家回复：</span>
+                    <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="textarea">
+                    </el-input>
+                    <p style="float:right;margin: 15px;">
+                        <el-button type="primary" size="mini" @click="replyType =''">取消</el-button>
+                        <el-button type="primary" size="mini" @click="confirm(comment.id)">确认</el-button>
+                    </p>
+                </div>
+            </div>
+            <div class="page">
+                <el-pagination @size-change="handleSizeChange" style="float:right;" @current-change="handleCurrentChange" :page-size='pagesize' :current-page="currentPage" layout="prev, pager, next" :total="totalCount">
+                </el-pagination>
             </div>
         </div>
     </div>
@@ -93,6 +113,8 @@ import moment from 'moment'
 export default {
     data() {
         return {
+            replyType: '',
+            textarea: '',
             businessid: '',
             // 好中差评数据
             weekGood: 0,
@@ -117,20 +139,6 @@ export default {
             total: 0,
             // 雇主的评论数据
             comments: [
-                // {
-                //     commodityName: '北京空间',
-                //     score: 3.8,
-                //     user: '罗阳',
-                //     date: '2017-07-29',
-                //     msg: '完成质量很好，服务很好'
-                // },
-                // {
-                //     commodityName: '北京空间',
-                //     score: 4.9,
-                //     user: '罗阳',
-                //     date: '2017-07-29',
-                //     msg: '完成质量很好，服务很好'
-                // }
             ],
             //评论管理
             recommend: 0,
@@ -140,6 +148,13 @@ export default {
             communicationAverage: 0,
             serveAverage: 0,
             completeAverage: 0,
+
+            //默认每页数据量
+            pagesize: 5,
+            //当前页码
+            currentPage: 1,
+            //默认数据总数
+            totalCount: 0,
         }
     },
     created: function() {
@@ -147,6 +162,7 @@ export default {
         if (businessid) {
             this.businessid = businessid;
             this.init();
+            this.init2();
         }
     },
     filters: {
@@ -163,7 +179,8 @@ export default {
                 businessid: this.businessid,
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/getBusinessAppraise', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/getBusinessAppraise`, {}, {
+                // this.$htAjax.post('http://172.16.32.143:8082/guoanmaker/provide/orderform/getBusinessAppraise', {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status === 200) {
@@ -200,12 +217,72 @@ export default {
                     that.otherTotal = data.data.appraiseNumbers[3].sixMonthAgoNum;
                     that.total = data.data.appraiseNumbers[3].allNum;
                     //评论
-                    that.comments = data.data.appraises;
+
                 } else {
                     that.$message.warning(data.msg);
                 }
             }).catch(function(err) {
-               
+
+            });
+        },
+        init2() {
+            var item = {
+                businessid: this.businessid,
+                pageNumber: this.currentPage - 1,
+                pageSize: this.pagesize
+            }
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/getBusinessAppraise`, {}, {
+            //this.$htAjax.post('http://172.16.32.143:8082/guoanmaker/provide/orderform/getAppraise', {}, {
+                params: item
+            }).then(({ data }) => {
+                if (data.status === 200) {
+                    this.comments = data.data.appraises;
+                    this.totalCount = data.data.totle
+                } else {
+                    this.$message.warning(data.msg);
+                }
+            }).catch(function(err) {
+
+            });
+        },
+        // 分页方法
+        handleSizeChange(val) {
+            this.pagesize = val;
+            this.init2();
+            this.replyType='';
+        },
+        handleCurrentChange(val) {
+            this.currentPage = val;
+            this.init2();
+            this.replyType='';
+        },
+        reply(index) {
+            this.replyType = index+1;
+            this.textarea = '';
+        },
+        confirm(id) {
+            if (this.textarea == '' || this.textarea == null) {
+                this.$message.warning('请填写回复内容');
+                return false;
+            }
+            var item = {
+                orderId: id,
+                reply: this.textarea
+            }
+            var that = this;
+            this.$htAjax.post(`${this.$config.gack}/guoanmaker/personal/appraise/insertReply`, {}, {
+                // this.$htAjax.post('http://:8083/guoanmaker/personal/appraise/insertReply', {}, {
+                params: item
+            }).then(({ data }) => {
+                if (data.status === 200) {
+                    this.replyType = '';
+                    this.$message.success(data.msg);
+                    this.init2()
+                } else {
+                    this.$message.warning(data.msg);
+                }
+            }).catch(function(err) {
+
             });
         }
     }
@@ -248,21 +325,21 @@ p.title {
 .commentMan ul li:nth-of-type(1) {
     padding-left: 30px;
     box-sizing: border-box;
-    background: url(../../assets/information/pl1.png) no-repeat left center;
+    background: url(../../assets/images/information/pl1.png) no-repeat left center;
     background-size: contain;
 }
 
 .commentMan ul li:nth-of-type(2) {
     padding-left: 30px;
     box-sizing: border-box;
-    background: url(../../assets/information/pl2.png) no-repeat left center;
+    background: url(../../assets/images/information/pl2.png) no-repeat left center;
     background-size: contain;
 }
 
 .commentMan ul li:nth-of-type(3) {
     padding-left: 30px;
     box-sizing: border-box;
-    background: url(../../assets/information/pl3.png) no-repeat left center;
+    background: url(../../assets/images/information/pl3.png) no-repeat left center;
     background-size: contain;
 }
 
@@ -283,22 +360,22 @@ p.title {
 }
 
 .zevaluate table tr:nth-child(2) td:first-child {
-    background: url(../../assets/information/pl4.png) no-repeat 8px;
+    background: url(../../assets/images/information/pl4.png) no-repeat 8px;
     background-size: 25px 25px;
 }
 
 .zevaluate table tr:nth-child(3) td:first-child {
-    background: url(../../assets/information/pl5.png) no-repeat 8px;
+    background: url(../../assets/images/information/pl5.png) no-repeat 8px;
     background-size: 25px 25px;
 }
 
 .zevaluate table tr:nth-child(4) td:first-child {
-    background: url(../../assets/information/pl6.png) no-repeat 8px;
+    background: url(../../assets/images/information/pl6.png) no-repeat 8px;
     background-size: 25px 25px;
 }
 
 .zevaluate table tr:nth-child(5) td:first-child {
-    background: url(../../assets/information/pl7.png) no-repeat 8px;
+    background: url(../../assets/images/information/pl7.png) no-repeat 8px;
     background-size: 25px 25px;
 }
 
@@ -320,7 +397,42 @@ p.title {
 
 .employer .info ul li {
     box-sizing: border-box;
-    width: 33.3%;
+    float: left;
+    font-size: 14px;
+    height: 40px;
+    padding-left: 15px;
+}
+
+.employer .info ul li:nth-of-type(1) {
+    box-sizing: border-box;
+    width: 25%;
+    float: left;
+    font-size: 14px;
+    height: 40px;
+    padding-left: 15px;
+}
+
+.employer .info ul li:nth-of-type(2) {
+    box-sizing: border-box;
+    width: 30%;
+    float: left;
+    font-size: 14px;
+    height: 40px;
+    padding-left: 15px;
+}
+
+.employer .info ul li:nth-of-type(3) {
+    box-sizing: border-box;
+    width: 35%;
+    float: left;
+    font-size: 14px;
+    height: 40px;
+    padding-left: 15px;
+}
+
+.employer .info ul li:last-child {
+    box-sizing: border-box;
+    width: 10%;
     float: left;
     font-size: 14px;
     height: 40px;

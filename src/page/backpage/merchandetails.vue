@@ -8,7 +8,7 @@
             </el-breadcrumb>
         </div>
         <div class="space_box">
-            <el-steps :space="300" :active="orderActive" align-center center finish-status="success">
+            <el-steps :active="orderActive" align-center center finish-status="success">
                 <el-step :title="spaceTitle1" :description='comOrderTime1' v-if="spaceTitle1"></el-step>
                 <el-step :title="spaceTitle2" :description='comOrderTime2' v-if="spaceTitle2"></el-step>
                 <el-step :title="spaceTitle3" :description='comOrderTime3' v-if="spaceTitle3"></el-step>
@@ -52,10 +52,10 @@
                             </li>
                         </ul>
                         <!-- <ul class="cb_list">
-                                                                                                                                    <li>
-                                                                                                                                        用户地址：北京市朝阳区四惠东地铁站华腾世纪园D座国安创客
-                                                                                                                                    </li>
-                                                                                                                                </ul> -->
+                                                                                                                                        <li>
+                                                                                                                                            用户地址：北京市朝阳区四惠东地铁站华腾世纪园D座国安创客
+                                                                                                                                        </li>
+                                                                                                                                    </ul> -->
                         <ul class="cb_list">
                             <li>
                                 用户邮箱：{{email}}
@@ -265,7 +265,7 @@ export default {
         }
         var that = this;
         this.merchandetails = true;
-        this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findOrderForm', {}, { params: item })
+        this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findOrderForm`, {}, { params: item })
             .then(({ data }) => {
                 if (data.status == 200) {
                     that.merchandetails = false;
@@ -356,8 +356,9 @@ export default {
                     that.tableData[0].money = data.data.unitPrice || '0';
                     that.tableData[0].number = data.data.quantity || '0';
                     that.tableData[0].amount = data.data.realPrice || '0';
-                    that.tableData[0].activity = data.data.preferentialMoney || '0';
-                    //that.tableData[0].activity = '';
+                    let preferentialMoney = data.data.preferentialMoney || 0;
+                    let returnPreferentialMoney = data.data.returnPreferentialMoney || 0;
+                    that.tableData[0].activity = preferentialMoney + returnPreferentialMoney;
                     that.tableData[0].commission = data.data.commission || '0';
                     that.tableData[0].bond = data.data.bail || '0';
                     that.tableData[0].service = data.data.fee || '0';
@@ -372,13 +373,12 @@ export default {
             });
     },
     methods: {
-        //改变是否已读
         invoice() {
             let item = {
                 orderid: this.orderid
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/invoice/getOrderInvoice', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/invoice/getOrderInvoice`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         that.taxNumber = data.data.taxNumber || '暂无';
@@ -395,7 +395,7 @@ export default {
                 id: this.orderid
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/isRead', {}, { params: item })
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/isRead`, {}, { params: item })
                 .then(({ data }) => {
                     if (data.status == 200) {
                         //console.log(data.data.value)
@@ -537,39 +537,6 @@ export default {
     width: 33.3%;
     height: 50px;
     text-align: left;
-}
-</style>
-<style>
-.merchandetails .el-step__description.is-success {
-    position: relative;
-    left: -35px;
-}
-
-.merchandetails .el-step__description.is-wait {
-    position: relative;
-    left: -30px;
-}
-
-.merchandetails .el-step__description.is-process {
-    position: relative;
-    left: -30px;
-}
-
-.merchandetails .el-step__main {
-    margin-left: -12px!important;
-}
-
-.merchandetails .el-step__head.is-text.is-success {
-    background-color: #c7000a;
-    border-color: #c7000a;
-}
-
-.merchandetails .el-step__title.is-success {
-    color: #c7000a;
-}
-
-.merchandetails .el-step__description.is-success {
-    color: #999;
 }
 </style>
 

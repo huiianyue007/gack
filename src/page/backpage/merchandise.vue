@@ -21,10 +21,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="下单时间">
-                    <el-date-picker v-model="search.stratTime" :editable='false' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.stratTime" :editable='false' type="date" placeholder="日期时间" style="width:140px">
                     </el-date-picker>
                     <span>-</span>
-                    <el-date-picker v-model="search.endTime" :editable='false' type="date" placeholder="日期时间" style="width:120px">
+                    <el-date-picker v-model="search.endTime" :editable='false' type="date" placeholder="日期时间" style="width:140px">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="订单金额">
@@ -52,11 +52,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="orderNumber" label="订单编号" min-width="120" align='center'>
-                    <!-- <template slot-scope="scope">
-                                                                                        <p v-if="scope.row.isRead==0">
-                                                                                            <span style="color:#c7000a"> * </span>{{scope.row.orderNumber}}</p>
-                                                                                        <p v-else>{{scope.row.orderNumber}}</p>
-                                                                                    </template> -->
                 </el-table-column>
                 <el-table-column prop="placeOrderTime" label="下单时间" width="160" :formatter='dateFormat' align='center'>
                 </el-table-column>
@@ -98,7 +93,7 @@
             </div>
         </div>
 
-        <el-dialog title="用户信息" :visible.sync="dialogUse" size="tiny">
+        <el-dialog title="用户信息" :visible.sync="dialogUse" width="30%">
             <div class="dialogUseBox">
                 <p>用户昵称：{{use.name}}</p>
                 <p>联系方式：{{use.phone}}</p>
@@ -111,7 +106,7 @@
             </span>
         </el-dialog>
         <!--修改价格-->
-        <el-dialog title="修改价格" v-model="editFormMoney" size="tiny" @close='editClose' top='25%' :close-on-click-modal="false">
+        <el-dialog title="修改价格" :visible.sync="editFormMoney" width="30%" @close='editClose' top='10%' :close-on-click-modal="false">
             <el-form :model="editForm" label-width="130px" :rules="editRules" ref="editForm" style="padding:0 20px">
                 <el-form-item label="服务商品单价：">
                     <span>{{editForm.oddMoney}}</span>
@@ -132,6 +127,7 @@ import moment from 'moment'
 import $ from 'jquery'
 
 export default {
+    name: 'merchandise',
     data() {
         return {
             activeName: [
@@ -234,8 +230,30 @@ export default {
             businessid: '',
         }
     },
+    // activated() {
+    //     if(!this.$store.state.sideberArr){
+    //         this.$store.state.sideberArr = true;
+    //         this.isActive = [true]
+    //         this.search = {
+    //             transaction: '',
+    //             stratTime: '',
+    //             endTime: '',
+    //             startMoney: '',
+    //             endMoney: '',
+    //             name: ''
+    //         }
+    //         this.orderStatus = '';
+    //         this.businessid = this.$store.state.business;
+    //         let stateOrder = this.$store.state.stateOrder;
+    //         if (stateOrder != '') {
+    //             this.orderStatus = stateOrder.toString();
+    //             this.$store.state.adminleftnavnum = 'merchandise';
+    //             this.orderStatusChange(stateOrder);
+    //         }
+    //         this.orderlist();
+    //     }
+    // },
     created() {
-        //this.businessid = '';
         this.businessid = this.$store.state.business;
         let stateOrder = this.$store.state.stateOrder;
         if (stateOrder != '') {
@@ -280,6 +298,7 @@ export default {
             this.orderStatus = item.orderStatus;
             this.$set(this.isActive, index, true);
             this.unreadDis();
+            this.orderlist();
         },
         orderStatusChange(status) {
             let index = 0;
@@ -301,7 +320,7 @@ export default {
                 businessid: this.businessid  //服务商id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findUnread', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findUnread`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -328,7 +347,7 @@ export default {
                 state: this.orderStatus
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/isReadAll', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/isReadAll`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -354,7 +373,7 @@ export default {
                 businessid: this.businessid  //服务商id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findByProperties', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findByProperties`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -374,22 +393,39 @@ export default {
             return value.trim();
         },
         isNum(strValue) {
-            var objRegExp = /[^\d]/g;
+            var objRegExp = /^[0-9]+([.]{1}[0-9]+){0,1}$/;
             return objRegExp.test(this.trim(strValue));
         },
         onSubmit() {
             //验证是否为数字
+            if (this.search.stratTime && this.search.endTime) {
+                let compare = this.search.stratTime > this.search.endTime
+                if (compare) {
+                    this.$message({
+                        type: 'warning',
+                        message: '起始时间不能晚于结束时间'
+                    })
+                    return false;
+                }
+            }
             let isStartMoney = this.isNum(this.search.startMoney);
             let isEndMoney = this.isNum(this.search.endMoney);
-            if (!isStartMoney && !isEndMoney) {
-                this.currentPage = 1;
-                this.orderlist();
-            } else {
+            if (!isStartMoney && this.search.startMoney != '') {
                 this.$message({
                     type: 'warning',
-                    message: '订单金额只能为数字'
+                    message: '开始订单金额只能为数字'
                 });
+                return false;
             }
+            if (!isEndMoney && this.search.endMoney != '') {
+                this.$message({
+                    type: 'warning',
+                    message: '结束订单金额只能为数字'
+                });
+                return false;
+            }
+            this.currentPage = 1;
+            this.orderlist();
         },
         //雇主信息  172.16.32.103
         handleEmployer(index, row) {
@@ -398,7 +434,7 @@ export default {
                 orderid: row.id
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/findOrderForm', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/findOrderForm`, {}, {
                 params: item
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -432,7 +468,7 @@ export default {
                     id: row.id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/acceptOrder', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/acceptOrder`, {}, {
                     params: item
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -464,7 +500,7 @@ export default {
                     closeType: '5'
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/closeOrder', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/closeOrder`, {}, {
                     params: item
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -492,7 +528,7 @@ export default {
                     id: row.id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/completeServe', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/completeServe`, {}, {
                     params: item
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -520,7 +556,7 @@ export default {
                     id: row.id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/confirmRefunds', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/confirmRefunds`, {}, {
                     params: item
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -549,7 +585,7 @@ export default {
                     id: row.id
                 }
                 var that = this;
-                this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/denyRefunds', {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/denyRefunds`, {}, {
                     params: item
                 }).then(({ data }) => {
                     if (data.status == 200) {
@@ -588,7 +624,7 @@ export default {
                         price: this.editForm.newMoney
                     }
                     var that = this;
-                    this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/orderform/modifyPrice', {}, {
+                    this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/orderform/modifyPrice`, {}, {
                         params: item
                     }).then(({ data }) => {
                         if (data.status == 200) {
@@ -632,7 +668,6 @@ p {
 
 .crumbs {
     height: auto;
-    margin: 15px 0;
     margin-top: 15px;
     width: 100%;
 }

@@ -5,7 +5,9 @@
             <v-sidebar :prop='reg'></v-sidebar>
             <div class="content">
                 <transition name="move" mode="out-in">
-                    <router-view></router-view>
+                    <!-- <keep-alive :include="includedComponents"> -->
+                        <router-view></router-view>
+                    <!-- </keep-alive> -->
                 </transition>
             </div>
         </div>
@@ -23,14 +25,14 @@
                         </el-breadcrumb-item>
                     </el-breadcrumb>
                     <div class="crum_box" v-if="examine==0">
-                        <p style="font-size:24px;color:#333;padding-bottom:10px"><img src="../assets/information/success.png">企业实名认证开通申请已提交审核</p>
+                        <p style="font-size:24px;color:#333;padding-bottom:10px"><img src="../assets/images/information/success.png">企业实名认证开通申请已提交审核</p>
                         <p>我们会在1-3个工作日内完成审核，您也可以通过以下方式查询您的认证结果：</span>
                         </p>
                         <p style="line-height:40px">人工查询电话：400-851-8585 </p>
                     </div>
                     <div class="crum_box" v-if="examine==1">
                         <p style="font-size:24px;color:#333;;padding-bottom:10px;">
-                            <img src="../assets/information/nopass.png">很抱歉，您未审核通过</p>
+                            <img src="../assets/images/information/nopass.png">很抱歉，您未审核通过</p>
                         <p>原因：因为您的企业信息不符合标准</p>
                         <p style="font-size:16px">
                             <b>{{successTime}}秒</b> 后自动跳转填写企业认证信息页面，您也可以手动点击
@@ -46,7 +48,7 @@
 <script>
 import vHead from './backpage/Header';
 import vSidebar from './backpage/Sidebar';
-
+import store from '@/store'
 export default {
     data() {
         return {
@@ -56,7 +58,27 @@ export default {
             successTime: 6,
             busid: '',
             fullscreenLoading: true,
-            userId: ''
+            userId: '',
+            includedComponents: ['merchandise']
+        }
+    },
+    async beforeRouteEnter(from, to, next) {
+        if (store.state.sessionid) {
+            if (!store.state.userInfo) {
+                await store.dispatch('findById', store.state.userid.id).catch(() => {
+                    next('/login/0')
+                })
+                let user = store.state.userInfo
+                if (!user || !user.isProvider) {
+                    next('/')
+                } else {
+                    next()
+                }
+            } else {
+                next()
+            }
+        } else {
+            next('/login/0')
         }
     },
     created: function() {
@@ -90,7 +112,7 @@ export default {
                     var item = {
                         userid: this.userId
                     }
-                    this.$htAjax.post('https://apitest.gack.citic:8082/selectBusByUserid', {}, {
+                    this.$htAjax.post(`${this.$config.back}/selectBusByUserid`, {}, {
                         params: item
                     }).then(({ data }) => {
                         this.fullscreenLoading = false;
@@ -117,7 +139,7 @@ export default {
                 }
             } else {
                 this.fullscreenLoading = false;
-                this.$store.dispatch('findById', this.userId)
+                this.$store.dispatch('findById', this.userId).catch(() => { })
             }
         },
         information() {

@@ -1,26 +1,17 @@
 <template>
   <div id="app">
-    <transition name="fade" mode='out-in'>
-      <router-view></router-view>
+    <transition name="el-fade-in" mode='out-in'>
+      <keep-alive :include="['patentmark', 'trademark']">
+        <router-view></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app',
-  data() {
-    return {
-
-    }
-  }
+  name: 'app'
 }
 </script>
-
-<style>
-@import './common/style/public.css';
-#app,body,html{
-  width: 100%;
-  height: 100%;
-}
+<style src = '@/common/style/public.css'>
 </style>

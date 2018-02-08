@@ -9,7 +9,9 @@ new Vue({
   el: '#app',
   router,
   store,
-  template: '<App/>',
+  render (h) {
+    return h('app')
+  },
   components: {
     App
   },

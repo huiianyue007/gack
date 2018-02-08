@@ -18,7 +18,7 @@
     data: () => ({
       service: {
         title: '服务商名称',
-        imgSrc: '~assets/gack/tp_a.png'
+        imgSrc: '~assets/images/gack/tp_a.png'
       }
     })
   }

@@ -128,7 +128,7 @@ export default {
                 page: this.page -1,
                 size: this.size
             }
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomKeyNameBusinessIdStauts', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/selectRoomKeyNameBusinessIdStauts`, {}, {
                 params: json
             }).then(({ data }) => {
                 if (data.status == 200) {
@@ -193,7 +193,7 @@ export default {
                     message: ok || '关闭成功！',
 
                 });
-                this.$htAjax.post("https://apitest.gack.citic:8082/guoanmaker/provide/room/closeOpenRoom", {}, {
+                this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/closeOpenRoom`, {}, {
                     params: json
                 }).then(({ data }) => {
                     if (data.status == 200 && data.data == '操作成功') {
@@ -234,11 +234,11 @@ export default {
                 keyName: this.search.name,
                 businessId: this.businessid,
                 roomState: this.states,
-                page: this.page,
+                page: this.page-1,
                 size: this.size
             }
             var that = this;
-            this.$htAjax.post('https://apitest.gack.citic:8082/guoanmaker/provide/room/selectRoomKeyNameBusinessIdStauts', {}, {
+            this.$htAjax.post(`${this.$config.back}/guoanmaker/provide/room/selectRoomKeyNameBusinessIdStauts`, {}, {
                 params: json
             }).then(({ data }) => {
                 if (data.status == 200) {

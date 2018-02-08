@@ -2,15 +2,15 @@
   <div class="space">
     <div class="container">
       <el-breadcrumb separator=">">
-        <el-breadcrumb-item :to="{ path: '>' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ query.keywords || query.title }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container bg_white">
       <div class="nav" @click = 'changeOrder'>
         综合排序
-        <img src="../../assets/gack/up.png" alt="" v-if = 'orderBy'>
-        <img src="../../assets/gack/down.png" alt="" v-else>
+        <img src="../../assets/images/gack/up.png" alt="" v-if = 'orderBy'>
+        <img src="../../assets/images/gack/down.png" alt="" v-else>
       </div>
       <!--<div class="empty" v-if = 'spaceList.length <= 0 && serviceList.length <= 0'>没有搜索内容</div>-->
       <div class="no_data_lay" v-if = 'spaceList.length <= 0 && serviceList.length <= 0'>
@@ -42,8 +42,7 @@
       <!--</el-row>-->
       <el-row class="view_li" :gutter = '12' v-for = '(item, key) in serviceList' :key = 'key' v-if = 'serviceList.length > 0' @click.native = "routerTo(item, 'space')">
         <el-col :span = '4'>
-          <box-img :prop = '130/184' class = 'logo'>
-            <img :src="item.roomlogo" alt="">
+          <box-img prop = '130:184' class = 'logo' :bgImg = 'item.roomlogo'>
           </box-img>
         </el-col>
         <el-col :span = '16'>
@@ -67,12 +66,13 @@
 <script>
   import serviceList from 'components/serviceList'
   export default {
+    name: 'spacelist',
     data: () => ({
       orderBy: false,
       spaceList: [],
       serviceList: []
     }),
-    activated () {
+    created () {
       let data = Object.assign(this.query, {
         page: 1
       })
@@ -113,13 +113,13 @@
       init (opt) {
         let url = '', data= null
         if (opt.keywords) {
-          url = 'https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/selectKeyNameCodeSpaceCommodity'
+          url = `${this.$config.back}/guoanmaker/provide/commodityMove/selectKeyNameCodeSpaceCommodity`
           data = {
             code: opt.code,
             keyName: opt.keywords
           }
         } else {
-          url = 'https://apitest.gack.citic:8082/guoanmaker/provide/commodityMove/findProvideRoomMoves'
+          url = `${this.$config.back}/guoanmaker/provide/commodityMove/findProvideRoomMoves`
           data = {
             page: opt.page,
             code: this.code
